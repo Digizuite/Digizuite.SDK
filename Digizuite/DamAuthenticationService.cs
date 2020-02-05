@@ -1,4 +1,7 @@
 using System;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using Digizuite.Helpers;
@@ -89,8 +92,15 @@ namespace Digizuite
 
         private async Task<string> Login(string username, string password)
         {
+            // Hash the password if it has not already been md5'ed beforehand 
+            if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{36}$"))
+            {
+                password = CalculateMD5Hash(password);
+            }
+            
+            
             var client = _clientFactory.GetRestClient();
-            var request = new RestRequest("/dmm3bwsv3/ConnectService.js", DataFormat.Json);
+            var request = new RestRequest("ConnectService.js", DataFormat.Json);
             request.AddParameter("method", "CreateAccesskey");
             request.AddParameter("usertype", 2);
             request.AddParameter("useversionedmetadata", 0);
@@ -104,7 +114,7 @@ namespace Digizuite
 
             if (!res.Success)
             {
-                _logger.LogError("Authentication failed");
+                _logger.LogError("Authentication failed",  "response", res);
                 throw new Exception("Request was unsuccessful");
             }
 
@@ -115,6 +125,23 @@ namespace Digizuite
 
             _logger.LogInformation("Authenticated successful");
             return _accessKey;
+        }
+        
+        
+        private  string CalculateMD5Hash(string input)
+        {
+            // step 1, calculate MD5 hash from input
+            var md5 = MD5.Create();
+            var inputBytes = Encoding.ASCII.GetBytes(input);
+            var hash = md5.ComputeHash(inputBytes);
+ 
+            // step 2, convert byte array to hex string
+            var sb = new StringBuilder();
+            for (var i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("x2"));
+            }
+            return sb.ToString();
         }
     }
 }

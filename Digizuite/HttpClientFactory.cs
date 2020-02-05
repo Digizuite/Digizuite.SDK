@@ -14,7 +14,20 @@ namespace Digizuite
 
         public IRestClient GetRestClient()
         {
-            return new RestClient(_configuration.BaseUrl);
+            var baseUrl = _configuration.BaseUrl;
+
+            if (!baseUrl.EndsWith("/"))
+            {
+                baseUrl += "/";
+            }
+
+            if (!baseUrl.EndsWith("/dmm3bwsv3/"))
+            {
+                baseUrl += "dmm3bwsv3/";
+            }
+            
+            
+            return new RestClient(baseUrl);
         }
     }
 }
