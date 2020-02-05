@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Digizuite.Models;
 
 namespace Digizuite.Samples
 {
-    internal class Logger : ILogger
+    internal class ConsoleLogger : ILogger
     {
         public void LogTrace(string message)
         {
@@ -49,7 +47,7 @@ namespace Digizuite.Samples
 
         public void LogInformation(string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogInformation(string message, params object[] args)
@@ -59,7 +57,7 @@ namespace Digizuite.Samples
 
         public void LogInformation(Exception exception, string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogInformation(Exception exception, string message, params object[] args)
@@ -69,7 +67,7 @@ namespace Digizuite.Samples
 
         public void LogWarning(string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogWarning(string message, params object[] args)
@@ -79,77 +77,77 @@ namespace Digizuite.Samples
 
         public void LogWarning(Exception exception, string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogWarning(Exception exception, string message, params object[] args)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message, args);
         }
 
         public void LogError(string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogError(string message, params object[] args)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message, args);
         }
 
         public void LogError(Exception exception, string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogError(Exception exception, string message, params object[] args)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message, args);
         }
 
         public void LogCritical(string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogCritical(string message, params object[] args)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message, args);
         }
 
         public void LogCritical(Exception exception, string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void LogCritical(Exception exception, string message, params object[] args)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message, args);
         }
 
         public void Log(LogLevel level, string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void Log(LogLevel level, string message, object[] args)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message, args);
         }
 
         public void Log(LogLevel level, Exception exception, string message)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message);
         }
 
         public void Log(LogLevel level, Exception exception, string message, object[] args)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(message, args);
         }
 
         public bool IsEnabled(LogLevel level)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 }
