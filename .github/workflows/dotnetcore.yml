@@ -19,9 +19,9 @@ jobs:
     - name: Tests
       run: dotnet test
       env:
-        DIGUZUITE_API_URL: ${{ secret.DIGIZUITE_API_URL }}
-        DIGIZUITE_USERNAME: ${{ secret.DIGIZUITE_USERNAME }}
-        DIGIZUITE_PASSWORD: ${{ secret.DIGIZUITE_PASSWORD }}
+        DIGUZUITE_API_URL: ${{ secrets.DIGIZUITE_API_URL }}
+        DIGIZUITE_USERNAME: ${{ secrets.DIGIZUITE_USERNAME }}
+        DIGIZUITE_PASSWORD: ${{ secrets.DIGIZUITE_PASSWORD }}
   build:
     name: Build core on $${{ matrix.os }}
     runs-on: ${{ matrix.os }}
