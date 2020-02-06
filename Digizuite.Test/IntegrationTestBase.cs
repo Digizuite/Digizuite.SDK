@@ -21,6 +21,21 @@ namespace Digizuite.Test
              var password = Environment.GetEnvironmentVariable("DIGIZUITE_PASSWORD");
              var accessKeyDuration = new TimeSpan(2, 0, 0);
 
+             if (string.IsNullOrWhiteSpace(apiUrl))
+             {
+                 throw new ArgumentException("apiUrl was not set");
+             }
+
+             if (string.IsNullOrWhiteSpace(username))
+             {
+                 throw new ArgumentException("username was not set");
+             }
+
+             if (string.IsNullOrWhiteSpace(password))
+             {
+                 throw new ArgumentException("password was not set");
+             }
+             
              _configuration = new Configuration()
              {
                  BaseUrl = apiUrl,
