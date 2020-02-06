@@ -18,6 +18,10 @@ jobs:
         dotnet-version: 3.1.101
     - name: Tests
       run: dotnet test
+      env:
+        DIGUZUITE_API_URL: ${{ secret.DIGIZUITE_API_URL }}
+        DIGIZUITE_USERNAME: ${{ secret.DIGIZUITE_USERNAME }}
+        DIGIZUITE_PASSWORD: ${{ secret.DIGIZUITE_PASSWORD }}
   build:
     name: Build core on $${{ matrix.os }}
     runs-on: ${{ matrix.os }}
