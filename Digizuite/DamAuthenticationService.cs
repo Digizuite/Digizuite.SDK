@@ -92,13 +92,14 @@ namespace Digizuite
 
         private async Task<string> Login(string username, string password)
         {
+            _logger.LogTrace("Logging in", nameof(username), username, "PasswordLength", password.Length);
+            
             // Hash the password if it has not already been md5'ed beforehand 
             if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{36}$"))
             {
                 password = CalculateMD5Hash(password);
             }
-            
-            
+
             var client = _clientFactory.GetRestClient();
             var request = new RestRequest("ConnectService.js", DataFormat.Json);
             request.AddParameter("method", "CreateAccesskey");
