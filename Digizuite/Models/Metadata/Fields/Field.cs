@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Digizuite.Models.Metadata.Fields
 {
@@ -45,6 +46,7 @@ namespace Digizuite.Models.Metadata.Fields
             return Equals((Field<T>)obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             unchecked

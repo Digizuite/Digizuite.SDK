@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Digizuite.Models.Metadata.Values
 {
@@ -24,6 +25,7 @@ namespace Digizuite.Models.Metadata.Values
             return Equals((TreeValueReference)obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             return Value != null ? Value.GetHashCode() : 0;

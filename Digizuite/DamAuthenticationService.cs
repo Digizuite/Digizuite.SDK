@@ -2,11 +2,12 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using Digizuite.Helpers;
 using Digizuite.Models;
 using RestSharp;
+using Timer = System.Timers.Timer;
 
 namespace Digizuite
 {
@@ -34,13 +35,16 @@ namespace Digizuite
             _clientFactory = clientFactory;
             _logger = logger;
 
-            Login(configuration.SystemUsername, configuration.SystemPassword);
-
             _renewalTimer = new Timer(configuration.AccessKeyDuration.TotalMilliseconds * 0.9);
-            _renewalTimer.Elapsed += (sender, args) => { Login(configuration.SystemUsername, _configuration.SystemPassword); };
+            _renewalTimer.Elapsed += async (sender, args) =>
+            {
+                await Login(configuration.SystemUsername, _configuration.SystemPassword);
+            };
             _renewalTimer.Start();
             _renewalTimer.AutoReset = true;
         }
+
+        private SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
         /// <summary>
         ///     Indicates if the access key has expired completely
@@ -55,16 +59,12 @@ namespace Digizuite
         /// <summary>
         ///     Gets the active access key for the system user
         /// </summary>
-        /// <param name="forceNew">
-        ///     If true, a new access key will be generated,
-        ///     even if the old one is still considered valid
-        /// </param>
-        public async Task<string> GetAccessKey(bool forceNew = false)
+        public async Task<string> GetAccessKey()
         {
-            _logger.LogTrace("Getting access key", nameof(forceNew), forceNew);
-            if (forceNew || HasExpired)
+            _logger.LogTrace("Getting access key");
+            if (HasExpired)
             {
-                _logger.LogTrace("Loading new access key", nameof(forceNew), forceNew, nameof(HasExpired), HasExpired);
+                _logger.LogTrace("Loading new access key", nameof(HasExpired), HasExpired);
                 return await Login(_configuration.SystemUsername, _configuration.SystemPassword);
             }
 
@@ -75,14 +75,12 @@ namespace Digizuite
         /// <summary>
         ///     Gets the member id of the authenticated user
         /// </summary>
-        /// <param name="forceNew"></param>
-        /// <returns></returns>
-        public async Task<int> GetMemberId(bool forceNew = false)
+        public async Task<int> GetMemberId()
         {
-            _logger.LogTrace("Getting memberId", nameof(forceNew), forceNew);
-            if (forceNew || HasExpired)
+            _logger.LogTrace("Getting memberId");
+            if (HasExpired)
             {
-                _logger.LogTrace("Loading new member id", nameof(forceNew), forceNew, nameof(HasExpired), HasExpired);
+                _logger.LogTrace("Loading new member id", nameof(HasExpired), HasExpired);
                 await Login(_configuration.SystemUsername, _configuration.SystemPassword);
             }
 
@@ -92,56 +90,65 @@ namespace Digizuite
 
         private async Task<string> Login(string username, string password)
         {
-            _logger.LogTrace("Logging in", nameof(username), username, "PasswordLength", password.Length);
-            
-            // Hash the password if it has not already been md5'ed beforehand 
-            if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{36}$"))
+            await _lock.WaitAsync();
+            try
             {
-                password = CalculateMD5Hash(password);
+                _logger.LogTrace("Logging in", nameof(username), username, "PasswordLength", password.Length);
+
+                // Hash the password if it has not already been md5'ed beforehand 
+                if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{36}$"))
+                {
+                    password = CalculateMD5Hash(password);
+                }
+
+                var client = _clientFactory.GetRestClient();
+                var request = new RestRequest("ConnectService.js", DataFormat.Json);
+                request.AddParameter("method", "CreateAccesskey");
+                request.AddParameter("usertype", 2);
+                request.AddParameter("useversionedmetadata", 0);
+                request.AddParameter("page", 1);
+                request.AddParameter("limit", 25);
+                request.AddParameter("username", username);
+                request.AddParameter("password", password);
+                request.MakeRequestDamSafe();
+
+                var res = await client.PostAsync<DigiResponse<AuthenticateResponse>>(request);
+
+                if (!res.Success)
+                {
+                    _logger.LogError("Authentication failed", "response", res);
+                    throw new Exception("Request was unsuccessful");
+                }
+
+                var item = res.Items[0];
+                _accessKey = item.AccessKey;
+                _memberId = int.Parse(item.MemberId);
+                _expirationTime = DateTime.Now.Add(_configuration.AccessKeyDuration);
+
+                _logger.LogInformation("Authenticated successful");
+                return _accessKey;
             }
-
-            var client = _clientFactory.GetRestClient();
-            var request = new RestRequest("ConnectService.js", DataFormat.Json);
-            request.AddParameter("method", "CreateAccesskey");
-            request.AddParameter("usertype", 2);
-            request.AddParameter("useversionedmetadata", 0);
-            request.AddParameter("page", 1);
-            request.AddParameter("limit", 25);
-            request.AddParameter("username", username);
-            request.AddParameter("password", password);
-            request.MakeRequestDamSafe();
-
-            var res = await client.PostAsync<DigiResponse<AuthenticateResponse>>(request);
-
-            if (!res.Success)
+            finally
             {
-                _logger.LogError("Authentication failed",  "response", res);
-                throw new Exception("Request was unsuccessful");
+                _lock.Release();
             }
-
-            var item = res.Items[0];
-            _accessKey = item.AccessKey;
-            _memberId = int.Parse(item.MemberId);
-            _expirationTime = DateTime.Now.Add(_configuration.AccessKeyDuration);
-
-            _logger.LogInformation("Authenticated successful");
-            return _accessKey;
         }
-        
-        
-        private  string CalculateMD5Hash(string input)
+
+
+        private string CalculateMD5Hash(string input)
         {
             // step 1, calculate MD5 hash from input
             var md5 = MD5.Create();
             var inputBytes = Encoding.ASCII.GetBytes(input);
             var hash = md5.ComputeHash(inputBytes);
- 
+
             // step 2, convert byte array to hex string
             var sb = new StringBuilder();
             for (var i = 0; i < hash.Length; i++)
             {
                 sb.Append(hash[i].ToString("x2"));
             }
+
             return sb.ToString();
         }
     }

@@ -29,7 +29,7 @@ namespace Digizuite
     {
         public static IRestClient UseJsonNetSerializer(this IRestClient client)
         {
-            client.UseSerializer(new JsonNetSerializer());
+            client.UseSerializer(() => new JsonNetSerializer());
             return client;
         }
     }

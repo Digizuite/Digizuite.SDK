@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Digizuite.Models;
 
 namespace Digizuite
@@ -40,6 +38,7 @@ namespace Digizuite
         bool IsEnabled(LogLevel level);
     }
 
+    // ReSharper disable once UnusedTypeParameter
     public interface ILogger<out T> : ILogger
     {
     }

@@ -1,4 +1,5 @@
-﻿namespace Digizuite.Models.Metadata.Internal
+﻿// ReSharper disable InconsistentNaming
+namespace Digizuite.Models.Metadata.Internal
 {
     internal class MetaFieldLabelResponse
     {

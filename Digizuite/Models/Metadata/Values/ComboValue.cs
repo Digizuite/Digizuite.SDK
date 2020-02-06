@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Digizuite.Models.Metadata.Values
 {
@@ -30,6 +31,7 @@ namespace Digizuite.Models.Metadata.Values
             return Equals((ComboValue)obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             unchecked

@@ -11,7 +11,7 @@ namespace Digizuite.Test
         public async Task CanGetAccessKey()
         {
 
-            var service = serviceProvider.GetRequiredService<IDamAuthenticationService>();
+            var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
 
             var ak = await service.GetAccessKey();
             

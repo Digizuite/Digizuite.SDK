@@ -1,4 +1,6 @@
-﻿namespace Digizuite.Models.Metadata.Values
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Digizuite.Models.Metadata.Values
 {
     public class ItemReferenceOptionReference
     {
@@ -22,6 +24,7 @@
             return Equals((ItemReferenceOptionReference)obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             return ItemId;

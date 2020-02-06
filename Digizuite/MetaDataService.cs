@@ -178,7 +178,7 @@ namespace Digizuite
         {
             var accessKey = await _authenticationService.GetAccessKey();
             var restClient = _clientFactory.GetRestClient();
-            restClient.UseSerializer(new JsonNetSerializer());
+            restClient.UseJsonNetSerializer();
             var restRequest = new RestRequest("/dmm3bwsv3/SearchService.js");
             restRequest.AddParameter("SearchName", "GetAllMetafieldAndValues")
                 .AddParameter("accessKey", accessKey)

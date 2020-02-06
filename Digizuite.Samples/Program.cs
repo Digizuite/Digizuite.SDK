@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Digizuite.Models;
 
 namespace Digizuite.Samples
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main()
         {
-            Test1();
+            await Test1();
         }
 
 
 
-        static void Test1()
+        static async Task Test1()
         {
             var config = new Configuration()
             {
@@ -25,7 +26,11 @@ namespace Digizuite.Samples
             
             var auth = new DamAuthenticationService(config, httpClient, new ConsoleLogger<DamAuthenticationService>());
 
+            var memberId = await auth.GetMemberId();
             
+            Console.WriteLine($"Authorized as member {memberId}");
+
+
 
         }
     }

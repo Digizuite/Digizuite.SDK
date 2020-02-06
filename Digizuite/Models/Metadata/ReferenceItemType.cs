@@ -1,4 +1,5 @@
-﻿namespace Digizuite.Models.Metadata
+﻿// ReSharper disable InconsistentNaming
+namespace Digizuite.Models.Metadata
 {
     public enum ReferenceItemType
     {

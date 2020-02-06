@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+// ReSharper disable InconsistentNaming
 
 namespace Digizuite.Models.Metadata.Internal
 {
