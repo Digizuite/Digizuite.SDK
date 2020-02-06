@@ -23,7 +23,7 @@ jobs:
         DIGIZUITE_USERNAME: ${{ secrets.DIGIZUITE_USERNAME }}
         DIGIZUITE_PASSWORD: ${{ secrets.DIGIZUITE_PASSWORD }}
   build:
-    name: Build core on $${{ matrix.os }}
+    name: Build core on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
