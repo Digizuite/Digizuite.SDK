@@ -4,7 +4,7 @@ using RestSharp.Serialization;
 
 namespace Digizuite
 {
-    public class JsonNetSerializer : IRestSerializer
+    internal class JsonNetSerializer : IRestSerializer
     {
         public string Serialize(object obj) =>
             JsonConvert.SerializeObject(obj);
@@ -25,7 +25,7 @@ namespace Digizuite
         public DataFormat DataFormat { get; } = DataFormat.Json;
     }
 
-    public static class JsonNetSerializerExtensions
+    internal static class JsonNetSerializerExtensions
     {
         public static IRestClient UseJsonNetSerializer(this IRestClient client)
         {

@@ -1,3 +1,4 @@
+using Digizuite.BatchUpdate;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Digizuite
@@ -11,6 +12,7 @@ namespace Digizuite
         {
             services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
+            services.AddSingleton<IBatchUpdateClient, BatchUpdateClient>();
             
             return services;
         }
