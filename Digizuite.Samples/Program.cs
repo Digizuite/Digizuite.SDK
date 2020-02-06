@@ -21,9 +21,9 @@ namespace Digizuite.Samples
                 SystemUsername = "",
                 SystemPassword = ""
             };
-            var httpClient = new HttpClientFactory(config);
+            var httpClient = new HttpClientFactory(config, new ConsoleLogger<HttpClientFactory>());
             
-            var auth = new DamAuthenticationService(config, httpClient, null);
+            var auth = new DamAuthenticationService(config, httpClient, new ConsoleLogger<DamAuthenticationService>());
 
             
 
