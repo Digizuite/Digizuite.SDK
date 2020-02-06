@@ -181,7 +181,7 @@ namespace Digizuite
             restClient.UseJsonNetSerializer();
             var restRequest = new RestRequest("/dmm3bwsv3/SearchService.js");
             restRequest.AddParameter("SearchName", "GetAllMetafieldAndValues")
-                .AddParameter("accessKey", accessKey)
+                .AddParameter(DigizuiteConstants.AccessKeyParameter, accessKey)
                 .AddParameter("limit", "9999")
                 .AddParameter("page", "1")
                 .AddParameter("itemid_note", assetItemId)

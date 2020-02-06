@@ -13,6 +13,7 @@ namespace Digizuite
             services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
             services.AddSingleton<IBatchUpdateClient, BatchUpdateClient>();
+            services.AddSingleton<ISearchService, SearchService>();
             
             return services;
         }
