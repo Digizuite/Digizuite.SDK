@@ -5,7 +5,7 @@ using Digizuite.BatchUpdate.Models;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace Digizuite.Test
+namespace Digizuite.Test.IntegrationTests
 {
     [TestFixture]
     public class BatchUpdateClientTest : IntegrationTestBase

@@ -2,10 +2,9 @@ using System;
 using Digizuite.Models;
 using Digizuite.Samples;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using NUnit.Framework;
 
-namespace Digizuite.Test
+namespace Digizuite.Test.IntegrationTests
 {
     public abstract class IntegrationTestBase
     {
