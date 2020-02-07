@@ -16,7 +16,7 @@ namespace Digizuite
 
         public IRestClient GetRestClient()
         {
-            var baseUrl = _configuration.GetDmm3bwsv3Url();
+            var baseUrl = _configuration.GetDmm3Bwsv3Url();
             
             _logger.LogTrace("Creating request client", nameof(baseUrl), baseUrl);
 

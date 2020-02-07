@@ -111,8 +111,6 @@ namespace Digizuite
                     var read = await AttemptToFillBuffer(stream, buffer);
                     _logger.LogTrace("Read bytes into buffer", nameof(read), read, nameof(buffer.Length),
                         buffer.Length);
-                    var request = new RestRequest(UploadFileChunkEndpoint);
-
                     if (read < buffer.Length)
                     {
                         var tempBuffer = new byte[read];
@@ -127,7 +125,7 @@ namespace Digizuite
                     _logger.LogDebug("Sending file chunk", nameof(itemId), itemId, nameof(endOfStream), endOfStream);
 
                     // Restsharp doesn't work for this, so we have to do things to old way
-                    var uri = new UriBuilder(new Uri(new Uri(_configuration.GetDmm3bwsv3Url()), UploadFileChunkEndpoint));
+                    var uri = new UriBuilder(new Uri(new Uri(_configuration.GetDmm3Bwsv3Url()), UploadFileChunkEndpoint));
                     var finished = endOfStream ? 1 : 0;
                     uri.Query =
                         $"{DigizuiteConstants.AccessKeyParameter}={ak}&itemid={itemId}&jsonresponse=1&finished={finished}";
@@ -194,8 +192,10 @@ namespace Digizuite
         
         private class InitiateUploadResponse
         {
-            public int ItemId { get; set; }
-            public int UploadId { get; set; }
+#pragma warning disable 649
+            public int ItemId;
+            public int UploadId;
+#pragma warning restore 649
         }
     }
 }
