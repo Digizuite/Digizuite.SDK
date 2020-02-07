@@ -30,7 +30,7 @@ namespace Digizuite.Test.IntegrationTests
         {
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
             var memberId = await service.GetMemberId();
-            Assert.AreEqual(30234, memberId);
+            Assert.AreEqual(30024, memberId);
         }
     }
 }
