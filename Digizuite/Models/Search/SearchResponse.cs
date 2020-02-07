@@ -55,7 +55,7 @@ namespace Digizuite.Models.Search
         /// <summary>
         ///     Returns true if this is the last page of response
         /// </summary>
-        public bool IsLast => TotalPages >= _searchParameters.Page;
+        public bool IsLast => TotalPages <= _searchParameters.Page;
 
         /// <summary>
         ///     Get the search parameters for going to a specific page
