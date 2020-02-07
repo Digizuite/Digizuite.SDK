@@ -5,28 +5,33 @@ namespace Digizuite.Test.UnitTests
 {
     internal class UnitTestConfiguration : IConfiguration
     {
+        static T Disallow<T>()
+        {
+            throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
+        }
+
         public string BaseUrl
         {
-            get => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
-            set => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
+            get => Disallow<string>();
+            set => Disallow<string>();
         }
 
         public TimeSpan AccessKeyDuration
         {
-            get => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
-            set => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
+            get => Disallow<TimeSpan>();
+            set => Disallow<TimeSpan>();
         }
 
         public string SystemUsername
         {
-            get => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
-            set => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
+            get => Disallow<string>();
+            set => Disallow<string>();
         }
 
         public string SystemPassword
         {
-            get => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
-            set => throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
+            get => Disallow<string>();
+            set => Disallow<string>();
         }
     }
 }
