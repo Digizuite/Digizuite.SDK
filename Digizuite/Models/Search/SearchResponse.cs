@@ -38,6 +38,10 @@ namespace Digizuite.Models.Search
         }
 
         /// <summary>
+        ///     Gets current page
+        /// </summary>
+        public int Page => (int) _searchParameters.Page;
+        /// <summary>
         ///     Gets the total number of pages available
         /// </summary>
         public int TotalPages => (int) Math.Ceiling(Total / (double) _searchParameters.PageSize);
