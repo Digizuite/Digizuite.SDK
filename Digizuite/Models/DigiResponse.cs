@@ -11,5 +11,7 @@ namespace Digizuite.Models
         public object Errors { get; set; }
         public object Warning { get; set; }
         public object Warnings { get; set; }
+        
+        public int Total { get; set; }
     }
 }
