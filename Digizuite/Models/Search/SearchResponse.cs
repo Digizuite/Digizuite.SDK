@@ -52,7 +52,7 @@ namespace Digizuite.Models.Search
         public SearchParameters<T> Next => GoToPage(_searchParameters.Page + 1);
 
         /// <summary>
-        ///     Gets theo search parameters for getting the previous page
+        ///     Gets the search parameters for getting the previous page
         /// </summary>
         public SearchParameters<T> Previous => GoToPage(_searchParameters.Page - 1);
 
