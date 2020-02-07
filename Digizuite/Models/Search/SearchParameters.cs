@@ -63,7 +63,7 @@ namespace Digizuite.Models.Search
         {
             get
             {
-                var page = this[PageSizeKey];
+                var page = this[PageKey];
                 if (int.TryParse(page, out var p)) return p;
 
                 throw new InvalidCastException($"The stored page was not a valid integer. Value was: '{page}'");
