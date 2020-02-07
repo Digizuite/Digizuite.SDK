@@ -4,7 +4,7 @@ using Digizuite.Test.TestModels;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace Digizuite.Test
+namespace Digizuite.Test.IntegrationTests
 {
     [TestFixture]
     public class SearchServiceTest : IntegrationTestBase
@@ -20,7 +20,7 @@ namespace Digizuite.Test
             };
 
             var firstResult = await service.Search<GetAssetsResponse>(parameters);
-            
+
             Assert.That(firstResult.Items.Count, Is.EqualTo(12));
 
             var secondResult = await service.Search(firstResult.Next);
