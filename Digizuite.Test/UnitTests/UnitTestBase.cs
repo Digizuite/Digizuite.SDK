@@ -9,36 +9,18 @@ namespace Digizuite.Test.UnitTests
 {
     public abstract class UnitTestBase
     {
-        protected Configuration Configuration;
-
+        protected IConfiguration Configuration;
         protected IServiceProvider ServiceProvider;
 
         protected virtual void SetupDependencies(IServiceCollection services)
         {
-//            services.Replace(new ServiceDescriptor(typeof(IHttpClientFactory), typeof(UnitTestHttpClientFactory), ServiceLifetime.Singleton));
+            services.Replace(new ServiceDescriptor(typeof(IHttpClientFactory), typeof(UnitTestHttpClientFactory), ServiceLifetime.Singleton));
         }
 
         [SetUp]
         public void Setup()
         {
-            var apiUrl = "https://unittest-dam.example.local";
-            var username = "fictionaluser";
-            var password = "fictionalpassword";
-            var accessKeyDuration = new TimeSpan(2, 0, 0);
-
-            if (string.IsNullOrWhiteSpace(apiUrl)) throw new ArgumentException("apiUrl was not set");
-
-            if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException("username was not set");
-
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("password was not set");
-
-            Configuration = new Configuration
-            {
-                BaseUrl = apiUrl,
-                SystemUsername = username,
-                SystemPassword = password,
-                AccessKeyDuration = accessKeyDuration
-            };
+            Configuration = new UnitTestConfiguration();
 
 
             var serviceCollection = new ServiceCollection();

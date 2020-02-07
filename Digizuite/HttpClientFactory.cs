@@ -5,10 +5,10 @@ namespace Digizuite
 {
     public class HttpClientFactory : IHttpClientFactory
     {
-        private readonly Configuration _configuration;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<HttpClientFactory> _logger;
 
-        public HttpClientFactory(Configuration configuration, ILogger<HttpClientFactory> logger)
+        public HttpClientFactory(IConfiguration configuration, ILogger<HttpClientFactory> logger)
         {
             _configuration = configuration;
             _logger = logger;

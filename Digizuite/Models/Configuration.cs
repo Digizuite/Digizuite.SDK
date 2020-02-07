@@ -2,7 +2,7 @@
 
 namespace Digizuite.Models
 {
-    public class Configuration
+    public class Configuration : IConfiguration
     {
         /// <summary>
         /// The base url for all DC requests
