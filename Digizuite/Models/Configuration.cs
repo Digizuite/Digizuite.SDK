@@ -24,7 +24,7 @@ namespace Digizuite.Models
                 $"{nameof(BaseUrl)}: {BaseUrl}, {nameof(AccessKeyDuration)}: {AccessKeyDuration}, {nameof(SystemUsername)}: {SystemUsername}, {nameof(SystemPassword)}: {SystemPassword.Length}";
         }
 
-        internal string GetDmm3bwsv3Url()
+        internal string GetDmm3Bwsv3Url()
         {
             
             var baseUrl = BaseUrl;
