@@ -14,6 +14,7 @@ namespace Digizuite
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
             services.AddSingleton<IBatchUpdateClient, BatchUpdateClient>();
             services.AddSingleton<ISearchService, SearchService>();
+            services.AddSingleton<IUploadService, UploadService>();
             
             return services;
         }

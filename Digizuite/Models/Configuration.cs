@@ -23,5 +23,24 @@ namespace Digizuite.Models
             return
                 $"{nameof(BaseUrl)}: {BaseUrl}, {nameof(AccessKeyDuration)}: {AccessKeyDuration}, {nameof(SystemUsername)}: {SystemUsername}, {nameof(SystemPassword)}: {SystemPassword.Length}";
         }
+
+        internal string GetDmm3bwsv3Url()
+        {
+            
+            var baseUrl = BaseUrl;
+
+            if (!baseUrl.EndsWith("/"))
+            {
+                baseUrl += "/";
+            }
+
+            if (!baseUrl.EndsWith("/dmm3bwsv3/"))
+            {
+                baseUrl += "dmm3bwsv3/";
+            }
+
+            return baseUrl;
+
+        }
     }
 }
