@@ -16,11 +16,11 @@ namespace Digizuite
     public class MetaDataService
     {
         private const string DamDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
-        private readonly DamAuthenticationService _authenticationService;
-        private readonly HttpClientFactory _clientFactory;
+        private readonly IDamAuthenticationService _authenticationService;
+        private readonly IHttpClientFactory _clientFactory;
         private readonly ILogger<MetaDataService> _logger;
 
-        public MetaDataService(DamAuthenticationService authenticationService, ILogger<MetaDataService> logger, HttpClientFactory clientFactory)
+        public MetaDataService(IDamAuthenticationService authenticationService, ILogger<MetaDataService> logger, IHttpClientFactory clientFactory)
         {
             _authenticationService = authenticationService;
             _logger = logger;

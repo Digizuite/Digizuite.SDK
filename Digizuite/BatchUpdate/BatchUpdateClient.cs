@@ -13,12 +13,12 @@ namespace Digizuite.BatchUpdate
     {
         private readonly IDamAuthenticationService _authenticationService;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly Configuration _damInfo;
+        private readonly IConfiguration _damInfo;
 
         private readonly ILogger<BatchUpdateClient> _logger;
 
         public BatchUpdateClient(ILogger<BatchUpdateClient> logger, IDamAuthenticationService authenticationService,
-            Configuration damInfo, IHttpClientFactory clientFactory)
+            IConfiguration damInfo, IHttpClientFactory clientFactory)
         {
             _logger = logger;
             _authenticationService = authenticationService;

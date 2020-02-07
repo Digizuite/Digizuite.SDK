@@ -15,7 +15,7 @@ namespace Digizuite
     {
         private readonly IHttpClientFactory _clientFactory;
 
-        private readonly Configuration _configuration;
+        private readonly IConfiguration _configuration;
 
         private readonly ILogger<DamAuthenticationService> _logger;
         private readonly Timer _renewalTimer;
@@ -28,7 +28,7 @@ namespace Digizuite
 
         private int _memberId;
 
-        public DamAuthenticationService(Configuration configuration, IHttpClientFactory clientFactory,
+        public DamAuthenticationService(IConfiguration configuration, IHttpClientFactory clientFactory,
             ILogger<DamAuthenticationService> logger)
         {
             _configuration = configuration;
