@@ -75,10 +75,10 @@ In addition methods are provided for adding or removing general parameters from 
 
 Method|Description
 ------|-----------
-Set(string key, IEnumerable<string> values)|Sets the specific string values.
-Set(string key, int value)|Sets a specific single string value.
-Set(string key, IEnumerable<int> values)|Sets the specific int values.
-SetDateBetween(string key, DateTime from = default, DateTime to = default)|Sets the parameters for doing a `datebetween` search. 
+`Set(string key, IEnumerable<string> values)`|Sets the specific string values.
+`Set(string key, int value)`|Sets a specific single string value.
+`Set(string key, IEnumerable<int> values)`|Sets the specific int values.
+`SetDateBetween(string key, DateTime from, DateTime to)`|Sets the parameters for doing a `datebetween` search. 
 
 
 Additionally it is possible the specify the response type directly on the `SearchParameters<T>` generic, 
