@@ -170,6 +170,11 @@ namespace Digizuite.Models.Search
                 to = DateTime.MaxValue;
             }
 
+            if (to < from)
+            {
+                throw new ArgumentException("from date is after to date");
+            }
+
             var endName = $"{key}_end";
             Set(key, from.ToString(CultureInfo.InvariantCulture));
             Set($"{key}_type_date", endName);
