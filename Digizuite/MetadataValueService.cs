@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Digizuite.BatchUpdate;
+using Digizuite.BatchUpdate.Models;
 using Digizuite.Helpers;
 using Digizuite.Models;
 using Digizuite.Models.Metadata;
@@ -13,111 +15,123 @@ using RestSharp;
 
 namespace Digizuite
 {
-    public class MetaDataService
+    public class MetadataValueService : IMetadataValueService
     {
         private const string DamDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
         private readonly IDamAuthenticationService _authenticationService;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly ILogger<MetaDataService> _logger;
+        private readonly ILogger<MetadataValueService> _logger;
+        private readonly IBatchUpdateClient _batchUpdateClient;
 
-        public MetaDataService(IDamAuthenticationService authenticationService, ILogger<MetaDataService> logger, IHttpClientFactory clientFactory)
+        public MetadataValueService(IDamAuthenticationService authenticationService,
+            ILogger<MetadataValueService> logger, IHttpClientFactory clientFactory, IBatchUpdateClient batchUpdateClient)
         {
             _authenticationService = authenticationService;
             _logger = logger;
             _clientFactory = clientFactory;
+            _batchUpdateClient = batchUpdateClient;
         }
 
 
+        /// <inheritdoc cref="IMetadataValueService.GetBitMetafield"/>
         public async Task<BitMetafield> GetBitMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseBitMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetComboMetafield"/>
         public async Task<ComboMetafield> GetComboMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseComboMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetEditComboMetafield"/>
         public async Task<EditComboMetafield> GetEditComboMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseEditComboMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetMultiComboMetafield"/>
         public async Task<MultiComboMetafield> GetMultiComboMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseMultiComboMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetEditMultiComboMetafield"/>
         public async Task<EditMultiComboMetafield> GetEditMultiComboMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseEditMultiComboMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetIntMetafield"/>
         public async Task<IntMetafield> GetIntMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseIntMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetStringMetafield"/>
         public async Task<StringMetafield> GetStringMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseStringMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetLinkMetafield"/>
         public async Task<LinkMetafield> GetLinkMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseLinkMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetMoneyMetafield"/>
         public async Task<MoneyMetafield> GetMoneyMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseMoneyMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetFloatMetafield"/>
         public async Task<FloatMetafield> GetFloatMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseFloatMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetUniqueVersionMetafield"/>
         public async Task<UniqueVersionMetafield> GetUniqueVersionMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseUniqueVersionMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetNoteMetafield"/>
         public async Task<NoteMetafield> GetNoteMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseNoteMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetTreeMetafield"/>
         public async Task<TreeMetafield> GetTreeMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseTreeMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetDateTimeMetafield"/>
         public async Task<DateTimeMetafield> GetDateTimeMetafield(int assetItemId, int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseDateTimeMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetMasterItemReferenceMetafield"/>
         public async Task<MasterItemReferenceMetafield> GetMasterItemReferenceMetafield(int assetItemId,
             int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseMasterItemReferenceMetafield);
         }
 
+        /// <inheritdoc cref="IMetadataValueService.GetSlaveItemReferenceMetafield"/>
         public async Task<SlaveItemReferenceMetafield> GetSlaveItemReferenceMetafield(int assetItemId,
             int metafieldItemId)
         {
             return await SearchAndFind(assetItemId, metafieldItemId, ParseSlaveItemReferenceMetafield);
         }
 
-        /// <summary>
-        /// Gets all the metafields specified for the given asset
-        /// </summary>
-        /// <param name="assetItemId"></param>
-        /// <param name="metaFieldItemIds"></param>
-        /// <param name="languageId"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <inheritdoc cref="IMetadataValueService.GetAllMetadata"/>
         public async Task<List<Field>> GetAllMetadata(int assetItemId, List<int> metaFieldItemIds, int languageId = 0)
         {
             var values = await GetMetadata(assetItemId, metaFieldItemIds, languageId);
@@ -174,7 +188,138 @@ namespace Digizuite
                 .ToList();
         }
 
-        private async Task<List<MetaFieldResponse>> GetMetadata(int assetItemId, List<int> fieldItemIds, int languageId = 0)
+        /// <inheritdoc cref="IMetadataValueService.Set(int,Digizuite.Models.Metadata.Fields.Field[])"/>
+        public Task Set(int assetItemId, params Field[] fields)
+        {
+            return Set(new[] {assetItemId}, fields);
+        }
+
+        /// <inheritdoc cref="IMetadataValueService.Set(System.Collections.Generic.IEnumerable{int},Digizuite.Models.Metadata.Fields.Field[])"/>
+        public Task Set(IEnumerable<int> assetItemId, params Field[] fields)
+        {
+            var batch = new Batch(new BatchPart
+            {
+                ItemIds = assetItemId.ToList(),
+                Target = FieldType.Asset,
+                BatchType = BatchType.ItemIdsValuesRowId,
+                RowId = 1,
+                Values = fields
+                    .Select(GetBatchValue)
+                    .Where(v => v != null)
+                    .ToList()
+            });
+
+            return _batchUpdateClient.ApplyBatch(batch);
+        }
+
+        private BatchValue GetBatchValue(Field field)
+        {
+            switch (field)
+            {
+                case BitMetafield bm:
+                    return new BoolBatchValue(FieldType.Metafield, bm.Value, new BatchLabelIdProperties(bm.LabelId));
+                case DateTimeMetafield dtm:
+                    return dtm.Value != null
+                        ? new DateTimeBatchValue(FieldType.Metafield, dtm.Value.Value,
+                            new BatchLabelIdProperties(field.LabelId))
+                        : GetDeleteBatch(field.LabelId);
+
+                case FloatMetafield fm:
+                    return fm.Value != null
+                        ? new FloatBatchValue(FieldType.Metafield, fm.Value.Value,
+                            new BatchLabelIdProperties(field.LabelId))
+                        : GetDeleteBatch(field.LabelId);
+                
+                case ComboMetafield cm:
+                    return GetIntBatch(cm.Value?.Value, field.LabelId);
+                case MultiComboMetafield mcm:
+                    return GetIntListBatch(mcm.Value?.Select(v => v.Value).ToList(), field.LabelId);
+                case EditComboMetafield ecm:
+                    return GetStringBatch(ecm.Value?.Value, field.LabelId);
+                case EditMultiComboMetafield emcm:
+                    return GetStringListBatch(emcm.Value?.Select(v => v.Value).ToList(), field.LabelId);
+                
+                case TreeMetafield m:
+                    return GetIntListBatch(m.Value?.Select(v => v.Id).ToList(), field.LabelId);
+                
+                case Field<int?> f:
+                    return GetIntBatch(f.Value, f.LabelId);
+                case Field<string> f:
+                    return GetStringBatch(f.Value, f.LabelId);
+                case Field<List<ItemReferenceOption>> f:
+                    return GetIntListBatch(f.Value?.Select(v => v.ItemId).ToList(), field.LabelId);
+            }
+            
+            return null;
+        }
+
+        private BatchValue GetIntBatch(int? value, int labelId)
+        {
+            if (value == null)
+            {
+                return GetDeleteBatch(labelId);
+            }
+            
+            return new IntBatchValue(FieldType.Metafield, value.Value, new BatchLabelIdProperties(labelId));
+        }
+
+        private BatchValue GetIntBatch(string value, int labelId)
+        {
+            if (value == null)
+            {
+                return GetDeleteBatch(labelId);
+            }
+
+            return GetIntBatch(int.Parse(value), labelId);
+        }
+
+        private BatchValue GetIntListBatch(List<int> values, int labelId)
+        {
+            if (values == null)
+            {
+                return GetDeleteBatch(labelId);
+            }
+            
+            return new IntListBatchValue(FieldType.Metafield, values, new BatchLabelIdProperties(labelId));
+        }
+
+        private BatchValue GetIntListBatch(List<string> values, int labelId)
+        {
+            if (values == null)
+            {
+                return GetDeleteBatch(labelId);
+            }
+
+            return GetIntListBatch(values.Select(int.Parse).ToList(), labelId);
+        }
+
+        private BatchValue GetStringBatch(string value, int labelId)
+        {
+            if (value == null)
+            {
+                return GetDeleteBatch(labelId);
+            }
+            
+            return new StringBatchValue(FieldType.Metafield, value, new BatchLabelIdProperties(labelId));
+        }
+
+        private BatchValue GetStringListBatch(List<string> value, int labelId)
+        {
+            if (value == null)
+            {
+                return GetDeleteBatch(labelId);
+            }
+            
+            return new StringListBatchValue(FieldType.Metafield, value, new BatchLabelIdProperties(labelId));
+        }
+
+        private BatchValue GetDeleteBatch(int labelId)
+        {
+            return new DeleteBatchValue(FieldType.Metafield, new BatchLabelIdProperties(labelId));
+        }
+
+        private async Task<List<MetaFieldResponse>> GetMetadata(int assetItemId, List<int> fieldItemIds,
+            int languageId = 0)
         {
             var accessKey = await _authenticationService.GetAccessKey();
             var restClient = _clientFactory.GetRestClient();
@@ -231,12 +376,12 @@ namespace Digizuite
         /// <returns></returns>
         internal async Task<MetaFieldResponse> GetRawMetadata(int assetId, int metafieldItemId)
         {
-            return (await GetMetadata(assetId, new List<int> { metafieldItemId })).Single();
+            return (await GetMetadata(assetId, new List<int> {metafieldItemId})).Single();
         }
 
         private async Task<T> SearchAndFind<T>(int assetItemId, int fieldItemId, Func<MetaFieldResponse, T> parse)
         {
-            var item = (await GetMetadata(assetItemId, new List<int> { fieldItemId })).Single();
+            var item = (await GetMetadata(assetItemId, new List<int> {fieldItemId})).Single();
             return parse(item);
         }
 
