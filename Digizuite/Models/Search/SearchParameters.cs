@@ -145,7 +145,10 @@ namespace Digizuite.Models.Search
         {
             Set(key, values.Select(v => v.ToString()));
             Remove(MultiStringsName(key));
-            Set(MultiIdsName(key), "1");
+            if (values.Any())
+                Set(MultiIdsName(key), "1");
+            else
+                Remove(MultiIdsName(key));
         }
 
         /// <summary>
