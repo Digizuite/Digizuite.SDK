@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Test.TestUtils;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
