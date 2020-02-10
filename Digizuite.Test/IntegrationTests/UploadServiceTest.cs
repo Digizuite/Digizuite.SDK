@@ -10,16 +10,34 @@ namespace Digizuite.Test.IntegrationTests
     [TestFixture]
     public class UploadServiceTest : IntegrationTestBase
     {
+        private const string TestFileName = "TestFiles/large_test_image.png";
+        
         [Test]
         public async Task CanUploadFile()
         {
             var service = ServiceProvider.GetRequiredService<IUploadService>();
 
-            var file = new FileInfo("TestFiles/large_test_image.png");
+            var file = new FileInfo(TestFileName);
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
             
             var listener = new SimpleUploadProgressListener();
             var resultingItemId = await service.Upload(stream, "uploaded-from-unit-test.png", "unittest", listener);
+            
+            Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
+            Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));
+            Assert.That(listener.ChunkUploadedEvents.Last().Item2, Is.EqualTo(file.Length));
+        }
+
+        [Test]
+        public async Task CanReplace()
+        {
+            var service = ServiceProvider.GetRequiredService<IUploadService>();
+            
+            var file = new FileInfo(TestFileName);
+            await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+            
+            var listener = new SimpleUploadProgressListener();
+            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 55, true, false, listener);
             
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
             Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));
