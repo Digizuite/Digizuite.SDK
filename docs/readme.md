@@ -2,9 +2,7 @@
 Welcome to the Digizuite C# SDK documentation. At this site you will find documentation on how to use
 the sdk and some tips and tricks for interacting with the Digizuite in general. 
 
-The source for both the SDK itself, and this documentation can be found at 
-https://github.com/Digizuite/Digizuite.SDK. Feel free to file an issue if you find any problems, 
-or have any questions about how to use the SDK. 
+Feel free to file an issue if you find any problems, or have any questions about how to use the SDK. 
 
 ## Getting started
 To get started with the Digizuite SDK, you should first install the Digizuite package from nuget:
