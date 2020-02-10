@@ -37,7 +37,7 @@ namespace Digizuite.Test.IntegrationTests
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
 
             var listener = new SimpleUploadProgressListener();
-            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 55,
+            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 56,
                 KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener);
 
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
