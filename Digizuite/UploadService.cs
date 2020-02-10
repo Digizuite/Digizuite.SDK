@@ -10,20 +10,6 @@ using RestSharp;
 
 namespace Digizuite
 {
-    public interface IUploadProgressListener
-    {
-        Task UploadInitiated(int itemId);
-        Task ChunkUploaded(int itemId, long totalUploaded);
-        Task FinishedUpload(int itemId);
-    }
-    
-    
-    public interface IUploadService
-    {
-        Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener listener);
-        Task Replace(Stream stream, int assetId, bool keepMetadata, IUploadProgressListener listener);
-    }
-    
     public class UploadService : IUploadService
     {
         private const long SliceSize = 1000 * 1000 * 10;
@@ -34,7 +20,8 @@ namespace Digizuite
         private readonly ILogger<UploadService> _logger;
         private readonly Configuration _configuration;
 
-        public UploadService(IDamAuthenticationService damAuthenticationService, IHttpClientFactory clientFactory, ILogger<UploadService> logger, Configuration configuration)
+        public UploadService(IDamAuthenticationService damAuthenticationService, IHttpClientFactory clientFactory,
+            ILogger<UploadService> logger, Configuration configuration)
         {
             _damAuthenticationService = damAuthenticationService;
             _clientFactory = clientFactory;
@@ -42,7 +29,24 @@ namespace Digizuite
             _configuration = configuration;
         }
 
-        public async Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener listener)
+        public Task<int> Upload(Stream stream, string filename, string computerName,
+            IUploadProgressListener listener)
+        {
+            return InternalUpload(stream, filename, computerName, listener,
+                uploadInfo => FinishUpload(uploadInfo.UploadId, uploadInfo.ItemId));
+        }
+
+
+        public Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId,
+            bool keepMetadata, bool overwrite, IUploadProgressListener listener)
+        {
+            return InternalUpload(stream, filename, computerName, listener,
+                uploadInfo =>
+                    FinishReplace(uploadInfo.UploadId, uploadInfo.ItemId, targetAssetId, keepMetadata, overwrite));
+        }
+
+        private async Task<int> InternalUpload(Stream stream, string filename, string computerName,
+            IUploadProgressListener listener, Func<InitiateUploadResponse, Task> completeUpload)
         {
             var uploadInfo = await InitiateUpload(filename, computerName);
             if (listener != null)
@@ -52,7 +56,7 @@ namespace Digizuite
 
             await UploadFileChunks(stream, uploadInfo.ItemId, listener);
 
-            await FinishUpload(uploadInfo.UploadId, uploadInfo.ItemId);
+            await completeUpload(uploadInfo);
 
             if (listener != null)
             {
@@ -61,18 +65,11 @@ namespace Digizuite
 
             return uploadInfo.ItemId;
         }
-        
-        
-        public async Task Replace(Stream stream, int assetId, bool keepMetadata, IUploadProgressListener listener)
-        {
-            throw new System.NotImplementedException();
-        }
-
 
         private async Task<InitiateUploadResponse> InitiateUpload(string filename, string computerName)
         {
             var ak = await _damAuthenticationService.GetAccessKey();
-            
+
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "InitiateUpload")
                 .AddParameter(DigizuiteConstants.AccessKeyParameter, ak)
@@ -81,18 +78,28 @@ namespace Digizuite
                 .MakeRequestDamSafe();
 
             var client = _clientFactory.GetRestClient();
-            
+
             _logger.LogTrace("Sending initiate upload", nameof(filename), filename, nameof(computerName), computerName);
-            var response = await client.PostAsync<DigiResponse<InitiateUploadResponse>>(request);
-            _logger.LogDebug("Initiate upload response", nameof(response), response);
+            var res = await client.ExecutePostAsync<DigiResponse<InitiateUploadResponse>>(request);
+            _logger.LogDebug("Initiate upload response", nameof(res.Content), res.Content);
+
+            var response = res.Data;
 
             if (!response.Success)
             {
-                _logger.LogError("Initiate upload failed", nameof(response), response);
+                _logger.LogError("Initiate upload failed", nameof(response), response, nameof(res.Content),
+                    res.Content);
                 throw new UploadException("Initiate upload failed. Check your logs for more information");
             }
 
             var item = response.Items[0];
+
+            if (item.ItemId == default)
+            {
+                _logger.LogError("Initiate upload succeeded, but no itemId was returned", nameof(response), response,
+                    nameof(res.Content), res.Content);
+                throw new UploadException("Request succeeded, but no itemId was returned???");
+            }
 
             return item;
         }
@@ -125,15 +132,17 @@ namespace Digizuite
                     _logger.LogDebug("Sending file chunk", nameof(itemId), itemId, nameof(endOfStream), endOfStream);
 
                     // Restsharp doesn't work for this, so we have to do things to old way
-                    var uri = new UriBuilder(new Uri(new Uri(_configuration.GetDmm3Bwsv3Url()), UploadFileChunkEndpoint));
+                    var uri = new UriBuilder(
+                        new Uri(new Uri(_configuration.GetDmm3Bwsv3Url()), UploadFileChunkEndpoint));
                     var finished = endOfStream ? 1 : 0;
                     uri.Query =
                         $"{DigizuiteConstants.AccessKeyParameter}={ak}&itemid={itemId}&jsonresponse=1&finished={finished}";
                     var response = await webClient.UploadDataTaskAsync(uri.Uri, "POST", buffer);
                     var actualResponse = Encoding.UTF8.GetString(response);
-                    
-                    
-                    _logger.LogDebug("Uploaded file chunk", nameof(itemId), itemId, nameof(actualResponse), actualResponse);
+
+
+                    _logger.LogDebug("Uploaded file chunk", nameof(itemId), itemId, nameof(actualResponse),
+                        actualResponse);
 
                     totalUploaded += read;
                     if (listener != null)
@@ -143,7 +152,7 @@ namespace Digizuite
                 }
             }
         }
-        
+
         private async Task FinishUpload(int uploadId, int itemId)
         {
             var ak = await _damAuthenticationService.GetAccessKey();
@@ -165,6 +174,32 @@ namespace Digizuite
             }
         }
 
+        private async Task FinishReplace(int uploadId, int itemId, int targetAssetId, bool keepMetadata,
+            bool overwrite)
+        {
+            var ak = await _damAuthenticationService.GetAccessKey();
+            var client = _clientFactory.GetRestClient();
+            var request = new RestRequest(UploadEndpoint);
+            request.AddParameter("method", "ReplaceAsset")
+                .AddParameter("digiUploadId", uploadId)
+                .AddParameter("itemId", itemId)
+                .AddParameter("targetAssetId", targetAssetId)
+                .AddParameter("keepMetadata", keepMetadata)
+                .AddParameter("overwrite", overwrite)
+                .AddParameter(DigizuiteConstants.AccessKeyParameter, ak)
+                .MakeRequestDamSafe();
+
+            _logger.LogTrace("Finishing replace");
+            var response = await client.PostAsync<DigiResponse<object>>(request);
+            _logger.LogDebug("Finished replace", nameof(response), response);
+
+            if (!response.Success)
+            {
+                _logger.LogError("Finish replace failed", nameof(response), response);
+                throw new UploadException("Finish replace failed");
+            }
+        }
+
 
         /// <summary>
         /// Helper method for reading as much data into the buffer as possible
@@ -175,7 +210,8 @@ namespace Digizuite
             var offset = 0;
             while (offset < buffer.Length)
             {
-                _logger.LogTrace("Reading bytes from stream", nameof(offset), offset, nameof(buffer.Length), buffer.Length);
+                _logger.LogTrace("Reading bytes from stream", nameof(offset), offset, nameof(buffer.Length),
+                    buffer.Length);
                 var read = await stream.ReadAsync(buffer, offset, buffer.Length - offset);
                 if (read == 0)
                 {
@@ -188,14 +224,12 @@ namespace Digizuite
 
             return offset;
         }
-        
-        
+
+
         private class InitiateUploadResponse
         {
-#pragma warning disable 649
-            public int ItemId;
-            public int UploadId;
-#pragma warning restore 649
+            public int ItemId { get; set; }
+            public int UploadId { get; set; }
         }
     }
 }
