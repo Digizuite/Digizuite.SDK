@@ -1,5 +1,4 @@
 ---
-layout: page
 title: "Search Service"
 permalink: /search-service/
 ---
