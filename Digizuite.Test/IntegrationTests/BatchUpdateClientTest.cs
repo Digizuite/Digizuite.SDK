@@ -15,7 +15,7 @@ namespace Digizuite.Test.IntegrationTests
         {
             var update = new Batch(new BatchPart
             {
-                ItemId = 43437,
+                ItemId = 10192,
                 Target = FieldType.Asset,
                 BatchType = BatchType.ItemIdsValuesRowId,
                 Values = new List<BatchValue>
