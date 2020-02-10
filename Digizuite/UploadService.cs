@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -30,7 +31,7 @@ namespace Digizuite
         }
 
         public Task<int> Upload(Stream stream, string filename, string computerName,
-            IUploadProgressListener listener)
+            IUploadProgressListener listener = null)
         {
             return InternalUpload(stream, filename, computerName, listener,
                 uploadInfo => FinishUpload(uploadInfo.UploadId, uploadInfo.ItemId));
@@ -38,7 +39,7 @@ namespace Digizuite
 
 
         public Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId,
-            bool keepMetadata, bool overwrite, IUploadProgressListener listener)
+            KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener listener = null)
         {
             return InternalUpload(stream, filename, computerName, listener,
                 uploadInfo =>
@@ -174,8 +175,7 @@ namespace Digizuite
             }
         }
 
-        private async Task FinishReplace(int uploadId, int itemId, int targetAssetId, bool keepMetadata,
-            bool overwrite)
+        private async Task FinishReplace(int uploadId, int itemId, int targetAssetId, KeepMetadata keepMetadata, Overwrite overwrite)
         {
             var ak = await _damAuthenticationService.GetAccessKey();
             var client = _clientFactory.GetRestClient();
@@ -184,8 +184,8 @@ namespace Digizuite
                 .AddParameter("digiUploadId", uploadId)
                 .AddParameter("itemId", itemId)
                 .AddParameter("targetAssetId", targetAssetId)
-                .AddParameter("keepMetadata", keepMetadata)
-                .AddParameter("overwrite", overwrite)
+                .AddParameter("keepMetadata", keepMetadata == KeepMetadata.Keep)
+                .AddParameter("overwrite", overwrite == Overwrite.ReplaceHistoryEntry)
                 .AddParameter(DigizuiteConstants.AccessKeyParameter, ak)
                 .MakeRequestDamSafe();
 
@@ -226,6 +226,7 @@ namespace Digizuite
         }
 
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class InitiateUploadResponse
         {
             public int ItemId { get; set; }

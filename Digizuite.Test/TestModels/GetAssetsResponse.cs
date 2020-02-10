@@ -21,6 +21,7 @@ namespace Digizuite.Test.TestModels
 
         public override int GetHashCode()
         {
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
             return AssetId;
         }
 

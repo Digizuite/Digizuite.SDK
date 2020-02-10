@@ -11,7 +11,7 @@ namespace Digizuite.Test.IntegrationTests
     public class UploadServiceTest : IntegrationTestBase
     {
         private const string TestFileName = "TestFiles/large_test_image.png";
-        
+
         [Test]
         public async Task CanUploadFile()
         {
@@ -19,10 +19,10 @@ namespace Digizuite.Test.IntegrationTests
 
             var file = new FileInfo(TestFileName);
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
-            
+
             var listener = new SimpleUploadProgressListener();
             var resultingItemId = await service.Upload(stream, "uploaded-from-unit-test.png", "unittest", listener);
-            
+
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
             Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));
             Assert.That(listener.ChunkUploadedEvents.Last().Item2, Is.EqualTo(file.Length));
@@ -32,13 +32,14 @@ namespace Digizuite.Test.IntegrationTests
         public async Task CanReplace()
         {
             var service = ServiceProvider.GetRequiredService<IUploadService>();
-            
+
             var file = new FileInfo(TestFileName);
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
-            
+
             var listener = new SimpleUploadProgressListener();
-            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 55, true, false, listener);
-            
+            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 55,
+                KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener);
+
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
             Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));
             Assert.That(listener.ChunkUploadedEvents.Last().Item2, Is.EqualTo(file.Length));
@@ -49,7 +50,7 @@ namespace Digizuite.Test.IntegrationTests
             public int UploadInitiatedItemId;
             public List<(int, long)> ChunkUploadedEvents = new List<(int, long)>();
             public int FinishedItemId;
-            
+
             public Task UploadInitiated(int itemId)
             {
                 UploadInitiatedItemId = itemId;
