@@ -62,7 +62,7 @@ namespace Digizuite.Test.UnitTests
             var parameters = new SearchParameters("GetAssets", 3, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => { var nxt = response.Next; });
-            Assert.AreEqual("Page cannot be more than TotalPages (3) (Parameter 'page')\r\nActual value was 4.", ex.Message, "Expected exception message not returned when accessing page# after last page");
+            Assert.AreEqual($"Page cannot be more than TotalPages (3) (Parameter 'page'){Environment.NewLine}Actual value was 4.", ex.Message, "Expected exception message not returned when accessing page# after last page");
         }
 
         [Test(Description = "Test Previous property")]
@@ -91,7 +91,7 @@ namespace Digizuite.Test.UnitTests
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => { var prev= response.Previous; });
             var msg = ex.Message;
-            Assert.AreEqual("Page cannot be less than 1 (Parameter 'page')\r\nActual value was 0.", ex.Message, "Expected exception message not returned when accessing page before first page");
+            Assert.AreEqual($"Page cannot be less than 1 (Parameter 'page'){Environment.NewLine}Actual value was 0.", ex.Message, "Expected exception message not returned when accessing page before first page");
         }
 
         [Test(Description = "Test GoTo Page")]
