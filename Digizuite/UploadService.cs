@@ -19,10 +19,10 @@ namespace Digizuite
         private readonly IDamAuthenticationService _damAuthenticationService;
         private readonly IHttpClientFactory _clientFactory;
         private readonly ILogger<UploadService> _logger;
-        private readonly Configuration _configuration;
+        private readonly IConfiguration _configuration;
 
         public UploadService(IDamAuthenticationService damAuthenticationService, IHttpClientFactory clientFactory,
-            ILogger<UploadService> logger, Configuration configuration)
+            ILogger<UploadService> logger, IConfiguration configuration)
         {
             _damAuthenticationService = damAuthenticationService;
             _clientFactory = clientFactory;
