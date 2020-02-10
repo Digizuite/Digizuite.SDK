@@ -37,3 +37,13 @@ var parameters = new SearchParameters("GetAssets")
 var results = await searchService.Search<GetAssetsResponse>(parameters);
 ```
 
+For additional full examples, check out the 
+[samples project on GitHub](https://github.com/Digizuite/Digizuite.SDK/tree/master/Digizuite.Samples). 
+
+## Specific documentation
+
+Specific documentation for each individual service can be found at the following pages:
+
+Service|Description
+-------|-----------
+[Search Service](search-service.md)|A low level utility for executing general searches against the Digizuite.
