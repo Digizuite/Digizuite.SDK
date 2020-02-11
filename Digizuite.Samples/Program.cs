@@ -22,16 +22,12 @@ namespace Digizuite.Samples
                 SystemUsername = "",
                 SystemPassword = ""
             };
-            var httpClient = new HttpClientFactory(config, new ConsoleLogger<HttpClientFactory>());
-            
-            using var auth = new DamAuthenticationService(config, httpClient, new ConsoleLogger<DamAuthenticationService>());
+            var restClient = new DamRestClient(new ConsoleLogger<DamRestClient>());
+            using var auth = new DamAuthenticationService(config, restClient, new ConsoleLogger<DamAuthenticationService>());
 
             var memberId = await auth.GetMemberId().ConfigureAwait(false);
             
             Console.WriteLine($"Authorized as member {memberId}");
-
-
-
         }
     }
 }

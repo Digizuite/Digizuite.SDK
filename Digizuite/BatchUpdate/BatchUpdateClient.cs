@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.Models;
-using Digizuite.Helpers;
 using Digizuite.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -14,22 +13,21 @@ namespace Digizuite.BatchUpdate
     public class BatchUpdateClient : IBatchUpdateClient
     {
         private readonly IDamAuthenticationService _authenticationService;
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IDamRestClient _restClient;
         private readonly IConfiguration _damInfo;
 
         private readonly ILogger<BatchUpdateClient> _logger;
 
         public BatchUpdateClient(ILogger<BatchUpdateClient> logger, IDamAuthenticationService authenticationService,
-            IConfiguration damInfo, IHttpClientFactory clientFactory)
+            IConfiguration damInfo, IDamRestClient restClient)
         {
             _logger = logger;
             _authenticationService = authenticationService;
             _damInfo = damInfo;
-            _clientFactory = clientFactory;
+            _restClient = restClient;
         }
 
-        public async Task<List<BatchUpdateResponse>> ApplyBatch(Batch batch,
-            bool useVersionedMetadata = false)
+        public async Task<List<BatchUpdateResponse>> ApplyBatch(Batch batch, bool useVersionedMetadata = false)
         {
             if (batch == null)
             {
@@ -41,18 +39,16 @@ namespace Digizuite.BatchUpdate
                 _damInfo.BaseUrl);
 
             var accessKey = await _authenticationService.GetAccessKey().ConfigureAwait(false);
-            var client = _clientFactory.GetRestClient();
+           
+            
             var restRequest = new RestRequest("BatchUpdateService.js");
             restRequest.AddParameter("updateXML", request.UpdateXml)
                 .AddParameter("values", request.Values)
                 .AddParameter("accessKey", accessKey)
                 .AddParameter("useVersionedMetadata", useVersionedMetadata);
 
-            restRequest.MakeRequestDamSafe();
-
-            var res = await client.PostAsync<DigiResponse<BatchUpdateResponse>>(restRequest).ConfigureAwait(false);
-
-            if (!res.Success)
+            var res = await _restClient.Execute<DigiResponse<BatchUpdateResponse>>(Method.POST, restRequest, accessKey).ConfigureAwait(false);
+            if (!res.Data.Success)
             {
                 _logger.LogError("Batch Update request failed", "response", res);
                 throw new Exception("Batch update request failed");

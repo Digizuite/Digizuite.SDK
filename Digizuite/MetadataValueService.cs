@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate;
 using Digizuite.BatchUpdate.Models;
-using Digizuite.Helpers;
 using Digizuite.Models;
 using Digizuite.Models.Metadata;
 using Digizuite.Models.Metadata.Fields;
@@ -19,16 +18,16 @@ namespace Digizuite
     {
         private const string DamDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
         private readonly IDamAuthenticationService _authenticationService;
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IDamRestClient _restClient;
         private readonly ILogger<MetadataValueService> _logger;
         private readonly IBatchUpdateClient _batchUpdateClient;
 
         public MetadataValueService(IDamAuthenticationService authenticationService,
-            ILogger<MetadataValueService> logger, IHttpClientFactory clientFactory, IBatchUpdateClient batchUpdateClient)
+            ILogger<MetadataValueService> logger, IDamRestClient restClient, IBatchUpdateClient batchUpdateClient)
         {
             _authenticationService = authenticationService;
             _logger = logger;
-            _clientFactory = clientFactory;
+            _restClient = restClient;
             _batchUpdateClient = batchUpdateClient;
         }
 
@@ -322,11 +321,9 @@ namespace Digizuite
             int languageId = 0)
         {
             var accessKey = await _authenticationService.GetAccessKey().ConfigureAwait(false);
-            var restClient = _clientFactory.GetRestClient();
-            restClient.UseJsonNetSerializer();
+
             var restRequest = new RestRequest("SearchService.js");
             restRequest.AddParameter("SearchName", "GetAllMetafieldAndValues")
-                .AddParameter(DigizuiteConstants.AccessKeyParameter, accessKey)
                 .AddParameter("limit", "9999")
                 .AddParameter("page", "1")
                 .AddParameter("itemid_note", assetItemId)
@@ -336,30 +333,29 @@ namespace Digizuite
                 .AddParameter("itemid_value_type_MultiIds", "1")
                 .AddParameter("sir_itemid_value_type_MultiIds", "1")
                 .AddParameter("metafielditemids", string.Join(",", fieldItemIds))
-                .AddParameter("metafielditemids_type_MultiIds", "1")
-                .MakeRequestDamSafe();
+                .AddParameter("metafielditemids_type_MultiIds", "1");
 
             if (languageId != 0)
             {
                 restRequest.AddParameter("language", languageId);
             }
 
-            var response = await restClient.GetAsync<DigiResponse<MetaFieldResponse>>(restRequest).ConfigureAwait(false);
-            if (!response.Success)
+            var response = await _restClient.Execute<DigiResponse<MetaFieldResponse>>(Method.GET, restRequest, accessKey).ConfigureAwait(false);
+            if (!response.Data.Success)
             {
                 _logger.LogError("GetMetadata failed", "response", response);
                 throw new Exception(
-                    $"response from api went horrible: Warnings are {response.Warnings}, Errors are {response.Errors}");
+                    $"response from api went horrible: Warnings are {response.Data.Warnings}, Errors are {response.Data.Errors}");
             }
 
-            if (response.Items == null)
+            if (response.Data.Items == null)
             {
                 _logger.LogError("Request successful, no metafields returned", "response", response,
                     nameof(fieldItemIds), fieldItemIds);
                 throw new Exception("Request successful, no metafields returned");
             }
 
-            if (response.Items.Count == 0)
+            if (response.Data.Items.Count == 0)
             {
                 _logger.LogWarning("Request successful, no metafields returned", nameof(response), response,
                     nameof(fieldItemIds), fieldItemIds);
@@ -367,7 +363,7 @@ namespace Digizuite
 
             _logger.LogTrace("Get metadata response", "response", response);
 
-            return response.Items;
+            return response.Data.Items;
         }
 
         /// <summary>

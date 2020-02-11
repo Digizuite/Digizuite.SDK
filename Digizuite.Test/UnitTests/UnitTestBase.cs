@@ -2,7 +2,6 @@
 using Digizuite.Models;
 using Digizuite.Samples;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using NUnit.Framework;
 
 namespace Digizuite.Test.UnitTests
@@ -14,7 +13,6 @@ namespace Digizuite.Test.UnitTests
 
         protected virtual void SetupDependencies(IServiceCollection services)
         {
-            services.Replace(new ServiceDescriptor(typeof(IHttpClientFactory), typeof(UnitTestHttpClientFactory), ServiceLifetime.Singleton));
         }
 
         [SetUp]
@@ -29,7 +27,6 @@ namespace Digizuite.Test.UnitTests
             serviceCollection.AddDigizuite();
             serviceCollection.AddSingleton(typeof(ILogger<>), typeof(ConsoleLogger<>));
             SetupDependencies(serviceCollection);
-
             ServiceProvider = serviceCollection.BuildServiceProvider();
         }
     }

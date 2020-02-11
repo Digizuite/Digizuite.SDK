@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
-using Digizuite.Helpers;
 using Digizuite.Models;
 using Digizuite.Models.Search;
 using RestSharp;
@@ -12,14 +11,14 @@ namespace Digizuite
     /// </summary>
     public class SearchService : ISearchService
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IDamRestClient _restClient;
         private readonly IDamAuthenticationService _damAuthenticationService;
         private readonly ILogger<SearchService> _logger;
 
-        public SearchService(IHttpClientFactory httpClientFactory, IDamAuthenticationService damAuthenticationService,
+        public SearchService(IDamRestClient restClient, IDamAuthenticationService damAuthenticationService,
             ILogger<SearchService> logger)
         {
-            _httpClientFactory = httpClientFactory;
+            _restClient = restClient;
             _damAuthenticationService = damAuthenticationService;
             _logger = logger;
         }
@@ -35,15 +34,10 @@ namespace Digizuite
         {
             // Copy the parameters immediately, so the user cannot change them under us
             parameters = new SearchParameters(parameters);
-
-            var client = _httpClientFactory.GetRestClient();
-            client.UseJsonNetSerializer();
-
-            var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(accessKey))
+                accessKey = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
             
             var request = new RestRequest("SearchService.js");
-            request.MakeRequestDamSafe()
-                .AddParameter(DigizuiteConstants.AccessKeyParameter, ak);
             
             foreach (var key in parameters.AllKeys)
             {
@@ -59,7 +53,7 @@ namespace Digizuite
             }
 
             _logger.LogTrace("Sending search request");
-            var response = await client.ExecutePostAsync<DigiResponse<T>>(request).ConfigureAwait(false);
+            var response = await _restClient.Execute<DigiResponse<T>>(Method.POST, request, accessKey).ConfigureAwait(false);
             _logger.LogTrace("Got api response");
 
             if (!response.Data.Success)
