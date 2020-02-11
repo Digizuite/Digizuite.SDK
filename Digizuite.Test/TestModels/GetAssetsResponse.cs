@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+
 namespace Digizuite.Test.TestModels
 {
     public class GetAssetsResponse
@@ -6,8 +9,9 @@ namespace Digizuite.Test.TestModels
         public string Name { get; set; }
         public int AssetId { get; set; }
 
-        protected bool Equals(GetAssetsResponse other)
+        protected bool Equals([NotNull] GetAssetsResponse other)
         {
+            Contract.Requires(other != null);
             return AssetId == other.AssetId;
         }
 

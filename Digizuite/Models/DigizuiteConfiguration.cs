@@ -2,12 +2,12 @@
 
 namespace Digizuite.Models
 {
-    public class Configuration : IConfiguration
+    public class DigizuiteConfiguration : IConfiguration
     {
         /// <summary>
         /// The base url for all DC requests
         /// </summary>
-        public string BaseUrl { get; set; }
+        public Uri BaseUrl { get; set; }
 
         /// <summary>
         /// How long the access key lasts before it expires and should be renewed.

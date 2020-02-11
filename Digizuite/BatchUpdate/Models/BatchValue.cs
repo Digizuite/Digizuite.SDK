@@ -5,10 +5,10 @@ namespace Digizuite.BatchUpdate.Models
     public abstract class BatchValue
     {
         [JsonConverter(typeof(FieldTypeJsonConverter))]
-        public FieldType FieldName;
+        public FieldType FieldName { get; set; }
 
-        public IBatchProperties Properties;
-        public object Value;
+        public IBatchProperties Properties { get; set; }
+        public object Value { get; set; }
 
         protected BatchValue(FieldType fieldName, object value, IBatchProperties properties)
         {

@@ -2,7 +2,7 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class BatchItemGuidProperties : IBatchProperties
     {
-        public string ItemGuid;
+        public string ItemGuid { get; }
 
         public BatchItemGuidProperties(string itemGuid)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Digizuite.Models.Metadata.Fields
@@ -31,8 +32,13 @@ namespace Digizuite.Models.Metadata.Fields
 
         protected bool Equals(Field<T> other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+            
             return ItemId == other.ItemId && MetafieldId == other.MetafieldId && LabelId == other.LabelId &&
-                   string.Equals(Label, other.Label) && LanguageId == other.LanguageId && ReadOnly == other.ReadOnly &&
+                   string.Equals(Label, other.Label, StringComparison.InvariantCulture) && LanguageId == other.LanguageId && ReadOnly == other.ReadOnly &&
                    Required == other.Required && SortIndex == other.SortIndex &&
                    EqualityComparer<T>.Default.Equals(Value, other.Value) && AutoTranslated == other.AutoTranslated &&
                    Audited == other.Audited && VisibilityMetaFieldId == other.VisibilityMetaFieldId;

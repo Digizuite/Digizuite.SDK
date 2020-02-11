@@ -4,7 +4,7 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class Batch
     {
-        public readonly List<BatchPart> Values = new List<BatchPart>();
+        internal readonly List<BatchPart> Values = new List<BatchPart>();
 
         public Batch()
         {

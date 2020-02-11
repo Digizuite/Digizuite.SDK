@@ -5,23 +5,18 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class BatchPart
     {
-        public List<int> BaseIds = new List<int>();
-        public BatchType BatchType;
-        public string FieldName = "";
-        public List<int> ItemIds = new List<int>();
+        public List<int> BaseIds { get; set; } = new List<int>();
+        public BatchType BatchType { get; set; }
+        public string FieldName { get; set; } = "";
+        public List<int> ItemIds { get; set; } = new List<int>();
 
-        public int RowId = 1;
+        public int RowId { get; set; } = 1;
 
         [JsonConverter(typeof(FieldTypeJsonConverter))]
-        public FieldType Target;
+        public FieldType Target { get; set; }
 
-        public List<BatchValue> Values = new List<BatchValue>();
+        public List<BatchValue> Values { get; set; } = new List<BatchValue>();
 
-        public bool ForceDelete;
-
-        public int ItemId
-        {
-            set => ItemIds = new List<int> {value};
-        }
+        public bool ForceDelete { get; set; }
     }
 }

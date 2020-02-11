@@ -1,6 +1,7 @@
 // ReSharper disable InconsistentNaming
 namespace Digizuite.BatchUpdate.Models
 {
+    #pragma warning disable CA1707
     public enum RepositoryType
     {
         Default = 0,
@@ -32,4 +33,5 @@ namespace Digizuite.BatchUpdate.Models
         Product = 22,
         Collection = 23
     }
+    #pragma warning restore CA1707
 }

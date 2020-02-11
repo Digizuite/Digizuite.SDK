@@ -18,10 +18,13 @@ namespace Digizuite.Test.IntegrationTests
             var service = ServiceProvider.GetRequiredService<IUploadService>();
 
             var file = new FileInfo(TestFileName);
+#pragma warning disable CA2000
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+#pragma warning restore CA2000
 
             var listener = new SimpleUploadProgressListener();
-            var resultingItemId = await service.Upload(stream, "uploaded-from-unit-test.png", "unittest", listener);
+            var resultingItemId = await service.Upload(stream, "uploaded-from-unit-test.png", "unittest", listener)
+                .ConfigureAwait(false);
 
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
             Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));
@@ -34,11 +37,12 @@ namespace Digizuite.Test.IntegrationTests
             var service = ServiceProvider.GetRequiredService<IUploadService>();
 
             var file = new FileInfo(TestFileName);
+#pragma warning disable CA2000
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
-
+#pragma warning restore CA2000
             var listener = new SimpleUploadProgressListener();
             var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 56,
-                KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener);
+                KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener).ConfigureAwait(false);
 
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
             Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));

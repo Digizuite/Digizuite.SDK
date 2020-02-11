@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Digizuite.Models.Search
 {
+#pragma warning disable CA1010,CA1710
     public class SearchParameters : NameValueCollection
     {
         public const string PageSizeKey = "limit";
@@ -41,6 +42,7 @@ namespace Digizuite.Models.Search
         /// How many items will at the most be returned from the request
         /// </summary>
         /// <exception cref="InvalidCastException">If the stored key is not a valid integer</exception>
+        #pragma warning disable CA1065
         public int PageSize
         {
             get
@@ -52,13 +54,15 @@ namespace Digizuite.Models.Search
                 throw new InvalidCastException(
                     $"The stored page size was not a valid integer. Value was: '{pageSize}'");
             }
-            set => this[PageSizeKey] = value.ToString();
+            set => this[PageSizeKey] = value.ToString(CultureInfo.InvariantCulture);
         }
+#pragma warning restore CA1065
 
         /// <summary>
         /// What page of items will be returned
         /// </summary>
         /// <exception cref="InvalidCastException">If the stored key is not a valid integer</exception>
+#pragma warning disable CA1065
         public int Page
         {
             get
@@ -68,8 +72,9 @@ namespace Digizuite.Models.Search
 
                 throw new InvalidCastException($"The stored page was not a valid integer. Value was: '{page}'");
             }
-            set => this[PageKey] = value.ToString();
+            set => this[PageKey] = value.ToString(CultureInfo.InvariantCulture);
         }
+#pragma warning restore CA1065
 
         /// <summary>
         /// Get or sets the name of the specific search that should be executed
@@ -108,6 +113,7 @@ namespace Digizuite.Models.Search
                 {
                     Add(key, value);
                 }
+
                 Set(MultiStringsName(key), "1");
             }
             else
@@ -133,7 +139,7 @@ namespace Digizuite.Models.Search
         /// <param name="value">The values to set</param>
         public void Set(string key, int value)
         {
-            Set(key, value.ToString());
+            Set(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -143,9 +149,10 @@ namespace Digizuite.Models.Search
         /// <param name="values">The values to set</param>
         public void Set(string key, IEnumerable<int> values)
         {
-            Set(key, values.Select(v => v.ToString()));
+            var valueList = values.ToList();
+            Set(key, valueList.Select(v => v.ToString(CultureInfo.InvariantCulture)));
             Remove(MultiStringsName(key));
-            if (values.Any())
+            if (valueList.Any())
                 Set(MultiIdsName(key), "1");
             else
                 Remove(MultiIdsName(key));
@@ -239,4 +246,5 @@ namespace Digizuite.Models.Search
         {
         }
     }
+#pragma warning restore CA1010,CA1710
 }

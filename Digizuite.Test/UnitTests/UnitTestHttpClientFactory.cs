@@ -2,6 +2,7 @@
 
 namespace Digizuite.Test.UnitTests
 {
+#pragma warning disable CA1812
     internal class UnitTestHttpClientFactory : IHttpClientFactory
     {
         public IRestClient GetRestClient()
@@ -9,4 +10,5 @@ namespace Digizuite.Test.UnitTests
             throw new System.NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
         }
     }
+#pragma warning restore CA1812
 }

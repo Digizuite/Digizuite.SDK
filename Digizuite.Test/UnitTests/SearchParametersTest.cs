@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Digizuite.Models.Search;
 using Digizuite.Test.TestModels;
@@ -67,7 +68,7 @@ namespace Digizuite.Test.UnitTests
             par["limit"] = "nolimit";
             var ex = Assert.Throws<InvalidCastException>(() =>
             {
-                var res = par.PageSize;
+                var _ = par.PageSize;
             });
             Assert.AreEqual("The stored page size was not a valid integer. Value was: 'nolimit'", ex.Message);
         }
@@ -87,7 +88,7 @@ namespace Digizuite.Test.UnitTests
             par["page"] = "first";
             var ex = Assert.Throws<InvalidCastException>(() =>
             {
-                var res = par.Page;
+                var _ = par.Page;
             });
             Assert.AreEqual("The stored page was not a valid integer. Value was: 'first'", ex.Message);
         }
@@ -138,7 +139,7 @@ namespace Digizuite.Test.UnitTests
             par.Set("ids", values);
             Assert.That(par.AllKeys.Contains("ids"));
             Assert.That(par.AllKeys.Contains("ids_type_multiids"));
-            Assert.That(par.GetValues("ids"), Is.EquivalentTo(values.ConvertAll(x => x.ToString())));
+            Assert.That(par.GetValues("ids"), Is.EquivalentTo(values.ConvertAll(x => x.ToString(CultureInfo.InvariantCulture))));
             Assert.AreEqual("1", par["ids_type_multiids"], "ids_type_multiids=1 expected");
             Assert.IsNull(par["ids_type_multistrings"], "ids_type_multistrings was not expected");
         }
@@ -178,7 +179,7 @@ namespace Digizuite.Test.UnitTests
             par.Add("ids", values);
             Assert.That(par.AllKeys.Contains("ids"));
             Assert.That(par.AllKeys.Contains("ids_type_multiids"));
-            Assert.That(par.GetValues("ids"), Is.EquivalentTo(values.ConvertAll(x => x.ToString())));
+            Assert.That(par.GetValues("ids"), Is.EquivalentTo(values.ConvertAll(x => x.ToString(CultureInfo.InvariantCulture))));
             Assert.AreEqual("1", par["ids_type_multiids"], "ids_type_multiids=1 expected");
             Assert.IsNull(par["ids_type_multistrings"], "ids_type_multistrings was not expected");
         }

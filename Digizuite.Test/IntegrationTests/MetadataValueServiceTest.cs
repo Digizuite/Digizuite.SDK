@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Digizuite.Models.Metadata;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Test.TestUtils;
@@ -26,7 +25,7 @@ namespace Digizuite.Test.IntegrationTests
 
             field.Value = first;
 
-            await service.Set(TestAssetItemId, field);
+            await service.UpdateFields(TestAssetItemId, field);
 
             var updated = await load(TestAssetItemId, fieldItemId);
 
@@ -34,7 +33,7 @@ namespace Digizuite.Test.IntegrationTests
 
             field.Value = second;
 
-            await service.Set(TestAssetItemId, field);
+            await service.UpdateFields(TestAssetItemId, field);
 
             updated = await load(TestAssetItemId, fieldItemId);
             
@@ -259,7 +258,7 @@ namespace Digizuite.Test.IntegrationTests
                 }
             };
 
-            await service.Set(TestAssetItemId, field);
+            await service.UpdateFields(TestAssetItemId, field);
 
             var updated = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldId);
             
@@ -280,7 +279,7 @@ namespace Digizuite.Test.IntegrationTests
             
             slave.Value = new List<ItemReferenceOption>();
 
-            await service.Set(slaveAssetItemId, slave);
+            await service.UpdateFields(slaveAssetItemId, slave);
 
             slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveFieldId);
             Assert.That(slave.Value, Is.Empty);

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Contracts;
 using Newtonsoft.Json;
 
 namespace Digizuite.BatchUpdate.Models
@@ -9,6 +10,7 @@ namespace Digizuite.BatchUpdate.Models
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
+            Contract.Requires(writer != null);
             var fieldType = value as FieldType;
             writer.WriteValue(fieldType?.Value);
         }

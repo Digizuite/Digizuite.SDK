@@ -17,12 +17,12 @@ namespace Digizuite.Models.Search
         /// <summary>
         ///     The items returned from this request
         /// </summary>
-        public readonly IReadOnlyList<T> Items;
+        public IReadOnlyList<T> Items { get; }
 
         /// <summary>
         ///     How many items are available in total
         /// </summary>
-        public readonly int Total;
+        public int Total { get; }
 
         /// <summary>
         /// Creates a new search response. You probably should not be constructing this by hand. 
@@ -40,7 +40,7 @@ namespace Digizuite.Models.Search
         /// <summary>
         ///     Gets current page
         /// </summary>
-        public int Page => (int) _searchParameters.Page;
+        public int Page => _searchParameters.Page;
         /// <summary>
         ///     Gets the total number of pages available
         /// </summary>

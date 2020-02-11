@@ -1,6 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 namespace Digizuite.Models.Metadata
 {
+    #pragma warning disable CA1707
     public enum ReferenceItemType
     {
         Asset = 0,
@@ -29,4 +30,5 @@ namespace Digizuite.Models.Metadata
         digizuite_config = 23,
         playertemplate = 24,
     }
+#pragma warning restore CA1707
 }

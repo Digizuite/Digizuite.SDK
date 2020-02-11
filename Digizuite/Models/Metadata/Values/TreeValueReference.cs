@@ -14,6 +14,11 @@ namespace Digizuite.Models.Metadata.Values
 
         protected bool Equals(TreeValueReference other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             return string.Equals(Value, other.Value, StringComparison.InvariantCultureIgnoreCase);
         }
 

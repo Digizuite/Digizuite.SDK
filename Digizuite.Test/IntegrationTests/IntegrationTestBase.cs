@@ -31,9 +31,9 @@ namespace Digizuite.Test.IntegrationTests
 
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("password was not set");
 
-            Configuration = new Configuration
+            Configuration = new DigizuiteConfiguration
             {
-                BaseUrl = apiUrl,
+                BaseUrl = new Uri(apiUrl),
                 SystemUsername = username,
                 SystemPassword = password,
                 AccessKeyDuration = accessKeyDuration

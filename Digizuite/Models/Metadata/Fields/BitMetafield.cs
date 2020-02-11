@@ -1,4 +1,6 @@
-﻿namespace Digizuite.Models.Metadata.Fields
+﻿using System.Globalization;
+
+namespace Digizuite.Models.Metadata.Fields
 {
     public class BitMetafield : Field<bool>
     {
@@ -6,7 +8,7 @@
 
         public override string ToSingleString(string separator)
         {
-            return Value.ToString();
+            return Value.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

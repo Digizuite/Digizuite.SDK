@@ -129,7 +129,7 @@ namespace Digizuite.Samples
 
         public void Log(LogLevel level, string message)
         {
-            InnerLog(level, message, null, new object[0]);
+            InnerLog(level, message, null, Array.Empty<object>());
         }
 
         public void Log(LogLevel level, string message, object[] args)
@@ -139,7 +139,7 @@ namespace Digizuite.Samples
 
         public void Log(LogLevel level, Exception exception, string message)
         {
-            InnerLog(level, message, exception, new object[0]);
+            InnerLog(level, message, exception, Array.Empty<object>());
         }
 
         public void Log(LogLevel level, Exception exception, string message, object[] args)
