@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
-using Digizuite.Helpers;
 using Digizuite.Models;
 using RestSharp;
 using Timer = System.Timers.Timer;
@@ -15,7 +14,7 @@ namespace Digizuite
 {
     public class DamAuthenticationService : IDisposable, IDamAuthenticationService
     {
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IDamRestClient _restClient;
 
         private readonly IConfiguration _configuration;
 
@@ -32,11 +31,11 @@ namespace Digizuite
 
         private int _memberId;
 
-        public DamAuthenticationService(IConfiguration configuration, IHttpClientFactory clientFactory,
+        public DamAuthenticationService(IConfiguration configuration, IDamRestClient restClient,
             ILogger<DamAuthenticationService> logger)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _renewalTimer = new Timer(configuration.AccessKeyDuration.TotalMilliseconds * 0.9);
@@ -117,7 +116,6 @@ namespace Digizuite
                 // Hash the password if it has not already been md5'ed beforehand 
                 if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{36}$")) password = CalculateMD5Hash(password);
 
-                var client = _clientFactory.GetRestClient();
                 var request = new RestRequest("ConnectService.js", DataFormat.Json);
                 request.AddParameter("method", "CreateAccesskey");
                 request.AddParameter("usertype", 2);
@@ -126,17 +124,16 @@ namespace Digizuite
                 request.AddParameter("limit", 25);
                 request.AddParameter("username", username);
                 request.AddParameter("password", password);
-                request.MakeRequestDamSafe();
 
-                var res = await client.PostAsync<DigiResponse<AuthenticateResponse>>(request).ConfigureAwait(false);
+                var res = await _restClient.Execute<DigiResponse<AuthenticateResponse>>(Method.POST, request).ConfigureAwait(false);
 
-                if (!res.Success)
+                if (!res.Data.Success)
                 {
                     _logger.LogError("Authentication failed", "response", res);
                     throw new AuthenticationException("Authentication failed");
                 }
 
-                var item = res.Items[0];
+                var item = res.Data.Items[0];
                 _accessKey = item.AccessKey;
                 _memberId = int.Parse(item.MemberId, NumberStyles.Integer, CultureInfo.InvariantCulture);
                 _expirationTime = DateTime.Now.Add(_configuration.AccessKeyDuration);

@@ -5,7 +5,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
-using Digizuite.Helpers;
 using Digizuite.Models;
 using RestSharp;
 
@@ -17,15 +16,15 @@ namespace Digizuite
         private const string UploadEndpoint = "UploadService.js";
         private const string UploadFileChunkEndpoint = "UploadFileChunk.js";
         private readonly IDamAuthenticationService _damAuthenticationService;
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IDamRestClient _restClient;
         private readonly ILogger<UploadService> _logger;
         private readonly IConfiguration _configuration;
 
-        public UploadService(IDamAuthenticationService damAuthenticationService, IHttpClientFactory clientFactory,
+        public UploadService(IDamAuthenticationService damAuthenticationService, IDamRestClient restClient,
             ILogger<UploadService> logger, IConfiguration configuration)
         {
             _damAuthenticationService = damAuthenticationService;
-            _clientFactory = clientFactory;
+            _restClient = restClient;
             _logger = logger;
             _configuration = configuration;
         }
@@ -73,15 +72,11 @@ namespace Digizuite
 
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "InitiateUpload")
-                .AddParameter(DigizuiteConstants.AccessKeyParameter, ak)
                 .AddParameter("uploadername", computerName)
-                .AddParameter("filename", filename)
-                .MakeRequestDamSafe();
-
-            var client = _clientFactory.GetRestClient();
+                .AddParameter("filename", filename);
 
             _logger.LogTrace("Sending initiate upload", nameof(filename), filename, nameof(computerName), computerName);
-            var res = await client.ExecutePostAsync<DigiResponse<InitiateUploadResponse>>(request).ConfigureAwait(false);
+            var res = await _restClient.Execute<DigiResponse<InitiateUploadResponse>>(Method.POST, request, ak).ConfigureAwait(false);
             _logger.LogDebug("Initiate upload response", nameof(res.Content), res.Content);
 
             var response = res.Data;
@@ -137,7 +132,7 @@ namespace Digizuite
                         new Uri(_configuration.GetDmm3Bwsv3Url(), UploadFileChunkEndpoint));
                     var finished = endOfStream ? 1 : 0;
                     uri.Query =
-                        $"{DigizuiteConstants.AccessKeyParameter}={ak}&itemid={itemId}&jsonresponse=1&finished={finished}";
+                        $"itemid={itemId}&jsonresponse=1&finished={finished}";
                     var response = await webClient.UploadDataTaskAsync(uri.Uri, "POST", buffer).ConfigureAwait(false);
                     var actualResponse = Encoding.UTF8.GetString(response);
 
@@ -157,18 +152,17 @@ namespace Digizuite
         private async Task FinishUpload(int uploadId, int itemId)
         {
             var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
-            var client = _clientFactory.GetRestClient();
+
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "UploadAsset")
-                .AddParameter(DigizuiteConstants.AccessKeyParameter, ak)
                 .AddParameter("itemId", itemId)
-                .AddParameter("digiuploadId", uploadId)
-                .MakeRequestDamSafe();
+                .AddParameter("digiuploadId", uploadId);
 
             _logger.LogTrace("Finishing upload", nameof(uploadId), uploadId, nameof(itemId), itemId);
-            var response = await client.PostAsync<DigiResponse<object>>(request).ConfigureAwait(false);
+            var response = await _restClient.Execute<DigiResponse<object>>(Method.POST, request, ak).ConfigureAwait(false);
+
             _logger.LogDebug("Finished upload", nameof(response), response);
-            if (!response.Success)
+            if (!response.Data.Success)
             {
                 _logger.LogError("Finish upload failed", nameof(response), response);
                 throw new UploadException("Finish upload failed");
@@ -178,22 +172,20 @@ namespace Digizuite
         private async Task FinishReplace(int uploadId, int itemId, int targetAssetId, KeepMetadata keepMetadata, Overwrite overwrite)
         {
             var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
-            var client = _clientFactory.GetRestClient();
+
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "ReplaceAsset")
                 .AddParameter("digiUploadId", uploadId)
                 .AddParameter("itemId", itemId)
                 .AddParameter("targetAssetId", targetAssetId)
                 .AddParameter("keepMetadata", keepMetadata == KeepMetadata.Keep)
-                .AddParameter("overwrite", overwrite == Overwrite.ReplaceHistoryEntry)
-                .AddParameter(DigizuiteConstants.AccessKeyParameter, ak)
-                .MakeRequestDamSafe();
+                .AddParameter("overwrite", overwrite == Overwrite.ReplaceHistoryEntry);
 
             _logger.LogTrace("Finishing replace");
-            var response = await client.PostAsync<DigiResponse<object>>(request).ConfigureAwait(false);
+            var response = await _restClient.Execute<DigiResponse<object>>(Method.POST, request, ak).ConfigureAwait(false);
             _logger.LogDebug("Finished replace", nameof(response), response);
 
-            if (!response.Success)
+            if (!response.Data.Success)
             {
                 _logger.LogError("Finish replace failed", nameof(response), response);
                 throw new UploadException("Finish replace failed");

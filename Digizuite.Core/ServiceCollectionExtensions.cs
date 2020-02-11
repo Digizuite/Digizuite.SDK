@@ -10,7 +10,7 @@ namespace Digizuite
         /// </summary>
         public static IServiceCollection AddDigizuite(this IServiceCollection services)
         {
-            services.AddSingleton<IHttpClientFactory, HttpClientFactory>();
+            services.AddSingleton<IDamRestClient, DamRestClient>();
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
             services.AddSingleton<IBatchUpdateClient, BatchUpdateClient>();
             services.AddSingleton<ISearchService, SearchService>();
