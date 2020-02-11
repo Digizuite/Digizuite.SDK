@@ -324,15 +324,17 @@ namespace Digizuite
             var accessKey = await _authenticationService.GetAccessKey();
             var restClient = _clientFactory.GetRestClient();
             restClient.UseJsonNetSerializer();
-            var restRequest = new RestRequest("/dmm3bwsv3/SearchService.js");
+            var restRequest = new RestRequest("SearchService.js");
             restRequest.AddParameter("SearchName", "GetAllMetafieldAndValues")
                 .AddParameter(DigizuiteConstants.AccessKeyParameter, accessKey)
                 .AddParameter("limit", "9999")
                 .AddParameter("page", "1")
                 .AddParameter("itemid_note", assetItemId)
                 .AddParameter("itemid_value", assetItemId)
+                .AddParameter("sir_itemid_value", assetItemId)
                 .AddParameter("itemid_note_type_MultiIds", "1")
                 .AddParameter("itemid_value_type_MultiIds", "1")
+                .AddParameter("sir_itemid_value_type_MultiIds", "1")
                 .AddParameter("metafielditemids", string.Join(",", fieldItemIds))
                 .AddParameter("metafielditemids_type_MultiIds", "1")
                 .MakeRequestDamSafe();
@@ -650,10 +652,6 @@ namespace Digizuite
 
             PopulateItemReferenceFields(metaField, response);
 
-
-            //            metaField.RefByMetafieldId = response.MetafieldReferencedMetafieldId.Select(int.Parse).ToList();
-            //            metaField.RefByMetafieldLabelId = response.MetafieldReferencedMetafieldLabelId.Select(int.Parse).ToList();
-
             metaField.Value = response.GetMetaFieldValueId().Select(v => v.ToItemReferenceOption()).ToList();
 
 
@@ -669,6 +667,10 @@ namespace Digizuite
 
             if (int.TryParse(response.MetafieldReferenceMetafieldLabelId, out var refLabelId))
                 metaField.RefLabelId = refLabelId;
+            
+            metaField.Value = response.GetSirValueId().Select(v => v.ToItemReferenceOption()).ToList();
+            
+            
 
             return metaField;
         }

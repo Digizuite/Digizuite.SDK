@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Digizuite.Models.Metadata;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Test.TestUtils;
@@ -236,6 +237,55 @@ namespace Digizuite.Test.IntegrationTests
                     Value = "215ac668-f788-4991-89a9-a1acb976148c"
                 }
             });
+        }
+
+        [Test]
+        public async Task CanLoadAndUpdateField_MasterSlaveItemReference()
+        {
+            var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
+            var masterFieldId = 10289;
+            var slaveFieldId = 10293;
+            var slaveAssetItemId = 10229;
+
+            var field = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldId);
+            
+            field.Value = new List<ItemReferenceOption>
+            {
+                new ItemReferenceOption
+                {
+                    BaseId = 90,
+                    ItemId = slaveAssetItemId,
+                    Label = "XCAo_gm4kxw",
+                }
+            };
+
+            await service.Set(TestAssetItemId, field);
+
+            var updated = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldId);
+            
+            Assert.That(updated.Value, Is.EquivalentTo(field.Value));
+
+
+            var slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveFieldId);
+            
+            Assert.That(slave.Value, Is.EquivalentTo(new List<ItemReferenceOption>
+            {
+                new ItemReferenceOption
+                {
+                    BaseId = 85,
+                    ItemId = TestAssetItemId,
+                    Label = "RvDi7uf9ugI",
+                }
+            }));
+            
+            slave.Value = new List<ItemReferenceOption>();
+
+            await service.Set(slaveAssetItemId, slave);
+
+            slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveFieldId);
+            Assert.That(slave.Value, Is.Empty);
+            var master = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldId);
+            Assert.That(master.Value, Is.Empty);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
+
 namespace Digizuite.Models.Metadata.Internal
 {
     internal class ItemMetafieldValueIdResponse
