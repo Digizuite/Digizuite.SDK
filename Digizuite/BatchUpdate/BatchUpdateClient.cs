@@ -28,7 +28,7 @@ namespace Digizuite.BatchUpdate
             _clientFactory = clientFactory;
         }
 
-        public async Task ApplyBatch(Batch batch,
+        public async Task<List<BatchUpdateResponse>> ApplyBatch(Batch batch,
             bool useVersionedMetadata = false)
         {
             if (batch == null)
@@ -50,7 +50,7 @@ namespace Digizuite.BatchUpdate
 
             restRequest.MakeRequestDamSafe();
 
-            var res = await client.PostAsync<DigiResponse<object>>(restRequest).ConfigureAwait(false);
+            var res = await client.PostAsync<DigiResponse<BatchUpdateResponse>>(restRequest).ConfigureAwait(false);
 
             if (!res.Success)
             {
@@ -59,6 +59,8 @@ namespace Digizuite.BatchUpdate
             }
 
             _logger.LogDebug("Batch update response", "response", res);
+
+            return res.Items;
         }
 
         private BatchRequestBodyPartial CreateBatchRequest(Batch batch)

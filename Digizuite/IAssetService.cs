@@ -48,6 +48,14 @@ namespace Digizuite
         /// <param name="deleteType">What kind of delete should be done</param>
         /// <param name="accepts">Only required if you are doing a hard delete</param>
         Task DeleteAsset(int itemId, AssetDeleteType deleteType, AcceptsConsequence accepts = AcceptsConsequence.No);
+
+        /// <summary>
+        ///     Creates a new meta asset (An asset without an attached file)
+        /// </summary>
+        /// <param name="title">The title/name of the asset</param>
+        /// <param name="catalogFolderId">The id of the catalog folder to create the asset in</param>
+        /// <returns></returns>
+        Task<Asset> CreateMetaAsset(string title, int catalogFolderId);
     }
 
     /// <summary>

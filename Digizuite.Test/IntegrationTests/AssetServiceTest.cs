@@ -25,5 +25,16 @@ namespace Digizuite.Test.IntegrationTests
             var loadedAssetByAssetId = await service.GetAssetByAssetId(asset.AssetId);
             Assert.That(loadedAssetByAssetId, Is.EqualTo(asset));
         }
+
+        [Test]
+        public async Task CreatesMetaAssetWithoutIssues()
+        {
+            var service = ServiceProvider.GetRequiredService<IAssetService>();
+
+            var asset = await service.CreateMetaAsset("rhdh-unit-test-meta-asset", 40);
+            
+            Assert.That(asset.Name, Is.Not.Empty);
+            Assert.That(asset.AssetId, Is.GreaterThan(0));
+        }
     }
 }

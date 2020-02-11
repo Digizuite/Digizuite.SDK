@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -90,6 +91,34 @@ namespace Digizuite
             });
 
             return _batchUpdateClient.ApplyBatch(batch);
+        }
+
+        /// <inheritdoc cref="IAssetService.CreateMetaAsset"/>
+        public async Task<Asset> CreateMetaAsset(string title, int catalogFolderId)
+        {
+            _logger.LogDebug("Creating meta asset", nameof(title), title, nameof(catalogFolderId), catalogFolderId);
+            var batch = new Batch(new BatchPart
+            {
+                Target = FieldType.Asset,
+                BatchType = BatchType.Values,
+                ItemIds = new List<int>{0},
+                Values =
+                {
+                    new StringBatchValue(FieldType.Name, title, null),
+                    new IntBatchValue(FieldType.AssetType, (int)AssetType.META, null),
+                    new IntBatchValue(FieldType.MetafieldGroup, 10025, null),
+                    new FolderBatchValue(FieldType.Folder, catalogFolderId, null, RepositoryType.Catalog)
+                }
+            });
+
+            var response = await _batchUpdateClient.ApplyBatch(batch).ConfigureAwait(false);
+
+            if (response.Any())
+            {
+                return await GetAssetByItemId(response[0].ItemId).ConfigureAwait(false);
+            }
+            
+            throw new Exception("Batch update succeeded, but we didn't get any information about the created asset");
         }
 
         private async Task<Asset> GetAssetUsingParameter(string key, int value)
