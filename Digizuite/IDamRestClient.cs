@@ -1,0 +1,21 @@
+﻿using System.Threading.Tasks;
+using RestSharp;
+
+namespace Digizuite
+{
+    /// <summary>
+    /// Provides helpers for executing rest requests against DamCenter
+    /// </summary>
+    public interface IDamRestClient
+    {
+        /// <summary>
+        /// Execute Rest Request
+        /// </summary>
+        /// <typeparam name="T">The type the response items should be converted into</typeparam>
+        /// <param name="method">Request Method (GET, POST ...)</param>
+        /// <param name="request">Request Arguments</param>
+        /// <param name="accessKey">optional accessKey, if specified, the accessKey is added to the request parameters</param>
+        /// <returns>the rest response</returns>
+        Task<IRestResponse<T>> Execute<T>(Method method, RestRequest request, string accessKey = null);
+    }
+}
