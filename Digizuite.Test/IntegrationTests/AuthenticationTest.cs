@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -21,8 +20,8 @@ namespace Digizuite.Test.IntegrationTests
         {
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
             Configuration.SystemPassword = new string('0', 36);
-            var exceptionThrown = Assert.Throws<Exception>(() => service.GetAccessKey().GetAwaiter().GetResult());
-            Assert.AreEqual("Request was unsuccessful", exceptionThrown.Message);
+            var exceptionThrown = Assert.Throws<Digizuite.Exceptions.AuthenticationException>(() => service.GetAccessKey().GetAwaiter().GetResult());
+            Assert.AreEqual("Authentication failed", exceptionThrown.Message);
         }
 
         [Test]
