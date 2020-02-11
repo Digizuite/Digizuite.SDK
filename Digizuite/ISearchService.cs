@@ -12,14 +12,16 @@ namespace Digizuite
         /// Executes the specific search
         /// </summary>
         /// <param name="parameters">The parameters to search with</param>
+        /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
         /// <typeparam name="T">The type the response items should be converted into</typeparam>
-        Task<SearchResponse<T>> Search<T>(SearchParameters parameters);
+        Task<SearchResponse<T>> Search<T>(SearchParameters parameters, string accessKey = null);
 
         /// <summary>
         /// Executes the specific search
         /// </summary>
         /// <param name="parameters">The parameters to search with</param>
+        /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
         /// <typeparam name="T">The type of the response items should be converted into</typeparam>
-        Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters);
+        Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string accessKey = null);
     }
 }

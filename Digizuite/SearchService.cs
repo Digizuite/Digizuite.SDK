@@ -29,8 +29,9 @@ namespace Digizuite
         /// Executes the specific search
         /// </summary>
         /// <param name="parameters">The parameters to search with</param>
+        /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
         /// <typeparam name="T">The type the response items should be converted into</typeparam>
-        public async Task<SearchResponse<T>> Search<T>(SearchParameters parameters)
+        public async Task<SearchResponse<T>> Search<T>(SearchParameters parameters, string accessKey = null)
         {
             // Copy the parameters immediately, so the user cannot change them under us
             parameters = new SearchParameters(parameters);
@@ -75,10 +76,11 @@ namespace Digizuite
         /// Executes the specific search
         /// </summary>
         /// <param name="parameters">The parameters to search with</param>
+        /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
         /// <typeparam name="T">The type of the response items should be converted into</typeparam>
-        public Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters)
+        public Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string accessKey = null)
         {
-            return Search<T>((SearchParameters) parameters);
+            return Search<T>((SearchParameters) parameters, accessKey);
         }
     }
 }
