@@ -22,7 +22,7 @@ namespace Digizuite.Samples
                 SystemUsername = "",
                 SystemPassword = ""
             };
-            var restClient = new DamRestClient(new ConsoleLogger<DamRestClient>());
+            var restClient = new DamRestClient(config, new ConsoleLogger<DamRestClient>());
             using var auth = new DamAuthenticationService(config, restClient, new ConsoleLogger<DamAuthenticationService>());
 
             var memberId = await auth.GetMemberId().ConfigureAwait(false);
