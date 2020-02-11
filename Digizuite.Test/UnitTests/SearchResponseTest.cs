@@ -3,6 +3,7 @@ using Digizuite.Models.Search;
 using Digizuite.Test.TestModels;
 using NUnit.Framework;
 using System.Collections.Generic;
+
 // ReSharper disable CollectionNeverUpdated.Local
 // ReSharper disable UseObjectOrCollectionInitializer
 // ReSharper disable PossibleNullReferenceException
@@ -47,11 +48,11 @@ namespace Digizuite.Test.UnitTests
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var next = response.Next;
             Assert.IsNotNull(next, "next returned null");
-            Assert.That(next.GetValues("limit")[0] == "3", "not expected PageSize value");
-            Assert.That(next.GetValues("page")[0] == "3", "not expected Page value");
-            Assert.That(next.GetValues("SearchName")[0] == "GetAssets", "not expected SearchName value");
-            Assert.That(next.GetValues("fromAssetId")[0] == "0", "not expected search parameter fromAssetId value");
-            Assert.That(next.GetValues("toAssetId")[0] == "10", "not expected search parameter toAssetId value");
+            Assert.That(next.GetValues("limit")[0], Is.EqualTo("3"), "not expected PageSize value");
+            Assert.That(next.GetValues("page")[0], Is.EqualTo("3"), "not expected Page value");
+            Assert.That(next.GetValues("SearchName")[0], Is.EqualTo("GetAssets"), "not expected SearchName value");
+            Assert.That(next.GetValues("fromAssetId")[0], Is.EqualTo("0"), "not expected search parameter fromAssetId value");
+            Assert.That(next.GetValues("toAssetId")[0], Is.EqualTo("10"), "not expected search parameter toAssetId value");
         }
         
         [Test(Description = "Test Next property - after last page")]
@@ -62,7 +63,10 @@ namespace Digizuite.Test.UnitTests
             var parameters = new SearchParameters("GetAssets", 3, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => { var nxt = response.Next; });
-            Assert.AreEqual($"Page cannot be more than TotalPages (3) (Parameter 'page'){Environment.NewLine}Actual value was 4.", ex.Message, "Expected exception message not returned when accessing page# after last page");
+            Assert.That(ex.Message, 
+                    Is.EqualTo($"Page cannot be more than TotalPages (3) (Parameter 'page'){Environment.NewLine}Actual value was 4."), 
+                    "Expected exception message not returned when accessing page# after last page"
+            );
         }
 
         [Test(Description = "Test Previous property")]
@@ -76,11 +80,11 @@ namespace Digizuite.Test.UnitTests
             parameters.Add("toAssetId", 10);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var prev = response.Previous;
-            Assert.That(prev.GetValues("limit")[0] == "3", "not expected PageSize value");
-            Assert.That(prev.GetValues("page")[0] == "1", "not expected Page value");
-            Assert.That(prev.GetValues("SearchName")[0] == "GetAssets", "not expected SearchName value");
-            Assert.That(prev.GetValues("fromAssetId")[0] == "0", "not expected search parameter fromAssetId value");
-            Assert.That(prev.GetValues("toAssetId")[0] == "10", "not expected search parameter toAssetId value");
+            Assert.That(prev.GetValues("limit")[0], Is.EqualTo("3"), "not expected PageSize value");
+            Assert.That(prev.GetValues("page")[0], Is.EqualTo("1"), "not expected Page value");
+            Assert.That(prev.GetValues("SearchName")[0], Is.EqualTo("GetAssets"), "not expected SearchName value");
+            Assert.That(prev.GetValues("fromAssetId")[0], Is.EqualTo("0"), "not expected search parameter fromAssetId value");
+            Assert.That(prev.GetValues("toAssetId")[0], Is.EqualTo("10"), "not expected search parameter toAssetId value");
         }
 
         [Test(Description = "Test Previous property - before first page")]
@@ -91,7 +95,11 @@ namespace Digizuite.Test.UnitTests
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => { var prev= response.Previous; });
             var msg = ex.Message;
-            Assert.AreEqual($"Page cannot be less than 1 (Parameter 'page'){Environment.NewLine}Actual value was 0.", ex.Message, "Expected exception message not returned when accessing page before first page");
+            Assert.That(ex.Message,
+                Is.EqualTo($"Page cannot be less than 1 (Parameter 'page'){Environment.NewLine}Actual value was 0."),
+                "Expected exception message not returned when accessing page before first page"
+            );
+
         }
 
         [Test(Description = "Test GoTo Page")]
@@ -105,11 +113,11 @@ namespace Digizuite.Test.UnitTests
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var gto = response.GoToPage(3);
             Assert.IsNotNull(gto, "GoToPage returned null");
-            Assert.That(gto.GetValues("limit")[0] == "3", "not expected PageSize value");
-            Assert.That(gto.GetValues("page")[0] == "3", "not expected Page value");
-            Assert.That(gto.GetValues("SearchName")[0] == "GetAssets", "not expected SearchName value");
-            Assert.That(gto.GetValues("fromAssetId")[0] == "0", "not expected search parameter fromAssetId value");
-            Assert.That(gto.GetValues("toAssetId")[0] == "10", "not expected search parameter toAssetId value");
+            Assert.That(gto.GetValues("limit")[0], Is.EqualTo("3"), "not expected PageSize value");
+            Assert.That(gto.GetValues("page")[0], Is.EqualTo("3"), "not expected Page value");
+            Assert.That(gto.GetValues("SearchName")[0], Is.EqualTo("GetAssets"), "not expected SearchName value");
+            Assert.That(gto.GetValues("fromAssetId")[0], Is.EqualTo("0"), "not expected search parameter fromAssetId value");
+            Assert.That(gto.GetValues("toAssetId")[0], Is.EqualTo("10"), "not expected search parameter toAssetId value");
         }
 
         [Test(Description = "Test IsLast")]
