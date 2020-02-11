@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 // ReSharper disable InconsistentNaming
 
@@ -19,6 +20,9 @@ namespace Digizuite.Models.Metadata.Internal
         public string ReferenceTypeId { get; set; }
         public string[] MetafieldReferencedMetafieldId { get; set; }
         public string[] MetafieldReferencedMetafieldLabelId { get; set; }
+        
+        [JsonProperty("sir_valueid")]
+        public object SirValueId { get; set; }
 
         public object Note { get; set; }
         public object Item_metafield_valueid { get; set; }
@@ -56,6 +60,15 @@ namespace Digizuite.Models.Metadata.Internal
                 return new List<ItemMetafieldValueIdResponse>();
 
             return ((JArray)Item_metafield_valueid).ToObject<List<ItemMetafieldValueIdResponse>>();
+        }
+
+        public List<SirValueId> GetSirValueId()
+        {
+            if(SirValueId == null) return new List<SirValueId>();
+            
+            if(string.IsNullOrWhiteSpace(SirValueId.ToString())) return new List<SirValueId>();
+
+            return ((JArray) SirValueId).ToObject<List<SirValueId>>();
         }
 
         public bool HasItemMetaFieldValueId()

@@ -6,16 +6,15 @@ namespace Digizuite.Models.Metadata.Values
     {
         public int BaseId { get; set; }
         public string Label { get; set; }
-        public MasterSlaveReferenceType Type { get; set; }
 
         public override string ToString()
         {
-            return $"{base.ToString()}, {nameof(BaseId)}: {BaseId}, {nameof(Label)}: {Label}, {nameof(Type)}: {Type}";
+            return $"{base.ToString()}, {nameof(BaseId)}: {BaseId}, {nameof(Label)}: {Label}";
         }
 
         protected bool Equals(ItemReferenceOption other)
         {
-            return base.Equals(other) && BaseId == other.BaseId && Label == other.Label && Type == other.Type;
+            return base.Equals(other) && BaseId == other.BaseId && Label == other.Label;
         }
 
         public override bool Equals(object obj)
@@ -34,7 +33,6 @@ namespace Digizuite.Models.Metadata.Values
                 int hashCode = base.GetHashCode();
                 hashCode = (hashCode * 397) ^ BaseId;
                 hashCode = (hashCode * 397) ^ (Label != null ? Label.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (int)Type;
                 return hashCode;
             }
         }

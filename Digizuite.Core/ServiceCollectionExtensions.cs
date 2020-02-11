@@ -15,6 +15,7 @@ namespace Digizuite
             services.AddSingleton<IBatchUpdateClient, BatchUpdateClient>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<IUploadService, UploadService>();
+            services.AddSingleton<IMetadataValueService, MetadataValueService>();
             
             return services;
         }
