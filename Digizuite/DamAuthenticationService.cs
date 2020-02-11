@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Exceptions;
 using Digizuite.Helpers;
 using Digizuite.Models;
 using RestSharp;
@@ -117,7 +118,7 @@ namespace Digizuite
                 if (!res.Success)
                 {
                     _logger.LogError("Authentication failed", "response", res);
-                    throw new Exception("Request was unsuccessful");
+                    throw new AuthenticationException("Authentication failed");
                 }
 
                 var item = res.Items[0];
