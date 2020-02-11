@@ -7,7 +7,7 @@ namespace Digizuite.Models
         /// <summary>
         /// The base url for all DC requests
         /// </summary>
-        string BaseUrl { get; set; }
+        Uri BaseUrl { get; set; }
 
         /// <summary>
         /// How long the access key lasts before it expires and should be renewed.
@@ -17,6 +17,5 @@ namespace Digizuite.Models
 
         string SystemUsername { get; set; }
         string SystemPassword { get; set; }
-        string ToString();
     }
 }

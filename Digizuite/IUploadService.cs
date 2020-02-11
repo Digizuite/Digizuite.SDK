@@ -30,6 +30,7 @@ namespace Digizuite
             KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener listener = null);
     }
 
+    #pragma warning disable CA1717
     public enum KeepMetadata
     {
         /// <summary>
@@ -41,6 +42,7 @@ namespace Digizuite
         /// </summary>
         Reset
     }
+    #pragma warning restore CA1717
 
     public enum Overwrite
     {

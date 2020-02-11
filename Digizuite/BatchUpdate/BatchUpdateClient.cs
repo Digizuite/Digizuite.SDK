@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Digizuite.Helpers;
 using Digizuite.Models;
 using Newtonsoft.Json;
 using RestSharp;
+using ValueType = Digizuite.BatchUpdate.Models.ValueType;
 
 namespace Digizuite.BatchUpdate
 {
@@ -29,12 +31,16 @@ namespace Digizuite.BatchUpdate
         public async Task ApplyBatch(Batch batch,
             bool useVersionedMetadata = false)
         {
+            if (batch == null)
+            {
+                throw new ArgumentNullException(nameof(batch));
+            }
             var request = CreateBatchRequest(batch);
 
             _logger.LogInformation("Sending batch request: ", nameof(request), request, nameof(_damInfo.BaseUrl),
                 _damInfo.BaseUrl);
 
-            var accessKey = await _authenticationService.GetAccessKey();
+            var accessKey = await _authenticationService.GetAccessKey().ConfigureAwait(false);
             var client = _clientFactory.GetRestClient();
             var restRequest = new RestRequest("BatchUpdateService.js");
             restRequest.AddParameter("updateXML", request.UpdateXml)
@@ -44,12 +50,12 @@ namespace Digizuite.BatchUpdate
 
             restRequest.MakeRequestDamSafe();
 
-            var res = await client.PostAsync<DigiResponse<object>>(restRequest);
+            var res = await client.PostAsync<DigiResponse<object>>(restRequest).ConfigureAwait(false);
 
             if (!res.Success)
             {
                 _logger.LogError("Batch Update request failed", "response", res);
-                throw new System.Exception("Batch update request failed");
+                throw new Exception("Batch update request failed");
             }
 
             _logger.LogDebug("Batch update response", "response", res);

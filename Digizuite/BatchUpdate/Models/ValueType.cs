@@ -1,5 +1,6 @@
 namespace Digizuite.BatchUpdate.Models
 {
+#pragma warning disable CA1720
     public enum ValueType
     {
         String = 1,
@@ -19,6 +20,7 @@ namespace Digizuite.BatchUpdate.Models
         Delete = 15,
         ValueExtraValue = 16,
         StringList = 17,
-        StringListRow = 18,
+        StringListRow = 18
     }
+#pragma warning restore CA1720
 }

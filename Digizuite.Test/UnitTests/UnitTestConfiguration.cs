@@ -5,33 +5,34 @@ namespace Digizuite.Test.UnitTests
 {
     internal class UnitTestConfiguration : IConfiguration
     {
-        static T Disallow<T>()
+        public Uri BaseUrl
         {
-            throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
-        }
-
-        public string BaseUrl
-        {
-            get => Disallow<string>();
-            set => Disallow<string>();
+            get => Disallow<Uri>();
+            set => Disallow(value);
         }
 
         public TimeSpan AccessKeyDuration
         {
             get => Disallow<TimeSpan>();
-            set => Disallow<TimeSpan>();
+            set => Disallow(value);
         }
 
         public string SystemUsername
         {
             get => Disallow<string>();
-            set => Disallow<string>();
+            set => Disallow(value);
         }
 
         public string SystemPassword
         {
             get => Disallow<string>();
-            set => Disallow<string>();
+            set => Disallow(value);
+        }
+
+        // ReSharper disable once UnusedParameter.Local
+        private static T Disallow<T>(T _ = default)
+        {
+            throw new NotImplementedException(@"Dam access needs to be mock'ed out for UnitTests");
         }
     }
 }

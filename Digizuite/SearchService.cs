@@ -38,7 +38,7 @@ namespace Digizuite
             var client = _httpClientFactory.GetRestClient();
             client.UseJsonNetSerializer();
 
-            var ak = await _damAuthenticationService.GetAccessKey();
+            var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
             
             var request = new RestRequest("SearchService.js");
             request.MakeRequestDamSafe()
@@ -58,7 +58,7 @@ namespace Digizuite
             }
 
             _logger.LogTrace("Sending search request");
-            var response = await client.ExecutePostAsync<DigiResponse<T>>(request);
+            var response = await client.ExecutePostAsync<DigiResponse<T>>(request).ConfigureAwait(false);
             _logger.LogTrace("Got api response");
 
             if (!response.Data.Success)

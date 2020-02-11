@@ -1,5 +1,6 @@
 ﻿namespace Digizuite.Models.Metadata
 {
+#pragma warning disable CA1720
     public enum MetaFieldDataType
     {
         Int = 51,
@@ -25,4 +26,5 @@
         Link = 350,
         Reference = 400,
     }
+#pragma warning restore CA1720
 }

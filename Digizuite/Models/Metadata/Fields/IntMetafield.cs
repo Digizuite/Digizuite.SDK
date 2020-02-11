@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Digizuite.Models.Metadata.Fields
 {
     public class IntMetafield : Field<int?>
@@ -6,7 +8,7 @@ namespace Digizuite.Models.Metadata.Fields
 
         public override string ToSingleString(string separator)
         {
-            return Value?.ToString() ?? "";
+            return Value?.ToString(CultureInfo.InvariantCulture) ?? "";
         }
     }
 }

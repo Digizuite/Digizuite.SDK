@@ -49,19 +49,19 @@ namespace Digizuite
         private async Task<int> InternalUpload(Stream stream, string filename, string computerName,
             IUploadProgressListener listener, Func<InitiateUploadResponse, Task> completeUpload)
         {
-            var uploadInfo = await InitiateUpload(filename, computerName);
+            var uploadInfo = await InitiateUpload(filename, computerName).ConfigureAwait(false);
             if (listener != null)
             {
-                await listener.UploadInitiated(uploadInfo.ItemId);
+                await listener.UploadInitiated(uploadInfo.ItemId).ConfigureAwait(false);
             }
 
-            await UploadFileChunks(stream, uploadInfo.ItemId, listener);
+            await UploadFileChunks(stream, uploadInfo.ItemId, listener).ConfigureAwait(false);
 
-            await completeUpload(uploadInfo);
+            await completeUpload(uploadInfo).ConfigureAwait(false);
 
             if (listener != null)
             {
-                await listener.FinishedUpload(uploadInfo.ItemId);
+                await listener.FinishedUpload(uploadInfo.ItemId).ConfigureAwait(false);
             }
 
             return uploadInfo.ItemId;
@@ -69,7 +69,7 @@ namespace Digizuite
 
         private async Task<InitiateUploadResponse> InitiateUpload(string filename, string computerName)
         {
-            var ak = await _damAuthenticationService.GetAccessKey();
+            var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
 
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "InitiateUpload")
@@ -81,7 +81,7 @@ namespace Digizuite
             var client = _clientFactory.GetRestClient();
 
             _logger.LogTrace("Sending initiate upload", nameof(filename), filename, nameof(computerName), computerName);
-            var res = await client.ExecutePostAsync<DigiResponse<InitiateUploadResponse>>(request);
+            var res = await client.ExecutePostAsync<DigiResponse<InitiateUploadResponse>>(request).ConfigureAwait(false);
             _logger.LogDebug("Initiate upload response", nameof(res.Content), res.Content);
 
             var response = res.Data;
@@ -116,7 +116,7 @@ namespace Digizuite
                 var endOfStream = false;
                 while (!endOfStream)
                 {
-                    var read = await AttemptToFillBuffer(stream, buffer);
+                    var read = await AttemptToFillBuffer(stream, buffer).ConfigureAwait(false);
                     _logger.LogTrace("Read bytes into buffer", nameof(read), read, nameof(buffer.Length),
                         buffer.Length);
                     if (read < buffer.Length)
@@ -127,18 +127,18 @@ namespace Digizuite
                         endOfStream = true;
                     }
 
-                    var ak = await _damAuthenticationService.GetAccessKey();
+                    var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
 
 
                     _logger.LogDebug("Sending file chunk", nameof(itemId), itemId, nameof(endOfStream), endOfStream);
 
                     // Restsharp doesn't work for this, so we have to do things to old way
                     var uri = new UriBuilder(
-                        new Uri(new Uri(_configuration.GetDmm3Bwsv3Url()), UploadFileChunkEndpoint));
+                        new Uri(_configuration.GetDmm3Bwsv3Url(), UploadFileChunkEndpoint));
                     var finished = endOfStream ? 1 : 0;
                     uri.Query =
                         $"{DigizuiteConstants.AccessKeyParameter}={ak}&itemid={itemId}&jsonresponse=1&finished={finished}";
-                    var response = await webClient.UploadDataTaskAsync(uri.Uri, "POST", buffer);
+                    var response = await webClient.UploadDataTaskAsync(uri.Uri, "POST", buffer).ConfigureAwait(false);
                     var actualResponse = Encoding.UTF8.GetString(response);
 
 
@@ -148,7 +148,7 @@ namespace Digizuite
                     totalUploaded += read;
                     if (listener != null)
                     {
-                        await listener.ChunkUploaded(itemId, totalUploaded);
+                        await listener.ChunkUploaded(itemId, totalUploaded).ConfigureAwait(false);
                     }
                 }
             }
@@ -156,7 +156,7 @@ namespace Digizuite
 
         private async Task FinishUpload(int uploadId, int itemId)
         {
-            var ak = await _damAuthenticationService.GetAccessKey();
+            var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
             var client = _clientFactory.GetRestClient();
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "UploadAsset")
@@ -166,7 +166,7 @@ namespace Digizuite
                 .MakeRequestDamSafe();
 
             _logger.LogTrace("Finishing upload", nameof(uploadId), uploadId, nameof(itemId), itemId);
-            var response = await client.PostAsync<DigiResponse<object>>(request);
+            var response = await client.PostAsync<DigiResponse<object>>(request).ConfigureAwait(false);
             _logger.LogDebug("Finished upload", nameof(response), response);
             if (!response.Success)
             {
@@ -177,7 +177,7 @@ namespace Digizuite
 
         private async Task FinishReplace(int uploadId, int itemId, int targetAssetId, KeepMetadata keepMetadata, Overwrite overwrite)
         {
-            var ak = await _damAuthenticationService.GetAccessKey();
+            var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
             var client = _clientFactory.GetRestClient();
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "ReplaceAsset")
@@ -190,7 +190,7 @@ namespace Digizuite
                 .MakeRequestDamSafe();
 
             _logger.LogTrace("Finishing replace");
-            var response = await client.PostAsync<DigiResponse<object>>(request);
+            var response = await client.PostAsync<DigiResponse<object>>(request).ConfigureAwait(false);
             _logger.LogDebug("Finished replace", nameof(response), response);
 
             if (!response.Success)
@@ -212,7 +212,7 @@ namespace Digizuite
             {
                 _logger.LogTrace("Reading bytes from stream", nameof(offset), offset, nameof(buffer.Length),
                     buffer.Length);
-                var read = await stream.ReadAsync(buffer, offset, buffer.Length - offset);
+                var read = await stream.ReadAsync(buffer, offset, buffer.Length - offset).ConfigureAwait(false);
                 if (read == 0)
                 {
                     _logger.LogTrace("Read zero bytes from stream. This probably means the stream has ended");

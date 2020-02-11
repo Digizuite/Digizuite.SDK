@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Digizuite.Models.Metadata.Values
 {
@@ -9,7 +10,12 @@ namespace Digizuite.Models.Metadata.Values
 
         protected bool Equals(TreeValue other)
         {
-            return base.Equals(other) && Id == other.Id && string.Equals(Label, other.Label);
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
+            return base.Equals(other) && Id == other.Id && string.Equals(Label, other.Label, StringComparison.InvariantCulture);
         }
 
         public override bool Equals(object obj)

@@ -65,8 +65,8 @@ namespace Digizuite
         /// </summary>
         /// <param name="assetItemId">The item id of the asset to update</param>
         /// <param name="fields">All the fields with their values</param>
-        Task Set(IEnumerable<int> assetItemId, params Field[] fields);
-        /// <inheritdoc cref="Set(System.Collections.Generic.IEnumerable{int},Digizuite.Models.Metadata.Fields.Field[])"/>
-        Task Set(int assetItemId, params Field[] fields);
+        Task UpdateFields(IEnumerable<int> assetItemId, params Field[] fields);
+        /// <inheritdoc cref="UpdateFields(System.Collections.Generic.IEnumerable{int},Digizuite.Models.Metadata.Fields.Field[])"/>
+        Task UpdateFields(int assetItemId, params Field[] fields);
     }
 }

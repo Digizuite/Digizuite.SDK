@@ -4,10 +4,10 @@ namespace Digizuite.Models
 {
     public static class ConfigurationExtensions
     {
-        public static string GetDmm3Bwsv3Url(this IConfiguration config)
+        public static Uri GetDmm3Bwsv3Url(this IConfiguration config)
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
-            var baseUrl = config.BaseUrl;
+            var baseUrl = config.BaseUrl.ToString();
 
             if (!baseUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase))
             {
@@ -17,8 +17,7 @@ namespace Digizuite.Models
             {
                 baseUrl += "dmm3bwsv3/";
             }
-            return baseUrl;
-
+            return new Uri(baseUrl);
         }
     }
 }

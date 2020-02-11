@@ -1,4 +1,5 @@
-﻿using Digizuite.Models.Metadata.Values;
+﻿using System.Globalization;
+using Digizuite.Models.Metadata.Values;
 
 namespace Digizuite.Models.Metadata.Internal
 {
@@ -28,7 +29,7 @@ namespace Digizuite.Models.Metadata.Internal
         {
             return new TreeValue
             {
-                Id = int.Parse(value.item_tree_valueid),
+                Id = int.Parse(value.item_tree_valueid, NumberStyles.Integer, CultureInfo.InvariantCulture),
                 Value = value.optionvalue,
                 Label = value.metaValue
             };
@@ -39,8 +40,8 @@ namespace Digizuite.Models.Metadata.Internal
             return new ItemReferenceOption
             {
                 Label = value.refItemTitle,
-                ItemId = int.Parse(value.ref_itemid),
-                BaseId = int.Parse(value.refItemBaseId)
+                ItemId = int.Parse(value.ref_itemid, NumberStyles.Integer, CultureInfo.InvariantCulture),
+                BaseId = int.Parse(value.refItemBaseId, NumberStyles.Integer, CultureInfo.InvariantCulture)
             };
         }
         

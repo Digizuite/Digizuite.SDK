@@ -20,6 +20,10 @@ namespace Digizuite.Models.Metadata.Values
 
         protected bool Equals(ComboValue other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
             return string.Equals(InternalValue, other.InternalValue, StringComparison.InvariantCultureIgnoreCase);
         }
 

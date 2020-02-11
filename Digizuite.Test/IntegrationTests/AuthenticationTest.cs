@@ -12,7 +12,7 @@ namespace Digizuite.Test.IntegrationTests
         {
 
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
-            var ak = await service.GetAccessKey();
+            var ak = await service.GetAccessKey().ConfigureAwait(false);
             Assert.That(ak, Is.Not.Empty);
         }
         [Test]
@@ -28,7 +28,7 @@ namespace Digizuite.Test.IntegrationTests
         public async Task GetMemberId()
         {
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
-            var memberId = await service.GetMemberId();
+            var memberId = await service.GetMemberId().ConfigureAwait(false);
             Assert.AreEqual(30024, memberId);
         }
     }

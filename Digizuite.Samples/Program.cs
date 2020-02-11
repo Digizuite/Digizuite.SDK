@@ -8,25 +8,25 @@ namespace Digizuite.Samples
     {
         static async Task Main()
         {
-            await Test1();
+            await Test1().ConfigureAwait(false);
         }
 
 
 
         static async Task Test1()
         {
-            var config = new Configuration()
+            var config = new DigizuiteConfiguration()
             {
                 AccessKeyDuration = new TimeSpan(86400000L),
-                BaseUrl = "https://dam.dev.digizuite.com/",
+                BaseUrl = new Uri("https://dam.dev.digizuite.com/"),
                 SystemUsername = "",
                 SystemPassword = ""
             };
             var httpClient = new HttpClientFactory(config, new ConsoleLogger<HttpClientFactory>());
             
-            var auth = new DamAuthenticationService(config, httpClient, new ConsoleLogger<DamAuthenticationService>());
+            using var auth = new DamAuthenticationService(config, httpClient, new ConsoleLogger<DamAuthenticationService>());
 
-            var memberId = await auth.GetMemberId();
+            var memberId = await auth.GetMemberId().ConfigureAwait(false);
             
             Console.WriteLine($"Authorized as member {memberId}");
 

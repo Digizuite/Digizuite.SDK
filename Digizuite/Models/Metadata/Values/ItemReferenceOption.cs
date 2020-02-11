@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Digizuite.Models.Metadata.Values
 {
@@ -14,6 +15,10 @@ namespace Digizuite.Models.Metadata.Values
 
         protected bool Equals(ItemReferenceOption other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
             return base.Equals(other) && BaseId == other.BaseId && Label == other.Label;
         }
 

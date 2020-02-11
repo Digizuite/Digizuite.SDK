@@ -19,11 +19,11 @@ namespace Digizuite.Test.IntegrationTests
                 {"sCatalogFolderId", "40"}
             };
 
-            var firstResult = await service.Search<GetAssetsResponse>(parameters);
+            var firstResult = await service.Search<GetAssetsResponse>(parameters).ConfigureAwait(false);
 
             Assert.That(firstResult.Items.Count, Is.EqualTo(12));
 
-            var secondResult = await service.Search(firstResult.Next);
+            var secondResult = await service.Search(firstResult.Next).ConfigureAwait(false);
             Assert.That(secondResult.Items.Count, Is.EqualTo(12));
             Assert.That(secondResult.Items, Is.Not.EquivalentTo(firstResult.Items));
         }
