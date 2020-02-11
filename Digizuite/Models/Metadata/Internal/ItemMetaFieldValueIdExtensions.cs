@@ -38,10 +38,19 @@ namespace Digizuite.Models.Metadata.Internal
         {
             return new ItemReferenceOption
             {
-                Type = MasterSlaveReferenceType.Other,
                 Label = value.refItemTitle,
                 ItemId = int.Parse(value.ref_itemid),
                 BaseId = int.Parse(value.refItemBaseId)
+            };
+        }
+        
+        internal static ItemReferenceOption ToItemReferenceOption(this SirValueId value)
+        {
+            return new ItemReferenceOption
+            {
+                Label = value.Title,
+                ItemId = value.ItemId,
+                BaseId = value.BaseId
             };
         }
     }
