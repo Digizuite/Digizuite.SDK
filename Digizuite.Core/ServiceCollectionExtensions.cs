@@ -17,6 +17,7 @@ namespace Digizuite
             services.AddSingleton<IUploadService, UploadService>();
             services.AddSingleton<IMetadataValueService, MetadataValueService>();
             services.AddSingleton<IAssetStreamerService, AssetStreamerService>();
+            services.AddSingleton<IAssetService, AssetService>();
             
             return services;
         }
