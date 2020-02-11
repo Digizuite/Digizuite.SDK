@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Digizuite.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
@@ -10,17 +11,18 @@ namespace Digizuite.Test.IntegrationTests
         [Test]
         public async Task CanGetAccessKey()
         {
-
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
             var ak = await service.GetAccessKey().ConfigureAwait(false);
             Assert.That(ak, Is.Not.Empty);
         }
+
         [Test]
         public void CanGetAccessKey_WrongPassword()
         {
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
             Configuration.SystemPassword = new string('0', 36);
-            var exceptionThrown = Assert.Throws<Digizuite.Exceptions.AuthenticationException>(() => service.GetAccessKey().GetAwaiter().GetResult());
+            var exceptionThrown =
+                Assert.Throws<AuthenticationException>(() => service.GetAccessKey().GetAwaiter().GetResult());
             Assert.AreEqual("Authentication failed", exceptionThrown.Message);
         }
 
