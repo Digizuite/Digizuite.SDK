@@ -24,7 +24,6 @@ namespace Digizuite.Samples
             };
             var restClient = new DamRestClient(config, new ConsoleLogger<DamRestClient>());
             using var auth = new DamAuthenticationService(config, restClient, new ConsoleLogger<DamAuthenticationService>());
-
             var memberId = await auth.GetMemberId().ConfigureAwait(false);
             
             Console.WriteLine($"Authorized as member {memberId}");

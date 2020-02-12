@@ -92,7 +92,7 @@ namespace Digizuite
 
             if (item.ItemId == default)
             {
-                _logger.LogError("Initiate upload succeeded, but no itemId was returned", nameof(response), response,
+                _logger.LogError("Initiate upload succeeded, but no itemId was returned", 
                     nameof(res.Content), res.Content);
                 throw new UploadException("Request succeeded, but no itemId was returned???");
             }
@@ -132,10 +132,11 @@ namespace Digizuite
                         new Uri(_configuration.GetDmm3Bwsv3Url(), UploadFileChunkEndpoint));
                     var finished = endOfStream ? 1 : 0;
                     uri.Query =
-                        $"itemid={itemId}&jsonresponse=1&finished={finished}";
+                        $"accessKey={ak}&itemid={itemId}&jsonresponse=1&finished={finished}";
                     var response = await webClient.UploadDataTaskAsync(uri.Uri, "POST", buffer).ConfigureAwait(false);
                     var actualResponse = Encoding.UTF8.GetString(response);
 
+                    //TODO: CHECK RESPONSE
 
                     _logger.LogDebug("Uploaded file chunk", nameof(itemId), itemId, nameof(actualResponse),
                         actualResponse);
@@ -152,6 +153,7 @@ namespace Digizuite
         private async Task FinishUpload(int uploadId, int itemId)
         {
             var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
+            _logger.LogDebug("Using AccessKey", nameof(ak), ak);
 
             var request = new RestRequest(UploadEndpoint);
             request.AddParameter("method", "UploadAsset")
@@ -161,10 +163,10 @@ namespace Digizuite
             _logger.LogTrace("Finishing upload", nameof(uploadId), uploadId, nameof(itemId), itemId);
             var response = await _restClient.Execute<DigiResponse<object>>(Method.POST, request, ak).ConfigureAwait(false);
 
-            _logger.LogDebug("Finished upload", nameof(response), response);
+            _logger.LogDebug("Finished upload", nameof(response.Content), response.Content);
             if (!response.Data.Success)
             {
-                _logger.LogError("Finish upload failed", nameof(response), response);
+                _logger.LogError("Finish upload failed", nameof(response.Content), response.Content);
                 throw new UploadException("Finish upload failed");
             }
         }
@@ -183,11 +185,11 @@ namespace Digizuite
 
             _logger.LogTrace("Finishing replace");
             var response = await _restClient.Execute<DigiResponse<object>>(Method.POST, request, ak).ConfigureAwait(false);
-            _logger.LogDebug("Finished replace", nameof(response), response);
+            _logger.LogDebug("Finished replace", nameof(response.Content), response.Content);
 
             if (!response.Data.Success)
             {
-                _logger.LogError("Finish replace failed", nameof(response), response);
+                _logger.LogError("Finish replace failed", nameof(response.Content), response.Content);
                 throw new UploadException("Finish replace failed");
             }
         }

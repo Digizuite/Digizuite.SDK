@@ -38,9 +38,8 @@ namespace Digizuite.Test.IntegrationTests
                 SystemPassword = password,
                 AccessKeyDuration = accessKeyDuration
             };
-
-
             var serviceCollection = new ServiceCollection();
+
 
             serviceCollection.AddSingleton(Configuration);
             serviceCollection.AddDigizuite();

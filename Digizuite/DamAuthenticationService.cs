@@ -129,7 +129,7 @@ namespace Digizuite
 
                 if (!res.Data.Success)
                 {
-                    _logger.LogError("Authentication failed", "response", res);
+                    _logger.LogError("Authentication failed", "response", res.Content);
                     throw new AuthenticationException("Authentication failed");
                 }
 
