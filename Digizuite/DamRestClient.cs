@@ -10,7 +10,7 @@ namespace Digizuite
     /// <inheritdoc />
     public class DamRestClient : IDamRestClient
     {
-        private readonly RestClient _client;
+        private readonly IRestClient _client;
         private readonly ILogger<DamRestClient> _logger;
         private readonly IConfiguration _configuration;
 
@@ -18,15 +18,15 @@ namespace Digizuite
         /// Constructor
         /// </summary>
         /// <param name="configuration"></param>
-        /// <param name="logger">optional logger</param>
-        public DamRestClient(IConfiguration configuration, ILogger<DamRestClient> logger)
+        /// <param name="logger">logger</param>
+        /// <param name="client">optional IRestClient used for unit testing</param>
+        public DamRestClient(IConfiguration configuration, ILogger<DamRestClient> logger, IRestClient client = null)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             var baseUrl = _configuration.GetDmm3Bwsv3Url();
-            _client = new RestClient(baseUrl);
-            _client.UseSerializer(() => new JsonNetSerializer());
+            _client = client ?? new RestClient(baseUrl).UseSerializer(() => new JsonNetSerializer());
         }
         /// <inheritdoc />
         public Task<IRestResponse<T>> Execute<T>(Method method, RestRequest request, string accessKey = null)
@@ -40,7 +40,7 @@ namespace Digizuite
             request.Method = method;
             if (!string.IsNullOrWhiteSpace(accessKey))
             {
-                request.AddParameter(DigizuiteConstants.AccessKeyParameter, accessKey);
+                request.AddOrUpdateParameter(DigizuiteConstants.AccessKeyParameter, accessKey);
             }
             return _client.ExecuteAsync<T>(request);
         }
