@@ -28,14 +28,16 @@ namespace Digizuite.Models.Search
         {
             PageSize = pageSize;
             Page = page;
+            if (string.IsNullOrWhiteSpace(searchName)) throw new ArgumentNullException(nameof(searchName));
             SearchName = searchName;
         }
 
         /// <summary>
         /// Alternative constructor for creating a copy of an existing set of search parameters
         /// </summary>
-        public SearchParameters(SearchParameters parameters) : base(parameters)
+        public SearchParameters(SearchParameters parameters) : base(parameters ?? new NameValueCollection())
         {
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
         }
 
         /// <summary>
