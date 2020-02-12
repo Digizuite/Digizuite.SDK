@@ -343,25 +343,25 @@ namespace Digizuite
             var response = await _restClient.Execute<DigiResponse<MetaFieldResponse>>(Method.GET, restRequest, accessKey).ConfigureAwait(false);
             if (!response.Data.Success)
             {
-                _logger.LogError("GetMetadata failed", "response", response);
+                _logger.LogError("GetMetadata failed", "response", response.Content);
                 throw new Exception(
                     $"response from api went horrible: Warnings are {response.Data.Warnings}, Errors are {response.Data.Errors}");
             }
 
             if (response.Data.Items == null)
             {
-                _logger.LogError("Request successful, no metafields returned", "response", response,
+                _logger.LogError("Request successful, no metafields returned", "response", response.Content,
                     nameof(fieldItemIds), fieldItemIds);
                 throw new Exception("Request successful, no metafields returned");
             }
 
             if (response.Data.Items.Count == 0)
             {
-                _logger.LogWarning("Request successful, no metafields returned", nameof(response), response,
+                _logger.LogWarning("Request successful, no metafields returned", nameof(response), response.Content,
                     nameof(fieldItemIds), fieldItemIds);
             }
 
-            _logger.LogTrace("Get metadata response", "response", response);
+            _logger.LogTrace("Get metadata response", "response", response.Content);
 
             return response.Data.Items;
         }

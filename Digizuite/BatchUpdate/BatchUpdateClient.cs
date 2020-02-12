@@ -44,19 +44,18 @@ namespace Digizuite.BatchUpdate
             var restRequest = new RestRequest("BatchUpdateService.js");
             restRequest.AddParameter("updateXML", request.UpdateXml)
                 .AddParameter("values", request.Values)
-                .AddParameter("accessKey", accessKey)
                 .AddParameter("useVersionedMetadata", useVersionedMetadata);
 
             var res = await _restClient.Execute<DigiResponse<BatchUpdateResponse>>(Method.POST, restRequest, accessKey).ConfigureAwait(false);
             if (!res.Data.Success)
             {
-                _logger.LogError("Batch Update request failed", "response", res);
+                _logger.LogError("Batch Update request failed", "response", res.Content);
                 throw new Exception("Batch update request failed");
             }
 
-            _logger.LogDebug("Batch update response", "response", res);
+            _logger.LogDebug("Batch update response", "response", res.Content);
 
-            return res.Items;
+            return res.Data.Items;
         }
 
         private BatchRequestBodyPartial CreateBatchRequest(Batch batch)
