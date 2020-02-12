@@ -44,4 +44,4 @@ jobs:
       if: github.ref == 'refs/heads/master'
       run: |
         dotnet pack --configuration Release --include-source --no-build --output out --version-suffix "-alpha" /p:PatchVersion=${{github.run_number}}
-        dotnet nuget push out\Digizuite.*.${{github.run_number}}-alpha.nupkg --api-key ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json
+        dotnet nuget push out\Digizuite.*.${{github.run_number}}-alpha.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json

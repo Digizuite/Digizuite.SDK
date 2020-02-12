@@ -8,6 +8,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <NoWarn>CA2227,CA1303,CA1822,CA1812</NoWarn>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>true</IncludeSymbols>
     <PackageVersion>$(DamVersion).$(PatchVersion)$(VersionSuffix)</PackageVersion>
     <PackageProjectUrl>https://github.com/Digizuite/Digizuite.SDK</PackageProjectUrl>
   </PropertyGroup>

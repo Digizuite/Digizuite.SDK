@@ -10,6 +10,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Digizuite</RootNamespace>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>true</IncludeSymbols>
     <PackageVersion>$(DamVersion).$(PatchVersion)$(VersionSuffix)</PackageVersion>
     <PackageProjectUrl>https://github.com/Digizuite/Digizuite.SDK</PackageProjectUrl>
   </PropertyGroup>
