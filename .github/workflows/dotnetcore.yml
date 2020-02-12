@@ -31,10 +31,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+
     - name: Build Release
       run: dotnet build --configuration Release
-  
+
+    - name: Publish pre-release to Nuget.org
+      if: github.ref == 'refs/heads/master'
+      run: |
+        dotnet pack --configuration Release --include-source --no-build --output out --version-suffix "-dev.${{github.run_number}}"
+        dotnet nuget push out/*.nupkg --api-key ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json

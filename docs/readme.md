@@ -4,6 +4,9 @@ the sdk and some tips and tricks for interacting with the Digizuite in general.
 
 Feel free to file an issue if you find any problems, or have any questions about how to use the SDK. 
 
+This project is still very much in development, is only compatible with Digizuite DAM from version 
+5.3 and forward.
+
 ## Getting started
 To get started with the Digizuite SDK, you should first install the Digizuite package from nuget:
 
@@ -14,7 +17,7 @@ dotnet install Digizuite Digizuite.Core
 
 Or if you are on .Net Framework
 ```powershell
-Install-Package Digizuite Digizuite.Framework
+Install-Package Digizuite
 ```
 
 
