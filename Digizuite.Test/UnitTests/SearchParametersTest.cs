@@ -29,6 +29,16 @@ namespace Digizuite.Test.UnitTests
             Assert.AreEqual("GetAssets", obj.SearchName, "SearchName did not contain expected value");
         }
 
+        [Test(Description = "Test Constructor with searchName=null")]
+        public void TestConstructor2()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+            {
+                var obj = new SearchParameters<GetAssetsResponse>((string)null);
+            });
+            Assert.That(ex.ParamName, Is.EqualTo("searchName"));
+        }
+
         [Test(Description = "Test Copy Constructor")]
         public void TestCopyConstructor1()
         {
@@ -52,6 +62,17 @@ namespace Digizuite.Test.UnitTests
             Assert.AreEqual(3, cpyParams.Page, "Page did not contain expected value");
             Assert.AreEqual(100, cpyParams.PageSize, "PageSize did not contain expected value");
         }
+
+        [Test(Description = "Test Copy Constructor")]
+        public void TestCopyConstructor3()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+            {
+                var obj = new SearchParameters<GetAssetsResponse>((SearchParameters) null);
+            });
+            Assert.That(ex.ParamName, Is.EqualTo("parameters"));
+        }
+
 
         [Test(Description = "Test PageSize property")]
         public void TestPageSizeProperty1()
@@ -187,7 +208,7 @@ namespace Digizuite.Test.UnitTests
         [Test(Description = "Test SetDateBetween method with default dates")]
         public void TestSetDateBetween1()
         {
-            var par = new SearchParameters("");
+            var par = new SearchParameters("GetAssets");
             par.SetDateBetween("dateRange", new DateTime(0), new DateTime(0));
             Assert.That(par.AllKeys.Contains("dateRange"), "Excpected parameter dateRange not found");
             Assert.That(par.AllKeys.Contains("dateRange_end"), "Excpected parameter dateRange_end not found");
@@ -198,7 +219,7 @@ namespace Digizuite.Test.UnitTests
         [Test(Description = "Test SetDateBetween method with specific start date and default end date")]
         public void TestSetDateBetween2()
         {
-            var par = new SearchParameters("");
+            var par = new SearchParameters("GetAssets");
             par.SetDateBetween("dateRange", new DateTime(2020,2,29), new DateTime(0));
             Assert.That(par.AllKeys.Contains("dateRange"), "Excpected parameter dateRange not found");
             Assert.That(par.AllKeys.Contains("dateRange_end"), "Excpected parameter dateRange_end not found");
@@ -209,7 +230,7 @@ namespace Digizuite.Test.UnitTests
         [Test(Description = "Test SetDateBetween method with default start date and specific end date")]
         public void TestSetDateBetween3()
         {
-            var par = new SearchParameters("");
+            var par = new SearchParameters("GetAssets");
             par.SetDateBetween("dateRange", new DateTime(), new DateTime(2020, 2, 29));
             Assert.That(par.AllKeys.Contains("dateRange"), "Excpected parameter dateRange not found");
             Assert.That(par.AllKeys.Contains("dateRange_end"), "Excpected parameter dateRange_end not found");
@@ -220,7 +241,7 @@ namespace Digizuite.Test.UnitTests
         [Test(Description = "Test SetDateBetween method thows an exception if fromdate is after todate")]
         public void TestSetDateBetween4()
         {
-            var par = new SearchParameters("");
+            var par = new SearchParameters("GetAssets");
             var ex = Assert.Throws<ArgumentException>(() => { par.SetDateBetween("dateRange", new DateTime(2020, 2, 2), new DateTime(2019, 2, 28)); });
             Assert.AreEqual("from date is after to date", ex.Message);
         }
