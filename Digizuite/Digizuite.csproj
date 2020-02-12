@@ -1,9 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <DamVersion>5.3</DamVersion>
+    <PatchVersion>0</PatchVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <NoWarn>CA2227,CA1303,CA1822,CA1812</NoWarn>
-    <PackageVersion>5.3.0$(VersionSuffix)</PackageVersion>
+    <PackageVersion>$(DamVersion).$(PatchVersion)$(VersionSuffix)</PackageVersion>
     <PackageProjectUrl>https://github.com/Digizuite/Digizuite.SDK</PackageProjectUrl>
   </PropertyGroup>
 
