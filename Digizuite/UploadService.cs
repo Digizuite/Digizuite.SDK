@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
 using Digizuite.Models;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace Digizuite
@@ -136,7 +137,13 @@ namespace Digizuite
                     var response = await webClient.UploadDataTaskAsync(uri.Uri, "POST", buffer).ConfigureAwait(false);
                     var actualResponse = Encoding.UTF8.GetString(response);
 
-                    //TODO: CHECK RESPONSE
+                    var resp = JsonConvert.DeserializeObject<DigiResponse<object>>(actualResponse);
+
+                    if (!resp.Success)
+                    {
+                        _logger.LogError("Failed to upload file chunk", nameof(resp), resp);
+                        throw new UploadException("Failed to upload file chunk");
+                    }
 
                     _logger.LogDebug("Uploaded file chunk", nameof(itemId), itemId, nameof(actualResponse),
                         actualResponse);
