@@ -25,14 +25,14 @@ namespace Digizuite.Helpers
                     {
                         return iVal;
                     }
-                    throw new Exception("Cannot create int from the given reader value");
+                    throw new Exception($"Cannot create int from the given reader value {reader.Value}");
                 }
                 case long l:
                     return (int)Convert.ChangeType(l, TypeCode.Int32, CultureInfo.InvariantCulture.NumberFormat);
                 case int i:
                     return i;
                 default:
-                    throw new Exception("Cannot create bool from the given reader value");
+                    throw new Exception($"Cannot create bool from the given reader value {reader.Value}");
             }
         }
 
