@@ -12,9 +12,9 @@ namespace Digizuite.Models
         public int PrevRef { get; set; }
         public int UploadMemberId { get; set; }
         public string Name { get; set; }
-        public int WriteAccess { get; set; }
-        [JsonConverter(typeof(DigizuiteBoolConverter))]
-        public bool AssetVersionId { get; set; }
+        [JsonConverter(typeof(DigizuiteBoolConverter))] 
+        public bool WriteAccess { get; set; }
+        public int AssetVersionId { get; set; }
         public string Thumb { get; set; }
         public string ImagePreview { get; set; }
         public string VideoPreview { get; set; }
@@ -48,8 +48,8 @@ namespace Digizuite.Models
                 hashCode = (hashCode * 397) ^ PrevRef;
                 hashCode = (hashCode * 397) ^ UploadMemberId;
                 hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ WriteAccess;
-                hashCode = (hashCode * 397) ^ AssetVersionId.GetHashCode();
+                hashCode = (hashCode * 397) ^ WriteAccess.GetHashCode();
+                hashCode = (hashCode * 397) ^ AssetVersionId;
                 hashCode = (hashCode * 397) ^ (Thumb != null ? Thumb.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (ImagePreview != null ? ImagePreview.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (VideoPreview != null ? VideoPreview.GetHashCode() : 0);
