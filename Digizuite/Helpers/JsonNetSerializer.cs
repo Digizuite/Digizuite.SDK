@@ -5,20 +5,26 @@ using RestSharp.Serialization;
 
 namespace Digizuite.Helpers
 {
-    internal class JsonNetSerializer : IRestSerializer
+    public class JsonNetSerializer : IRestSerializer
     {
-        private List<JsonConverter> _jsonConverters = new List<JsonConverter>();
+        private readonly List<JsonConverter> _jsonConverters;
         public JsonNetSerializer()
         {
-            _jsonConverters = new List<JsonConverter>();
-            _jsonConverters.Add(new DigizuiteIntConverter());
-            _jsonConverters.Add(new DigizuiteBoolConverter());
+            _jsonConverters = new List<JsonConverter>
+            {
+                new DigizuiteIntConverter(), 
+                new DigizuiteBoolConverter()
+            };
+        }
+        public JsonNetSerializer(List<JsonConverter> converters)
+        {
+            _jsonConverters = converters;
         }
         public string Serialize(object obj) =>
             JsonConvert.SerializeObject(obj);
 
         public string Serialize(Parameter parameter) =>
-            JsonConvert.SerializeObject(parameter.Value);
+            JsonConvert.SerializeObject(parameter?.Value);
 
         public T Deserialize<T>(IRestResponse response) =>
             JsonConvert.DeserializeObject<T>(response.Content, new JsonSerializerSettings()

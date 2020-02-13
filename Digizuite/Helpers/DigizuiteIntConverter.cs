@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Digizuite.Helpers
 {
-    internal class DigizuiteIntConverter : JsonConverter
+    public class DigizuiteIntConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
