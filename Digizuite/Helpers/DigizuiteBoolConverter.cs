@@ -2,12 +2,12 @@ using System;
 using System.Diagnostics.Contracts;
 using Newtonsoft.Json;
 
-namespace Digizuite.Models
+namespace Digizuite.Helpers
 {
     /// <summary>
     /// Converts between the strange ways the Digizuite can represent a bool, to a proper bool
     /// </summary>
-    public class DigizuiteBoolConverter : JsonConverter
+    internal class DigizuiteBoolConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
