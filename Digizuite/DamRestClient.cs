@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Digizuite.Helpers;
 using Digizuite.Models;
 using RestSharp;
 // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable

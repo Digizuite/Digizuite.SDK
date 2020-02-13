@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
 
 namespace Digizuite.Models
 {
@@ -11,14 +10,16 @@ namespace Digizuite.Models
         public int ItemId { get; set; }
         public int PrevRef { get; set; }
         public int UploadMemberId { get; set; }
+        public long FileSize { get; set; }
         public string Name { get; set; }
-        [JsonConverter(typeof(DigizuiteBoolConverter))] 
         public bool WriteAccess { get; set; }
         public int AssetVersionId { get; set; }
         public string Thumb { get; set; }
         public string ImagePreview { get; set; }
         public string VideoPreview { get; set; }
-
+        public DateTime ImportDate { get; set; }
+        public bool IsPublic { get; set; }
+        public int Published { get; set; }
         protected bool Equals(Asset other)
         {
             if (other == null)
@@ -47,9 +48,13 @@ namespace Digizuite.Models
                 hashCode = (hashCode * 397) ^ ItemId;
                 hashCode = (hashCode * 397) ^ PrevRef;
                 hashCode = (hashCode * 397) ^ UploadMemberId;
+                hashCode = (hashCode * 397) ^ AssetVersionId;
+                hashCode = (hashCode * 397) ^ Published;
+                hashCode = (hashCode * 397) ^ FileSize.GetHashCode();
                 hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ WriteAccess.GetHashCode();
-                hashCode = (hashCode * 397) ^ AssetVersionId;
+                hashCode = (hashCode * 397) ^ IsPublic.GetHashCode();
+                hashCode = (hashCode * 397) ^ ImportDate.GetHashCode();
                 hashCode = (hashCode * 397) ^ (Thumb != null ? Thumb.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (ImagePreview != null ? ImagePreview.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (VideoPreview != null ? VideoPreview.GetHashCode() : 0);
