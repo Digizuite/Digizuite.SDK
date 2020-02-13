@@ -7,7 +7,7 @@ namespace Digizuite.Helpers
     /// <summary>
     /// Converts between the strange ways the Digizuite can represent a bool, to a proper bool
     /// </summary>
-    internal class DigizuiteBoolConverter : JsonConverter
+    public class DigizuiteBoolConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
