@@ -53,7 +53,7 @@ namespace Digizuite
             params object[] args)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            logger.Log(LogLevel.Debug, message, args);
+            logger.Log(LogLevel.Debug, exception, message, args);
         }
 
         public static void LogInformation<T>(this ILogger<T> logger, string message)
@@ -103,7 +103,7 @@ namespace Digizuite
             params object[] args)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            logger.Log(LogLevel.Warning, message, args);
+            logger.Log(LogLevel.Warning, exception, message, args);
         }
 
         public static void LogError<T>(this ILogger<T> logger, string message)
@@ -128,7 +128,7 @@ namespace Digizuite
             params object[] args)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            logger.Log(LogLevel.Error, message, args);
+            logger.Log(LogLevel.Error, exception, message, args);
         }
 
         public static void LogCritical<T>(this ILogger<T> logger, string message)
@@ -146,14 +146,14 @@ namespace Digizuite
         public static void LogCritical<T>(this ILogger<T> logger, Exception exception, string message)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            logger.Log(LogLevel.Critical, message);
+            logger.Log(LogLevel.Critical, exception, message);
         }
 
         public static void LogCritical<T>(this ILogger<T> logger, Exception exception, string message,
             params object[] args)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            logger.Log(LogLevel.Critical, message, args);
+            logger.Log(LogLevel.Critical, exception, message, args);
         }
 
         public static void Log<T>(this ILogger<T> logger, LogLevel level, string message)
