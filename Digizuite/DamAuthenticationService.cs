@@ -12,6 +12,7 @@ using Timer = System.Timers.Timer;
 
 namespace Digizuite
 {
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class DamAuthenticationService : IDisposable, IDamAuthenticationService
     {
         private readonly IDamRestClient _restClient;
@@ -38,6 +39,7 @@ namespace Digizuite
             _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+            if (configuration.AccessKeyDuration.TotalMilliseconds <= 0) return;
             _renewalTimer = new Timer(configuration.AccessKeyDuration.TotalMilliseconds * 0.9);
             _renewalTimer.Elapsed += async (sender, args) =>
             {
@@ -114,7 +116,7 @@ namespace Digizuite
                 _logger.LogTrace("Logging in", nameof(username), username, "PasswordLength", password.Length);
 
                 // Hash the password if it has not already been md5'ed beforehand 
-                if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{36}$")) password = CalculateMD5Hash(password);
+                if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{32}$")) password = CalculateMD5Hash(password);
 
                 var request = new RestRequest("ConnectService.js", DataFormat.Json);
                 request.AddParameter("method", "CreateAccesskey");
@@ -159,6 +161,7 @@ namespace Digizuite
 
                 // step 2, convert byte array to hex string
                 var sb = new StringBuilder();
+                // ReSharper disable once ForCanBeConvertedToForeach
                 for (var i = 0; i < hash.Length; i++) sb.Append(hash[i].ToString("x2", CultureInfo.InvariantCulture));
 
                 return sb.ToString();
