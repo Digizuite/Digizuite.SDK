@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
@@ -223,8 +223,8 @@ namespace Digizuite.Test.UnitTests
                             Total = 22,
                             Items = new List<Asset>()
                             {
-                                new Asset() {AssetId = 1, ItemId = 9001, AssetType = AssetType.META, Name = "asset_1", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null },
-                                new Asset() {AssetId = 2, ItemId = 9002, AssetType = AssetType.META, Name = "asset_2", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null  },
+                                new Asset() {AssetId = 1, ItemId = 9001, AssetType = AssetType.META, Name = "asset_1", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 00, 00) },
+                                new Asset() {AssetId = 2, ItemId = 9002, AssetType = AssetType.META, Name = "asset_2", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 01, 00) },
                             }
                         }
                     };
@@ -254,8 +254,8 @@ namespace Digizuite.Test.UnitTests
                             Total = 22,
                             Items = new List<Asset>()
                             {
-                                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META },
-                                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META },
+                                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META, Name = "asset_3", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
+                                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META, Name = "asset_4", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
                             }
                         }
                     };
@@ -276,8 +276,8 @@ namespace Digizuite.Test.UnitTests
 
             var expectedResult = new List<Asset>()
             {
-                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META},
-                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META},
+                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META, Name = "asset_3", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
+                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META, Name = "asset_4", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
             };
             Assert.That(secondResult.Items, Is.EquivalentTo(expectedResult));
         }
