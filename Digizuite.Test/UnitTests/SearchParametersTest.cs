@@ -27,16 +27,15 @@ namespace Digizuite.Test.UnitTests
             Assert.AreEqual(2, obj.Page, "Page did not contain expected value");
             Assert.AreEqual(10, obj.PageSize, "PageSize did not contain expected value");
             Assert.AreEqual("GetAssets", obj.SearchName, "SearchName did not contain expected value");
+            Assert.That(obj.Method, Is.Null);
         }
 
-        [Test(Description = "Test Constructor with searchName=null")]
-        public void TestConstructor2()
+        [Test]
+        public void TestConstructorWithExplicitMethod()
         {
-            var ex = Assert.Throws<ArgumentNullException>(() =>
-            {
-                var obj = new SearchParameters<GetAssetsResponse>((string)null);
-            });
-            Assert.That(ex.ParamName, Is.EqualTo("searchName"));
+            var obj = new SearchParameters<GetAssetsResponse>(method: "MyMethod");
+            Assert.That(obj.Method, Is.EqualTo("MyMethod"));
+            Assert.That(obj.SearchName, Is.Null);
         }
 
         [Test(Description = "Test Copy Constructor")]

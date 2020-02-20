@@ -24,12 +24,20 @@ namespace Digizuite.Models.Search
         /// <param name="searchName">The name of the search to execute</param>
         /// <param name="page">The page to load</param>
         /// <param name="pageSize">How many items to return</param>
-        public SearchParameters(string searchName, int page = DefaultPage, int pageSize = DefaultPageSize)
+        /// <param name="method">A method name in the api</param>
+        public SearchParameters(string searchName = null, int page = DefaultPage, int pageSize = DefaultPageSize, string method = null)
         {
             PageSize = pageSize;
             Page = page;
-            if (string.IsNullOrWhiteSpace(searchName)) throw new ArgumentNullException(nameof(searchName));
-            SearchName = searchName;
+            if (!string.IsNullOrWhiteSpace(searchName))
+            {
+                SearchName = searchName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(method))
+            {
+                Method = method;
+            }
         }
 
         /// <summary>
@@ -221,14 +229,9 @@ namespace Digizuite.Models.Search
     /// <typeparam name="T"></typeparam>
     public class SearchParameters<T> : SearchParameters
     {
-        /// <summary>
-        /// Creates a type specific set of search parameters
-        /// </summary>
-        /// <param name="searchName">The name of the search to execute</param>
-        /// <param name="page">The page to load</param>
-        /// <param name="pageSize">How many items to load per page</param>
-        public SearchParameters(string searchName, int page = DefaultPage, int pageSize = DefaultPageSize) : base(
-            searchName, page, pageSize)
+        /// <inheritdoc/>
+        public SearchParameters(string searchName = null, int page = DefaultPage, int pageSize = DefaultPageSize, string method = null) : base(
+            searchName, page, pageSize, method)
         {
         }
 
