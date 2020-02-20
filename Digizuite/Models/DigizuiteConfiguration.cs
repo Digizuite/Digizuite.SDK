@@ -13,7 +13,7 @@ namespace Digizuite.Models
         /// How long the access key lasts before it expires and should be renewed.
         /// We will renew the access key 10% before the duration is up, so we have time to fetch a new access key
         /// </summary>
-        public TimeSpan AccessKeyDuration { get; set; }
+        public TimeSpan AccessKeyDuration { get; set; } = TimeSpan.FromDays(1);
 
         public string SystemUsername { get; set; }
         public string SystemPassword { get; set; }
