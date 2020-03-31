@@ -17,5 +17,8 @@ namespace Digizuite.Models
 
         string SystemUsername { get; set; }
         string SystemPassword { get; set; }
+        
+        string ConfigVersionId { get; set; }
+        string DataVersionId { get; set; }
     }
 }

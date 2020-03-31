@@ -29,6 +29,18 @@ namespace Digizuite.Test.UnitTests
             set => Disallow(value);
         }
 
+        public string ConfigVersionId
+        {
+            get => Disallow<string>();
+            set => Disallow(value);
+        }
+
+        public string DataVersionId
+        {
+            get => Disallow<string>();
+            set => Disallow(value);
+        }
+
         // ReSharper disable once UnusedParameter.Local
         private static T Disallow<T>(T _ = default)
         {
