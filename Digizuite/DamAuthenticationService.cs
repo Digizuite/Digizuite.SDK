@@ -127,6 +127,16 @@ namespace Digizuite
                 request.AddParameter("username", username);
                 request.AddParameter("password", password);
 
+                if (!string.IsNullOrWhiteSpace(_configuration.ConfigVersionId))
+                {
+                    request.AddParameter("configversionid", _configuration.ConfigVersionId);
+
+                    request.AddParameter("dataversionid",
+                        string.IsNullOrWhiteSpace(_configuration.DataVersionId)
+                            ? _configuration.ConfigVersionId
+                            : _configuration.DataVersionId);
+                }
+
                 var res = await _restClient.Execute<DigiResponse<AuthenticateResponse>>(Method.POST, request).ConfigureAwait(false);
 
                 if (!res.Data.Success)
