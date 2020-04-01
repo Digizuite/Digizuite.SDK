@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Digizuite.BatchUpdate.Models
 {
     public class FieldType

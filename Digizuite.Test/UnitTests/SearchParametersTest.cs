@@ -67,7 +67,7 @@ namespace Digizuite.Test.UnitTests
         {
             var ex = Assert.Throws<ArgumentNullException>(() =>
             {
-                var obj = new SearchParameters<GetAssetsResponse>((SearchParameters) null);
+                var _ = new SearchParameters<GetAssetsResponse>((SearchParameters) null);
             });
             Assert.That(ex.ParamName, Is.EqualTo("parameters"));
         }

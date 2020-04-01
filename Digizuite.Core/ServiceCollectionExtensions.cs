@@ -1,5 +1,6 @@
 using Digizuite.BatchUpdate;
 using Digizuite.Cache;
+using Digizuite.Folders;
 using Digizuite.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +24,9 @@ namespace Digizuite
             services.AddSingleton<IMetaFieldCacheService, MetaFieldCacheService>();
             services.AddSingleton<IMetaFieldsLoaderService, MetaFieldsLoaderService>();
             services.AddSingleton<IMetaGroupLoaderService, MetaGroupLoaderService>();
+            services.AddSingleton<IFolderService, FolderService>();
+            services.AddSingleton<IAssetFolderService, AssetFolderService>();
+
             if (!options.HasFlag(DigizuiteOption.SkipCache))
             {
                 services.AddSingleton(typeof(ICache<>), typeof(InMemoryCache<>));
