@@ -12,7 +12,7 @@ using Digizuite.Models.Metadata.Internal;
 using Digizuite.Models.Metadata.Values;
 using RestSharp;
 
-namespace Digizuite
+namespace Digizuite.Metadata
 {
     public class MetadataValueService : IMetadataValueService
     {
