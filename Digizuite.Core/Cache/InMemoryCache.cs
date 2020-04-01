@@ -26,6 +26,21 @@ namespace Digizuite.Cache
 
         public async Task<T> Get(string key, TimeSpan duration, Func<Task<T>> loadPredicate)
         {
+            if (loadPredicate == null)
+            {
+                throw new ArgumentNullException(nameof(loadPredicate));
+            }
+
+            if (duration == default)
+            {
+                throw new ArgumentNullException(nameof(duration));
+            }
+
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentException("No proper cache was provided", nameof(key));
+            }
+            
             if (_internalCache.TryGetValue<T>(key, out var result))
             {
                 return result;
