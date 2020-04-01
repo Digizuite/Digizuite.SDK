@@ -11,12 +11,12 @@ namespace Digizuite.Folders
 {
     public class AssetFolderService : IAssetFolderService, IDisposable
     {
-        private readonly BatchUpdateClient _batchUpdateClient;
+        private readonly IBatchUpdateClient _batchUpdateClient;
         private readonly IFolderService _folderService;
         private readonly ILogger<AssetFolderService> _logger;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
-        public AssetFolderService(BatchUpdateClient batchUpdateClient, IFolderService folderService,
+        public AssetFolderService(IBatchUpdateClient batchUpdateClient, IFolderService folderService,
             ILogger<AssetFolderService> logger)
         {
             _batchUpdateClient = batchUpdateClient;
