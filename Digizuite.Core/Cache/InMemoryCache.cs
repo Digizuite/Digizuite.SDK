@@ -8,12 +8,10 @@ using Microsoft.Extensions.Caching.Memory;
 namespace Digizuite.Cache
 {
     /// <summary>
-    /// Is a cache implementation, that relies on the standard IDistributedCache.
-    /// Entries are cached with sliding 5 minutes, with no actual expiration, unless the cache is
-    /// explicitly busted for a certain item
+    /// Is a cache implementation, that relies on the standard IMemoryCache
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal class InMemoryCache<T> : ICache<T>, IDisposable
+    public class InMemoryCache<T> : ICache<T>, IDisposable
     {
         private IMemoryCache _internalCache;
         private ILogger<InMemoryCache<T>> _logger;
@@ -72,8 +70,25 @@ namespace Digizuite.Cache
 
         public void Dispose()
         {
-            _internalCache?.Dispose();
-            _semaphore?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private bool _disposed;
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    
+                    _internalCache?.Dispose();
+                    _semaphore?.Dispose();
+                }
+
+                _disposed = true;
+            }
         }
     }
 }
