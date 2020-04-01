@@ -1,4 +1,5 @@
 using Digizuite.BatchUpdate;
+using Digizuite.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Digizuite

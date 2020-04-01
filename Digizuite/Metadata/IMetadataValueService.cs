@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Digizuite.Models.Metadata.Fields;
 
-namespace Digizuite
+namespace Digizuite.Metadata
 {
     public interface IMetadataValueService
     {

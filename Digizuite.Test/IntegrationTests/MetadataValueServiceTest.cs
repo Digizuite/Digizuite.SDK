@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Digizuite.Metadata;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Test.TestUtils;
