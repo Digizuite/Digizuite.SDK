@@ -1,4 +1,5 @@
 using Digizuite.BatchUpdate;
+using Digizuite.Cache;
 using Digizuite.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +10,7 @@ namespace Digizuite
         /// <summary>
         /// Adds the services from the Digizuite SDK to the service provider
         /// </summary>
-        public static IServiceCollection AddDigizuite(this IServiceCollection services)
+        public static IServiceCollection AddDigizuite(this IServiceCollection services, DigizuiteOption options = DigizuiteOption.Nothing)
         {
             services.AddSingleton<IDamRestClient, DamRestClient>();
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
@@ -19,7 +20,15 @@ namespace Digizuite
             services.AddSingleton<IMetadataValueService, MetadataValueService>();
             services.AddSingleton<IAssetStreamerService, AssetStreamerService>();
             services.AddSingleton<IAssetService, AssetService>();
-            
+            services.AddSingleton<IMetaFieldCacheService, MetaFieldCacheService>();
+            services.AddSingleton<IMetaFieldsLoaderService, MetaFieldsLoaderService>();
+            services.AddSingleton<IMetaGroupLoaderService, MetaGroupLoaderService>();
+            if (!options.HasFlag(DigizuiteOption.SkipCache))
+            {
+                services.AddSingleton(typeof(ICache<>), typeof(InMemoryCache<>));
+                services.AddMemoryCache();
+            }
+
             return services;
         }
     }

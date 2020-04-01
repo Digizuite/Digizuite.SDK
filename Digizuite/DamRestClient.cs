@@ -30,7 +30,7 @@ namespace Digizuite
             _client = client ?? new RestClient(baseUrl).UseSerializer(() => new JsonNetSerializer());
         }
         /// <inheritdoc />
-        public Task<IRestResponse<T>> Execute<T>(Method method, RestRequest request, string accessKey = null)
+        public Task<IRestResponse<T>>  Execute<T>(Method method, RestRequest request, string accessKey = null)
         {
             if (request == null)
             {

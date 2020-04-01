@@ -46,7 +46,11 @@ namespace Digizuite.Test.IntegrationTests
             serviceCollection.AddSingleton(typeof(ILogger<>), typeof(ConsoleLogger<>));
             SetupDependencies(serviceCollection);
 
-            ServiceProvider = serviceCollection.BuildServiceProvider();
+            ServiceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions()
+            {
+                ValidateScopes = true,
+                ValidateOnBuild = true
+            });
         }
     }
 }
