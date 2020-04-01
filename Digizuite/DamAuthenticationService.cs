@@ -143,7 +143,7 @@ namespace Digizuite
                 if (res.ErrorException != null)
                 {
                     _logger.LogError(res.ErrorException, "Request failed", nameof(res.ErrorMessage), res.ErrorMessage);
-                    throw new AuthenticationException("Network request failed");
+                    throw new AuthenticationException("Network request failed", res.ErrorException);
                 }
                 
                 if (!res.Data.Success)
