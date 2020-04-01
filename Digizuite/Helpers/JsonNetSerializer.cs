@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serialization;
@@ -26,12 +27,19 @@ namespace Digizuite.Helpers
         public string Serialize(Parameter parameter) =>
             JsonConvert.SerializeObject(parameter?.Value);
 
-        public T Deserialize<T>(IRestResponse response) =>
-            JsonConvert.DeserializeObject<T>(response.Content, new JsonSerializerSettings()
+        public T Deserialize<T>(IRestResponse response)
+        {
+            if (response == null)
+            {
+                throw new ArgumentNullException(nameof(response));
+            }
+
+            return JsonConvert.DeserializeObject<T>(response.Content, new JsonSerializerSettings
             {
                 DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                 Converters = _jsonConverters ?? new List<JsonConverter>()
             });
+        }
 
         public string[] SupportedContentTypes { get; } =
         {

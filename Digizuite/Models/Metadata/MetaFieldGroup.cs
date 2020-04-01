@@ -10,8 +10,8 @@ namespace Digizuite.Models.Metadata
 
     public class MetaFieldGroupFolder
     {
-        public int FolderId;
-        public string Name;
-        public int ParentFolderId;
+        public int FolderId { get; set; }
+        public string Name { get; set; }
+        public int ParentFolderId { get; set; }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using Digizuite.Models;
 using Digizuite.Samples;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NUnit.Framework;
 
 namespace Digizuite.Test.IntegrationTests
@@ -52,5 +53,27 @@ namespace Digizuite.Test.IntegrationTests
                 ValidateOnBuild = true
             });
         }
+        
+        
+        protected static void ReplaceWith<TReplaced, TReplacer>(IServiceCollection services)
+            where TReplaced : class
+            where TReplacer : new()
+        {
+            services.Replace(new ServiceDescriptor(typeof(TReplaced), new TReplacer()));
+        }
+        
+        
+        protected TAs Get<TType, TAs>()
+            where TType : class
+            where TAs : class, TType
+        {
+            if (ServiceProvider.GetRequiredService<TType>() is TAs type)
+            {
+                return type;
+            }
+
+            throw new ArgumentException("TAs was not of the correct type to cast to TType");
+        }
+
     }
 }

@@ -35,7 +35,7 @@ namespace Digizuite.Test.UnitTests
                 )
             ).ReturnsAsync(() => null);
             
-            var result = await damRest.Execute<DigiResponse<object>>(Method.PATCH, restRequest.Object, accessKey);
+            await damRest.Execute<DigiResponse<object>>(Method.PATCH, restRequest.Object, accessKey);
 
             Assert.AreEqual(Method.PATCH, restRequest.Object.Method);
             
@@ -66,7 +66,7 @@ namespace Digizuite.Test.UnitTests
                 )
             ).ReturnsAsync(() => null);
 
-            var result = await damRest.Execute<DigiResponse<object>>(Method.POST, restRequest.Object, accessKey);
+            await damRest.Execute<DigiResponse<object>>(Method.POST, restRequest.Object, accessKey);
 
             restRequest.VerifyNoOtherCalls();
             Assert.That(restRequest.Object.Parameters.Find(p =>
@@ -98,7 +98,7 @@ namespace Digizuite.Test.UnitTests
                 )
             ).ReturnsAsync(() => null);
 
-            var result = await damRest.Execute<DigiResponse<object>>(Method.POST, restRequest.Object, accessKey);
+            await damRest.Execute<DigiResponse<object>>(Method.POST, restRequest.Object, accessKey);
 
             restRequest.VerifyNoOtherCalls();
             Assert.That(restRequest.Object.Parameters.Find(p =>
@@ -131,7 +131,7 @@ namespace Digizuite.Test.UnitTests
 
             var ex = Assert.Throws<ArgumentNullException>(() =>
                 {
-                    var res = damRest.Execute<DigiResponse<object>>(Method.POST, null, accessKey).GetAwaiter().GetResult();
+                    damRest.Execute<DigiResponse<object>>(Method.POST, null, accessKey).GetAwaiter().GetResult();
 
                 }
             );

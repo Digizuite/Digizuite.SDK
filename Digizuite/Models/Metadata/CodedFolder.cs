@@ -1,5 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Digizuite.Models.Metadata
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "CA1707")]
     public enum CodedFolder
     {
         Default = 0,
