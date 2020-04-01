@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -139,6 +140,12 @@ namespace Digizuite
 
                 var res = await _restClient.Execute<DigiResponse<AuthenticateResponse>>(Method.POST, request).ConfigureAwait(false);
 
+                if (res.ErrorException != null)
+                {
+                    _logger.LogError(res.ErrorException, "Request failed", nameof(res.ErrorMessage), res.ErrorMessage);
+                    throw new AuthenticationException("Network request failed");
+                }
+                
                 if (!res.Data.Success)
                 {
                     _logger.LogError("Authentication failed", "response", res.Content);
