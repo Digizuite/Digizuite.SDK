@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Digizuite.Models.Search
 {
@@ -49,11 +50,13 @@ namespace Digizuite.Models.Search
         /// <summary>
         ///     Gets the search parameters for getting the next page
         /// </summary>
+        [JsonIgnore]
         public SearchParameters<T> Next => GoToPage(_searchParameters.Page + 1);
 
         /// <summary>
         ///     Gets the search parameters for getting the previous page
         /// </summary>
+        [JsonIgnore]
         public SearchParameters<T> Previous => GoToPage(_searchParameters.Page - 1);
 
         /// <summary>
