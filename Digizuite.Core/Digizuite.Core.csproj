@@ -8,7 +8,7 @@
 
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <NoWarn>CA2227,CA1303,CA1822,CA1812,CA1714</NoWarn>
     <RootNamespace>Digizuite</RootNamespace>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

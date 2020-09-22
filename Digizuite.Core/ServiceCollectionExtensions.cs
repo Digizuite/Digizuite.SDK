@@ -26,6 +26,7 @@ namespace Digizuite
             services.AddSingleton<IMetaGroupLoaderService, MetaGroupLoaderService>();
             services.AddSingleton<IFolderService, FolderService>();
             services.AddSingleton<IAssetFolderService, AssetFolderService>();
+            services.AddSingleton<IItemService, ItemService>();
 
             if (!options.HasFlag(DigizuiteOption.SkipCache))
             {
