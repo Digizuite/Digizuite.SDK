@@ -33,7 +33,7 @@ namespace Digizuite
         }
         public async Task<ItemInfo> GetItemInfoFromBaseId(ItemType itemType, int baseId)
         {
-            var parameters = new SearchParameters("DigiZuite_System_Item", 1, 25) {Page = 1, PageSize = 25};
+            _logger.LogDebug("Getting item info", nameof(ItemType), itemType, nameof(baseId), baseId);
             return await InnerGetItemInfo($"{itemType}_{baseId}", new SearchParameters("DigiZuite_System_Item", 1, 25) {{"sItemType", (int)itemType}, {"sBaseId",baseId}}).ConfigureAwait(false);
         }
         private async Task<ItemInfo> InnerGetItemInfo(string cacheKey, SearchParameters parameters)
