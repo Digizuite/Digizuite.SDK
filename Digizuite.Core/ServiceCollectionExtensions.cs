@@ -27,7 +27,7 @@ namespace Digizuite
             services.AddSingleton<IFolderService, FolderService>();
             services.AddSingleton<IAssetFolderService, AssetFolderService>();
             services.AddSingleton<IItemService, ItemService>();
-
+            services.AddSingleton<IProductService, ProductService>();
             if (!options.HasFlag(DigizuiteOption.SkipCache))
             {
                 services.AddSingleton(typeof(ICache<>), typeof(InMemoryCache<>));
