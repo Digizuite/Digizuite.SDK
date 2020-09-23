@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
 using Digizuite.Models;
 using RestSharp;
-// ReSharper disable StringLiteralTypo
 
 namespace Digizuite
 {
@@ -24,7 +20,7 @@ namespace Digizuite
             _logger = logger;
         }
 
-        public async Task<DigiResponse<string>> GetProductItemGuidFromVersionId(string versionId, string accessKey = null)
+        public async Task<string> GetProductItemGuidFromVersionId(string versionId, string accessKey = null)
         {
             _logger.LogDebug("GetProductItemGuidFromVersionId", nameof(versionId), versionId);
             if (string.IsNullOrWhiteSpace(accessKey))
@@ -32,17 +28,23 @@ namespace Digizuite
             
             var request = new RestRequest("MetadataService.js");
             request.AddParameter("method", "GetProductItemGuidFromVersionId");
+            // ReSharper disable once StringLiteralTypo
             request.AddParameter("accesskey", accessKey);
             request.AddParameter("versionId", versionId);
             var response = await _restClient.Execute<DigiResponse<string>>(Method.POST, request, accessKey).ConfigureAwait(false);
-            _logger.LogTrace("Got api response");
+            _logger.LogTrace("Got api response", response);
 
             if (!response.Data.Success)
             {
                 _logger.LogError("request failed", nameof(response), response.Data, nameof(response.Content), response.Content);
-                throw new ProductException($"{nameof(GetProductItemGuidFromVersionId)} request failed");
+                throw new ProductVersionNotFoundException($"{nameof(GetProductItemGuidFromVersionId)} did not find a Product ItemGuid for Version {versionId}");
             }
-            return response.Data;
+            if (!response.Data.Items.Any())
+            {
+                _logger.LogError("request failed", nameof(response), response.Data, nameof(response.Content), response.Content);
+                throw new ProductVersionNotFoundException($"{nameof(GetProductItemGuidFromVersionId)} succeeded, but did not return a Product ItemGuid for VersionId {versionId}");
+            }
+            return response.Data.Items[0];
         }
     }
 }
