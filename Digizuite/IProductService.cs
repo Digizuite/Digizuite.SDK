@@ -5,6 +5,6 @@ namespace Digizuite
 {
     public interface IProductService
     {
-        Task<DigiResponse<string>> GetProductItemGuidFromVersionId(string versionId, string accessKey = null);
+        Task<string> GetProductItemGuidFromVersionId(string versionId, string accessKey = null);
     }
 }
