@@ -29,9 +29,8 @@ namespace Digizuite
             var request = new RestRequest("MetadataService.js");
             request.AddParameter("method", "GetProductItemGuidFromVersionId");
             // ReSharper disable once StringLiteralTypo
-            request.AddParameter("accesskey", accessKey);
             request.AddParameter("versionId", versionId);
-            var response = await _restClient.Execute<DigiResponse<string>>(Method.POST, request, accessKey).ConfigureAwait(false);
+            var response = await _restClient.Execute<DigiSingleResult<string>>(Method.POST, request, accessKey).ConfigureAwait(false);
             _logger.LogTrace("Got api response", response);
 
             if (!response.Data.Success)
@@ -39,12 +38,14 @@ namespace Digizuite
                 _logger.LogError("request failed", nameof(response), response.Data, nameof(response.Content), response.Content);
                 throw new ProductVersionNotFoundException($"{nameof(GetProductItemGuidFromVersionId)} did not find a Product ItemGuid for Version {versionId}");
             }
-            if (!response.Data.Items.Any())
-            {
-                _logger.LogError("request failed", nameof(response), response.Data, nameof(response.Content), response.Content);
-                throw new ProductVersionNotFoundException($"{nameof(GetProductItemGuidFromVersionId)} succeeded, but did not return a Product ItemGuid for VersionId {versionId}");
-            }
-            return response.Data.Items[0];
+            return response.Data.Result;
+        }
+
+        private class DigiSingleResult<T>
+        {
+            public bool Success { get; set; }
+            public T Result { get; set; }
+            public object Errors { get; set; }
         }
     }
 }
