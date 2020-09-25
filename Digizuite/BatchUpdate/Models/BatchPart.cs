@@ -12,6 +12,8 @@ namespace Digizuite.BatchUpdate.Models
 
         public int RowId { get; set; } = 1;
 
+        public RepositoryType RepositoryType { get; set; } = RepositoryType.Default;
+        
         [JsonConverter(typeof(FieldTypeJsonConverter))]
         public FieldType Target { get; set; }
 
