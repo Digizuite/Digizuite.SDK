@@ -12,12 +12,15 @@ namespace Digizuite.BatchUpdate.Models
         public static readonly FieldType LayoutIsPublic = new FieldType("layoutIsPublic");
         public static readonly FieldType DefaultMetafieldLanguageId = new FieldType("defaultmetafieldlanguageid");
         public static readonly FieldType Member = new FieldType("member");
+        public static readonly FieldType MemberGroup = new FieldType("memberGroup");
         public static readonly FieldType MemberGroupIds = new FieldType("membergroupids");
+        public static readonly FieldType GroupName = new FieldType("groupname");
         public static readonly FieldType Folder = new FieldType("folder");
         public static readonly FieldType ItemSecurity = new FieldType("item_security");
         public static readonly FieldType AccessorItemId = new FieldType("accessor_itemid");
         public static readonly FieldType WriteAccess = new FieldType("writeaccess");
         public static readonly FieldType ReadAccess = new FieldType("readaccess");
+        public static readonly FieldType Expires = new FieldType("expires");
         public static readonly FieldType ItemSecurityId = new FieldType("item_securityid");
         public static readonly FieldType MetaComboDefinition = new FieldType("metacombo_definition");
         public static readonly FieldType ComboValue = new FieldType("combovalue");
@@ -28,7 +31,9 @@ namespace Digizuite.BatchUpdate.Models
         public static readonly FieldType ItemMetaFieldLabelId = new FieldType("item_metafield_labelid");
         public static readonly FieldType Password = new FieldType("password");
         public static readonly FieldType Name = new FieldType("name");
-
+        public static readonly FieldType PrevRef = new FieldType("prevref");
+        public static readonly FieldType UserName = new FieldType("username");
+        public static readonly FieldType SourceMediaFormatId = new FieldType("sourcemediaformatid");
 
         public string Value { get; }
 
