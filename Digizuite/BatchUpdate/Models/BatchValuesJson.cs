@@ -10,7 +10,7 @@ namespace Digizuite.BatchUpdate.Models
         public BatchType ContainerType { get; set; }
         public int RowId { get; set; }
         public List<int> ItemIds { get; set; }
-
+        public RepositoryType RepositoryType { get; set; }
         public bool? ForceDelete { get; set; }
 
         public int? ItemId

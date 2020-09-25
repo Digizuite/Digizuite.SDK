@@ -73,6 +73,7 @@ namespace Digizuite.BatchUpdate
                 var baseIds = container.BaseIds;
                 var fieldName = container.FieldName;
                 var forceDelete = container.ForceDelete;
+                var repositoryType = container.RepositoryType;
 
                 var valueFieldIdInc = 0;
                 var parts = container.Values.Select(value =>
@@ -132,6 +133,7 @@ namespace Digizuite.BatchUpdate
                     RowId = rowId,
                     ItemIds = itemIds.Count == 0 ? null : itemIds,
                     BaseIds = baseIds.Count == 0 ? null : baseIds,
+                    RepositoryType = repositoryType,
                     Values = parts.Select(part => part.Item2).ToList(),
                     ForceDelete = forceDelete ? true : (bool?) null
                 };
