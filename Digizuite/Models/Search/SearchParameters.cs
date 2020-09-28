@@ -7,7 +7,7 @@ using System.Linq;
 namespace Digizuite.Models.Search
 {
 #pragma warning disable CA1010,CA1710
-    public class SearchParameters : NameValueCollection
+    public class SearchParameters : NameValueCollection, IPagedParameters
     {
         public const string PageSizeKey = "limit";
         public const int DefaultPageSize = 12;

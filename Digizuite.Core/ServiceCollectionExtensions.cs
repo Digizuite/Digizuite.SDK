@@ -1,4 +1,5 @@
 using Digizuite.BatchUpdate;
+using Digizuite.BatchUpdate.BatchBuilder;
 using Digizuite.Cache;
 using Digizuite.Folders;
 using Digizuite.Metadata;
@@ -28,6 +29,9 @@ namespace Digizuite
             services.AddSingleton<IAssetFolderService, AssetFolderService>();
             services.AddSingleton<IItemService, ItemService>();
             services.AddSingleton<IProductService, ProductService>();
+            services.AddSingleton<IBatchBuilderService, BatchBuilderService>();
+            services.AddSingleton<IComboValueService, ComboValueService>();
+            
             if (!options.HasFlag(DigizuiteOption.SkipCache))
             {
                 services.AddSingleton(typeof(ICache<>), typeof(InMemoryCache<>));

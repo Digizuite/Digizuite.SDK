@@ -4,7 +4,7 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class DateTimeBatchValue : BatchValue
     {
-        public DateTimeBatchValue(FieldType fieldName, DateTime value, IBatchProperties properties) : base(
+        public DateTimeBatchValue(string fieldName, DateTime value, IBatchProperties properties) : base(
             fieldName, value, properties)
         {
         }

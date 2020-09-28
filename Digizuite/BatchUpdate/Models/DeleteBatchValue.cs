@@ -2,7 +2,7 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class DeleteBatchValue : BatchValue
     {
-        public DeleteBatchValue(FieldType fieldName, IBatchProperties properties) : base(fieldName, null,
+        public DeleteBatchValue(string fieldName, IBatchProperties properties) : base(fieldName, null,
             properties)
         {
         }

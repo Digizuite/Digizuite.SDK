@@ -17,7 +17,7 @@ namespace Digizuite.Test.UnitTests
         public void TestDefaultConstructor()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 1, 6);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 1, 6);
             var response = new SearchResponse<GetAssetsResponse>(items,0, parameters);
             Assert.AreSame(items, response.Items, "Expected item list ws not returned");
             Assert.AreEqual(1, response.Page, "Page did not return expected value");
@@ -28,7 +28,7 @@ namespace Digizuite.Test.UnitTests
         public void TestPageCalculation1()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 1, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 1, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             
             Assert.AreSame(items, response.Items, "Expected item list ws not returned");
@@ -41,7 +41,7 @@ namespace Digizuite.Test.UnitTests
         public void TestNext1()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 2, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 2, 3);
             // also test that search arguments are transfered to Next SearchParameter
             parameters.Add("fromAssetId", 0);
             parameters.Add("toAssetId", 10);
@@ -60,7 +60,7 @@ namespace Digizuite.Test.UnitTests
         public void TestNext2()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 3, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 3, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => { var nxt = response.Next; });
             Assert.That(ex.Message, 
@@ -74,7 +74,7 @@ namespace Digizuite.Test.UnitTests
         public void TestPrev1()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 2, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 2, 3);
             // also test that search arguments are transfered to Next SearchParameter
             parameters.Add("fromAssetId", 0);
             parameters.Add("toAssetId", 10);
@@ -91,7 +91,7 @@ namespace Digizuite.Test.UnitTests
         public void TestPrev2()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 1, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 1, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => { var prev= response.Previous; });
             var msg = ex.Message;
@@ -106,7 +106,7 @@ namespace Digizuite.Test.UnitTests
         public void TestGoToPage()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 1, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 1, 3);
             // also test that search arguments are transfered to Next SearchParameter
             parameters.Add("fromAssetId", 0);
             parameters.Add("toAssetId", 10);
@@ -124,7 +124,7 @@ namespace Digizuite.Test.UnitTests
         public void TestIsLast1()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 1, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 1, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             Assert.AreEqual(false, response.IsLast, "IsLast does not return correct value");
         }
@@ -132,7 +132,7 @@ namespace Digizuite.Test.UnitTests
         public void TestIsLast2()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 2, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 2, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             Assert.AreEqual(false, response.IsLast, "IsLast does not return correct value");
         }
@@ -140,7 +140,7 @@ namespace Digizuite.Test.UnitTests
         public void TestIsLast3()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 3, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 3, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 8, parameters);
             Assert.AreEqual(true, response.IsLast, "IsLast does not return correct value");
         }
@@ -148,7 +148,7 @@ namespace Digizuite.Test.UnitTests
         public void TestIsLast4()
         {
             var items = new List<GetAssetsResponse>();
-            var parameters = new SearchParameters("GetAssets", 3, 3);
+            var parameters = new SearchParameters<GetAssetsResponse>("GetAssets", 3, 3);
             var response = new SearchResponse<GetAssetsResponse>(items, 0, parameters);
             Assert.AreEqual(true, response.IsLast, "IsLast does not return correct value");
         }
