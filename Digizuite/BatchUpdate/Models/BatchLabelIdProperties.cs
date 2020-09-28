@@ -8,5 +8,10 @@ namespace Digizuite.BatchUpdate.Models
         {
             LabelId = labelId;
         }
+
+        public string ToUpdateKey()
+        {
+            return $"labelId=\"{LabelId}\"";
+        }
     }
 }

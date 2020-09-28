@@ -45,7 +45,7 @@ namespace Digizuite.BatchUpdate.Models
             }
         }
 
-        public List<BatchValueJsonValue> Values { get; set; }
+        public List<object> Values { get; set; }
         [JsonProperty("fieldName")]
         public string FieldName { get; set; }
     }

@@ -28,6 +28,8 @@ namespace Digizuite
             services.AddSingleton<IAssetFolderService, AssetFolderService>();
             services.AddSingleton<IItemService, ItemService>();
             services.AddSingleton<IProductService, ProductService>();
+            services.AddSingleton<IMetadataUpdateService, MetadataUpdateService>();
+            
             if (!options.HasFlag(DigizuiteOption.SkipCache))
             {
                 services.AddSingleton(typeof(ICache<>), typeof(InMemoryCache<>));

@@ -18,5 +18,15 @@ namespace Digizuite.BatchUpdate.Models
         }
 
         public abstract ValueType ValueType { get; }
+
+        public virtual object ToJsonValue(string fieldId, object actualValues)
+        {
+            return new BatchValueJsonValue
+            {
+                Type = ValueType,
+                FieldId = fieldId,
+                Values = actualValues
+            };
+        }
     }
 }

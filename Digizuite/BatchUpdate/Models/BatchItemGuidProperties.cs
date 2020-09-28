@@ -8,5 +8,10 @@ namespace Digizuite.BatchUpdate.Models
         {
             ItemGuid = itemGuid;
         }
+
+        public string ToUpdateKey()
+        {
+            return $"itemGuid=\"{ItemGuid}\"";
+        }
     }
 }

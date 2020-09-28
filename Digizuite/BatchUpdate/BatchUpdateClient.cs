@@ -95,27 +95,10 @@ namespace Digizuite.BatchUpdate
                                 break;
                         }
 
-                    var updateKey = "";
-                    switch (value.Properties)
-                    {
-                        case null:
-                            updateKey = "";
-                            break;
-                        case BatchItemGuidProperties p:
-                            updateKey = $"itemGuid=\"{p.ItemGuid}\"";
-                            break;
-                        case BatchLabelIdProperties p:
-                            updateKey = $"labelId=\"{p.LabelId}\"";
-                            break;
-                    }
+                    var updateKey = value.Properties?.ToUpdateKey() ?? "";
 
                     var xml = $"<{value.FieldName} fieldId=\"{fieldId}\" {updateKey} />";
-                    var json = new BatchValueJsonValue
-                    {
-                        Type = type,
-                        FieldId = fieldId,
-                        Values = actualValues
-                    };
+                    var json = value.ToJsonValue(fieldId, actualValues);
 
                     return (xml, json);
                 }).ToList();

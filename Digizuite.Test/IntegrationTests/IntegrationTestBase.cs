@@ -76,4 +76,9 @@ namespace Digizuite.Test.IntegrationTests
         }
 
     }
+
+    public class IntegrationTestBase<T> : IntegrationTestBase
+    {
+        public T Service => ServiceProvider.GetRequiredService<T>();
+    }
 }

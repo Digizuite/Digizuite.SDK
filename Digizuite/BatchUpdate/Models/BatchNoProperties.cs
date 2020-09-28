@@ -7,5 +7,10 @@ namespace Digizuite.BatchUpdate.Models
         private BatchNoProperties()
         {
         }
+
+        public string ToUpdateKey()
+        {
+            return "";
+        }
     }
 }
