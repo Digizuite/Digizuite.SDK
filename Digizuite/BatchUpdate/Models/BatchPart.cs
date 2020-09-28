@@ -14,8 +14,7 @@ namespace Digizuite.BatchUpdate.Models
 
         public RepositoryType RepositoryType { get; set; } = RepositoryType.Default;
         
-        [JsonConverter(typeof(FieldTypeJsonConverter))]
-        public FieldType Target { get; set; }
+        public string Target { get; set; }
 
         public List<BatchValue> Values { get; set; } = new List<BatchValue>();
 

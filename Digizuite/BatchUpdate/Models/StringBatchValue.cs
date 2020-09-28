@@ -2,7 +2,7 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class StringBatchValue : BatchValue
     {
-        public StringBatchValue(FieldType fieldName, string value, IBatchProperties properties) : base(fieldName,
+        public StringBatchValue(string fieldName, string value, IBatchProperties properties) : base(fieldName,
             value, properties)
         {
         }

@@ -2,7 +2,7 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class BoolBatchValue : BatchValue
     {
-        public BoolBatchValue(FieldType fieldName, bool value, IBatchProperties properties) : base(fieldName, value,
+        public BoolBatchValue(string fieldName, bool value, IBatchProperties properties) : base(fieldName, value,
             properties)
         {
         }

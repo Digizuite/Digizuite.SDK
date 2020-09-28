@@ -76,4 +76,15 @@ namespace Digizuite.Test.IntegrationTests
         }
 
     }
+
+    public class IntegrationTestBase<TService> : IntegrationTestBase where TService : class
+    {
+        public TService Service => ServiceProvider.GetRequiredService<TService>();
+
+        protected override void SetupDependencies(IServiceCollection services)
+        {
+            services.AddSingleton<TService>();
+            base.SetupDependencies(services);
+        }
+    }
 }

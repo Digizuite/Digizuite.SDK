@@ -2,7 +2,7 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class FloatBatchValue : BatchValue
     {
-        public FloatBatchValue(FieldType fieldName, double value, IBatchProperties properties) : base(fieldName,
+        public FloatBatchValue(string fieldName, double value, IBatchProperties properties) : base(fieldName,
             value, properties)
         {
         }

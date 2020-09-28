@@ -32,8 +32,19 @@ namespace Digizuite
         /// <typeparam name="T">The type the response items should be converted into</typeparam>
         public async Task<SearchResponse<T>> Search<T>(SearchParameters parameters, string accessKey = null)
         {
+            return await Search(new SearchParameters<T>(parameters), accessKey).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Executes the specific search
+        /// </summary>
+        /// <param name="parameters">The parameters to search with</param>
+        /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
+        /// <typeparam name="T">The type of the response items should be converted into</typeparam>
+        public async Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string accessKey = null)
+        {
             // Copy the parameters immediately, so the user cannot change them under us
-            parameters = new SearchParameters(parameters);
+            parameters = new SearchParameters<T>(parameters);
             if (string.IsNullOrWhiteSpace(accessKey))
                 accessKey = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
             
@@ -64,17 +75,6 @@ namespace Digizuite
             
             
             return new SearchResponse<T>(response.Data.Items, response.Data.Total, parameters);
-        }
-
-        /// <summary>
-        /// Executes the specific search
-        /// </summary>
-        /// <param name="parameters">The parameters to search with</param>
-        /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
-        /// <typeparam name="T">The type of the response items should be converted into</typeparam>
-        public Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string accessKey = null)
-        {
-            return Search<T>((SearchParameters) parameters, accessKey);
         }
     }
 }

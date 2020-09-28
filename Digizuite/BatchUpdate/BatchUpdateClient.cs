@@ -65,7 +65,7 @@ namespace Digizuite.BatchUpdate
             var containerFieldIdInc = 0;
             var containers = values.Select(container =>
             {
-                var containerFieldName = container.Target.Value;
+                var containerFieldName = container.Target;
                 var containerFieldId = $"Update_{++containerFieldIdInc}";
                 var containerType = container.BatchType;
                 var rowId = container.RowId;
