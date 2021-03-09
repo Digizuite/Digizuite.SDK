@@ -2,7 +2,7 @@
 
 
   <PropertyGroup>
-    <DamVersion>5.3</DamVersion>
+    <DamVersion>5.5</DamVersion>
     <PatchVersion>0</PatchVersion>
   </PropertyGroup>
 

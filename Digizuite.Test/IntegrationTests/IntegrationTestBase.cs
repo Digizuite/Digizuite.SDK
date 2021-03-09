@@ -32,7 +32,7 @@ namespace Digizuite.Test.IntegrationTests
 
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("password was not set");
 
-            Configuration = new DigizuiteConfiguration
+            var cfg = new DigizuiteConfiguration
             {
                 BaseUrl = new Uri(apiUrl),
                 SystemUsername = username,
@@ -41,9 +41,9 @@ namespace Digizuite.Test.IntegrationTests
             };
             var serviceCollection = new ServiceCollection();
 
+            Configuration = cfg;
 
-            serviceCollection.AddSingleton(Configuration);
-            serviceCollection.AddDigizuite();
+            serviceCollection.AddDigizuite(cfg);
             serviceCollection.AddSingleton(typeof(ILogger<>), typeof(ConsoleLogger<>));
             SetupDependencies(serviceCollection);
 
