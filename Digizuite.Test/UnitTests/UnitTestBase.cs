@@ -23,8 +23,7 @@ namespace Digizuite.Test.UnitTests
 
             var serviceCollection = new ServiceCollection();
 
-            serviceCollection.AddSingleton(Configuration);
-            serviceCollection.AddDigizuite();
+            serviceCollection.AddDigizuite(Configuration);
             serviceCollection.AddSingleton(typeof(ILogger<>), typeof(ConsoleLogger<>));
             SetupDependencies(serviceCollection);
             ServiceProvider = serviceCollection.BuildServiceProvider();

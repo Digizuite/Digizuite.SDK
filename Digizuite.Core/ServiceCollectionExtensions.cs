@@ -3,6 +3,7 @@ using Digizuite.BatchUpdate.BatchBuilder;
 using Digizuite.Cache;
 using Digizuite.Folders;
 using Digizuite.Metadata;
+using Digizuite.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Digizuite
@@ -12,7 +13,16 @@ namespace Digizuite
         /// <summary>
         /// Adds the services from the Digizuite SDK to the service provider
         /// </summary>
-        public static IServiceCollection AddDigizuite(this IServiceCollection services, DigizuiteOption options = DigizuiteOption.Nothing)
+        public static IServiceCollection AddDigizuite(this IServiceCollection services,
+            DigizuiteConfiguration configuration, DigizuiteOption options = DigizuiteOption.Nothing)
+        {
+            return services.AddDigizuite((IConfiguration) configuration, options);
+        }
+        
+        /// <summary>
+        /// Adds the services from the Digizuite SDK to the service provider
+        /// </summary>
+        public static IServiceCollection AddDigizuite(this IServiceCollection services, IConfiguration configuration, DigizuiteOption options = DigizuiteOption.Nothing)
         {
             services.AddSingleton<IDamRestClient, DamRestClient>();
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
@@ -31,6 +41,7 @@ namespace Digizuite
             services.AddSingleton<IProductService, ProductService>();
             services.AddSingleton<IBatchBuilderService, BatchBuilderService>();
             services.AddSingleton<IComboValueService, ComboValueService>();
+            services.AddSingleton(configuration);
             
             if (!options.HasFlag(DigizuiteOption.SkipCache))
             {
