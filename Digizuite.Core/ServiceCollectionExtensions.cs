@@ -41,7 +41,6 @@ namespace Digizuite
             services.AddSingleton<IProductService, ProductService>();
             services.AddSingleton<IBatchBuilderService, BatchBuilderService>();
             services.AddSingleton<IComboValueService, ComboValueService>();
-            services.AddSingleton<ICoreRestClient, DigizuiteCoreRestClient>();
             services.AddSingleton<ServiceHttpWrapper>();
             services.AddSingleton<DevServerConfigurations>();
             services.AddSingleton<HttpClientFactory>();
