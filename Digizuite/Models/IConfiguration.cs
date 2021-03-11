@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Digizuite.Models
 {
@@ -20,5 +21,7 @@ namespace Digizuite.Models
         
         string ConfigVersionId { get; set; }
         string DataVersionId { get; set; }
+        
+        HashSet<ServiceType> DevelopmentServices { get; set; }
     }
 }

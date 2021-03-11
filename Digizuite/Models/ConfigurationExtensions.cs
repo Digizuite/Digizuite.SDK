@@ -19,5 +19,21 @@ namespace Digizuite.Models
             }
             return new Uri(baseUrl);
         }
+
+        public static Uri GetDigizuiteCoreUrl(this IConfiguration config)
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            var baseUrl = config.BaseUrl.ToString();
+
+            if (!baseUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+            {
+                baseUrl += "/";
+            }
+            if (!baseUrl.EndsWith("/DigizuiteCore/", StringComparison.OrdinalIgnoreCase))
+            {
+                baseUrl += "DigizuiteCore/";
+            }
+            return new Uri(baseUrl);
+        }
     }
 }

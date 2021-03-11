@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
 using Digizuite.Models;
@@ -20,7 +21,8 @@ namespace Digizuite
             _logger = logger;
         }
 
-        public async Task<string> GetProductItemGuidFromVersionId(string versionId, string accessKey = null)
+        public async Task<string> GetProductItemGuidFromVersionId(string versionId, string accessKey = null,
+            CancellationToken cancellationToken = default)
         {
             _logger.LogDebug("GetProductItemGuidFromVersionId", nameof(versionId), versionId);
             if (string.IsNullOrWhiteSpace(accessKey))
@@ -30,7 +32,7 @@ namespace Digizuite
             request.AddParameter("method", "GetProductItemGuidFromVersionId");
             // ReSharper disable once StringLiteralTypo
             request.AddParameter("versionId", versionId);
-            var response = await _restClient.Execute<DigiSingleResult<string>>(Method.POST, request, accessKey).ConfigureAwait(false);
+            var response = await _restClient.Execute<DigiSingleResult<string>>(Method.POST, request, accessKey, cancellationToken).ConfigureAwait(false);
             _logger.LogTrace("Got api response", response);
 
             if (!response.Data.Success)

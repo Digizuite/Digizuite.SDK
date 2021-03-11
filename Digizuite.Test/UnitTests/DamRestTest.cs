@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Digizuite.Extensions;
 using Digizuite.Models;
 using NUnit.Framework;
 using Moq;
@@ -21,13 +22,12 @@ namespace Digizuite.Test.UnitTests
                 SystemPassword = "somepwd",
                 AccessKeyDuration = new TimeSpan(86400000L)
             };
-            var logger = new Mock<ILogger<DamRestClient>>(MockBehavior.Strict);
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
             client.Setup(x => x.UseSerializer(It.IsAny<Func<RestSharp.Serialization.IRestSerializer>>()));
             restRequest.SetupAllProperties();
 
-            var damRest = new DamRestClient(configuration, logger.Object, client.Object);
+            var damRest = new DamRestClient(configuration, client.Object);
 
             client.Setup(x =>
                 x.ExecuteAsync<DigiResponse<object>>(
@@ -52,13 +52,12 @@ namespace Digizuite.Test.UnitTests
                 SystemPassword = "somepwd",
                 AccessKeyDuration = new TimeSpan(86400000L)
             };
-            var logger = new Mock<ILogger<DamRestClient>>(MockBehavior.Strict);
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
             client.Setup(x => x.UseSerializer(It.IsAny<Func<RestSharp.Serialization.IRestSerializer>>()));
             restRequest.SetupAllProperties();
 
-            var damRest = new DamRestClient(configuration, logger.Object, client.Object);
+            var damRest = new DamRestClient(configuration, client.Object);
 
             client.Setup(x =>
                 x.ExecuteAsync<DigiResponse<object>>(
@@ -70,9 +69,10 @@ namespace Digizuite.Test.UnitTests
 
             restRequest.VerifyNoOtherCalls();
             Assert.That(restRequest.Object.Parameters.Find(p =>
-                    string.CompareOrdinal(p.Name, DigizuiteConstants.AccessKeyParameter) == 0)?.Value,
-                Is.EqualTo(accessKey));
+                    string.Equals(p.Name, "Authorization", StringComparison.Ordinal))?.Value,
+                Is.EqualTo("AccessKey some access key"));
         }
+
         [Test(Description = "Test that AccessKey and Method is handled correctly in DamRestClient")]
         public async Task TestDamRest3()
         {
@@ -84,13 +84,12 @@ namespace Digizuite.Test.UnitTests
                 SystemPassword = "somepwd",
                 AccessKeyDuration = new TimeSpan(86400000L)
             };
-            var logger = new Mock<ILogger<DamRestClient>>(MockBehavior.Strict);
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
             client.Setup(x => x.UseSerializer(It.IsAny<Func<RestSharp.Serialization.IRestSerializer>>()));
             restRequest.SetupAllProperties();
-            restRequest.Object.AddParameter(DigizuiteConstants.AccessKeyParameter, "accesskey to be overwritten");
-            var damRest = new DamRestClient(configuration, logger.Object, client.Object);
+            restRequest.Object.AddAccessKey("accesskey to be overwritten");
+            var damRest = new DamRestClient(configuration, client.Object);
 
             client.Setup(x =>
                 x.ExecuteAsync<DigiResponse<object>>(
@@ -102,8 +101,8 @@ namespace Digizuite.Test.UnitTests
 
             restRequest.VerifyNoOtherCalls();
             Assert.That(restRequest.Object.Parameters.Find(p =>
-                    string.CompareOrdinal(p.Name, DigizuiteConstants.AccessKeyParameter) == 0)?.Value,
-                Is.EqualTo(accessKey));
+                    string.CompareOrdinal(p.Name, "Authorization") == 0)?.Value,
+                Is.EqualTo("AccessKey " + accessKey));
         }
         [Test(Description = "Test that Execute throws an exception if request is null")]
         public  void TestDamRest4()
@@ -116,12 +115,11 @@ namespace Digizuite.Test.UnitTests
                 SystemPassword = "somepwd",
                 AccessKeyDuration = new TimeSpan(86400000L)
             };
-            var logger = new Mock<ILogger<DamRestClient>>(MockBehavior.Strict);
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
             client.Setup(x => x.UseSerializer(It.IsAny<Func<RestSharp.Serialization.IRestSerializer>>()));
             restRequest.SetupAllProperties();
-            var damRest = new DamRestClient(configuration, logger.Object, client.Object);
+            var damRest = new DamRestClient(configuration, client.Object);
 
             client.Setup(x =>
                 x.ExecuteAsync<DigiResponse<object>>(

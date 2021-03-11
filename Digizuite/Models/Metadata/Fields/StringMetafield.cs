@@ -7,7 +7,7 @@ namespace Digizuite.Models.Metadata.Fields
 
         public override string ToSingleString(string separator)
         {
-            return Value;
+            return Value ?? "";
         }
     }
 }

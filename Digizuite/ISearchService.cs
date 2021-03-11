@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Models.Search;
 
@@ -21,7 +22,9 @@ namespace Digizuite
         /// </summary>
         /// <param name="parameters">The parameters to search with</param>
         /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
+        /// <param name="cancellationToken"></param>
         /// <typeparam name="T">The type of the response items should be converted into</typeparam>
-        Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string accessKey = null);
+        Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string accessKey = null,
+            CancellationToken cancellationToken = default );
     }
 }

@@ -6,7 +6,7 @@ using RestSharp.Serialization;
 
 namespace Digizuite.Helpers
 {
-    public class JsonNetSerializer : IRestSerializer
+    internal class JsonNetSerializer : IRestSerializer
     {
         private readonly List<JsonConverter> _jsonConverters;
         public JsonNetSerializer()

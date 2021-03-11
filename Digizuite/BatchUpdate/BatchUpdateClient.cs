@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.Models;
 using Digizuite.Models;
@@ -27,7 +28,8 @@ namespace Digizuite.BatchUpdate
             _restClient = restClient;
         }
 
-        public async Task<List<BatchUpdateResponse>> ApplyBatch(Batch batch, bool useVersionedMetadata = false)
+        public async Task<List<BatchUpdateResponse>> ApplyBatch(Batch batch, bool useVersionedMetadata = false,
+            CancellationToken cancellationToken = default)
         {
             if (batch == null)
             {
@@ -46,7 +48,7 @@ namespace Digizuite.BatchUpdate
                 .AddParameter("values", request.Values)
                 .AddParameter("useVersionedMetadata", useVersionedMetadata);
 
-            var res = await _restClient.Execute<DigiResponse<BatchUpdateResponse>>(Method.POST, restRequest, accessKey).ConfigureAwait(false);
+            var res = await _restClient.Execute<DigiResponse<BatchUpdateResponse>>(Method.POST, restRequest, accessKey, cancellationToken).ConfigureAwait(false);
             if (!res.Data.Success)
             {
                 _logger.LogError("Batch Update request failed", "response", res.Content);

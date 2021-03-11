@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
 using Digizuite.Models;
@@ -26,8 +27,8 @@ namespace Digizuite.Test.UnitTests
             auth.Setup(x => x.GetAccessKey())
                 .ReturnsAsync(() => "someAccessKey");
 
-            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()))
-                .ReturnsAsync((Method method,RestRequest request, string accessKey) =>
+            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method,RestRequest request, string accessKey, CancellationToken ct) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("someAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
@@ -60,7 +61,7 @@ namespace Digizuite.Test.UnitTests
             auth.Verify(x => x.GetAccessKey(), Times.Once,"if Search does not have n accessKey argument, Search should call GetAccessKey on the AuthService");
             auth.VerifyNoOtherCalls();
 
-            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()), Times.Once);
+            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None), Times.Once);
         }
 
         [Test(Description = "Verify search without accesskey")]
@@ -72,8 +73,8 @@ namespace Digizuite.Test.UnitTests
             auth.Setup(x => x.GetAccessKey())
                 .ReturnsAsync(() => "someAccessKey");
 
-            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey) =>
+            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("specifiedAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
@@ -106,7 +107,7 @@ namespace Digizuite.Test.UnitTests
             auth.Verify(x => x.GetAccessKey(), Times.Never, "Should not call GetAccessKey, if accessKey is supplied");
             auth.VerifyNoOtherCalls();
 
-            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()), Times.Once);
+            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None), Times.Once);
         }
 
         [Test(Description = "Verify search parameters with null value is removed")]
@@ -118,8 +119,8 @@ namespace Digizuite.Test.UnitTests
             auth.Setup(x => x.GetAccessKey())
                 .ReturnsAsync(() => "someAccessKey");
 
-            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey) =>
+            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("someAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
@@ -156,7 +157,7 @@ namespace Digizuite.Test.UnitTests
             auth.Verify(x => x.GetAccessKey(), Times.Once, "if Search does not have n accessKey argument, Search should call GetAccessKey on the AuthService");
             auth.VerifyNoOtherCalls();
 
-            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()), Times.Once);
+            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None), Times.Once);
         }
 
         [Test(Description = "Verify search throws SearchFailedException if search fails")]
@@ -168,8 +169,8 @@ namespace Digizuite.Test.UnitTests
             auth.Setup(x => x.GetAccessKey())
                 .ReturnsAsync(() => "someAccessKey");
 
-            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey) =>
+            client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("someAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
@@ -199,7 +200,7 @@ namespace Digizuite.Test.UnitTests
             );
             auth.Verify(x => x.GetAccessKey(), Times.Once, "if Search does not have n accessKey argument, Search should call GetAccessKey on the AuthService");
             auth.VerifyNoOtherCalls();
-            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()), Times.Once);
+            client.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None), Times.Once);
         }
 
         [Test(Description = "Verify search with templated search")]
@@ -212,8 +213,8 @@ namespace Digizuite.Test.UnitTests
 
             var firstSearch = new SearchService(firstClient.Object, auth.Object, logger.Object);
 
-            firstClient.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey) =>
+            firstClient.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
                 {
                     var response = new RestResponse<DigiResponse<Asset>>()
                     {
@@ -233,8 +234,8 @@ namespace Digizuite.Test.UnitTests
 
             var secondSearch = new SearchService(secondClient.Object, auth.Object, logger.Object);
 
-            secondClient.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey) =>
+            secondClient.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
                 {
 
                     Assert.That(accessKey, Is.EqualTo("excpected_assetkey"), "AccessKey should be parsed on to DamRestClient");
@@ -270,8 +271,8 @@ namespace Digizuite.Test.UnitTests
             var firstResult = await firstSearch.Search<Asset>(parameters,"expected_assetkey").ConfigureAwait(false);
             var secondResult = await secondSearch.Search(firstResult.Next,"excpected_assetkey").ConfigureAwait(false);
 
-            firstClient.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()), Times.Once);
-            secondClient.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>()), Times.Once);
+            firstClient.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None), Times.Once);
+            secondClient.Verify(cli => cli.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None), Times.Once);
             secondClient.VerifyNoOtherCalls();
 
             var expectedResult = new List<Asset>()

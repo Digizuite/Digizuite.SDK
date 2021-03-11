@@ -108,7 +108,8 @@ namespace Digizuite
             }
         }
 
-        private async Task<string> Login(string username, string password)
+        private async Task<string> Login(string username, string password,
+            CancellationToken cancellationToken = default )
         {
             await _lock.WaitAsync().ConfigureAwait(false);
             try
@@ -137,7 +138,7 @@ namespace Digizuite
                             : _configuration.DataVersionId);
                 }
 
-                var res = await _restClient.Execute<DigiResponse<AuthenticateResponse>>(Method.POST, request).ConfigureAwait(false);
+                var res = await _restClient.Execute<DigiResponse<AuthenticateResponse>>(Method.POST, request, cancellationToken:cancellationToken).ConfigureAwait(false);
 
                 if (res.ErrorException != null)
                 {

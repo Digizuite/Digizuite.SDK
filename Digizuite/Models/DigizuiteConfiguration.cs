@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Digizuite.Models
 {
@@ -27,6 +28,11 @@ namespace Digizuite.Models
         /// Optional, if not specified, get set to the same as config version id
         /// </summary>
         public string DataVersionId { get; set; }
+
+        /// <summary>
+        /// If localhost version of the core services should be called instead. 
+        /// </summary>
+        public HashSet<ServiceType> DevelopmentServices { get; set; } = new();
 
         public override string ToString()
         {
