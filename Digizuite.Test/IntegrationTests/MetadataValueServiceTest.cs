@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Metadata;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Test.TestUtils;
+using Digizuite.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
@@ -16,27 +18,27 @@ namespace Digizuite.Test.IntegrationTests
     {
         private const int TestAssetItemId = 10224;
 
-        private async Task TestChanges<TValue, TField>(int fieldItemId, Func<int, int, Task<TField>> load,
+        private async Task TestChanges<TValue, TField>(int fieldItemId, Func<int, int, int, CancellationToken, Task<TField>> load,
             TValue first, TValue second)
             where TField : Field<TValue>
         {
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
 
-            var field = await load(TestAssetItemId, fieldItemId);
+            var field = await load(TestAssetItemId, fieldItemId, 0, CancellationToken.None);
 
             field.Value = first;
 
-            await service.UpdateFields(TestAssetItemId, field);
+            await service.UpdateFields(TestAssetItemId, CancellationToken.None, field);
 
-            var updated = await load(TestAssetItemId, fieldItemId);
+            var updated = await load(TestAssetItemId, fieldItemId, 0, CancellationToken.None);
 
             Compare(updated.Value, first);
 
             field.Value = second;
 
-            await service.UpdateFields(TestAssetItemId, field);
+            await service.UpdateFields(TestAssetItemId, CancellationToken.None, field);
 
-            updated = await load(TestAssetItemId, fieldItemId);
+            updated = await load(TestAssetItemId, fieldItemId, 0, CancellationToken.None);
             
             Compare(updated.Value, second);
         }
@@ -67,13 +69,13 @@ namespace Digizuite.Test.IntegrationTests
             await TestChanges(10273, service.GetComboMetafield, new ComboValue()
             {
                 Label = "A",
-                Value = "51285",
-                InternalValue = "A"
+                OptionValue = "A",
+                Id = 51285,
             }, new ComboValue
             {
                 Label = "B",
-                Value = "51284",
-                InternalValue = "B"
+                OptionValue = "B",
+                Id = 51284,
             });
         }
 
@@ -98,13 +100,12 @@ namespace Digizuite.Test.IntegrationTests
             await TestChanges(10277, service.GetEditComboMetafield, new ComboValue
             {
                 Label = "A",
-                Value = "A",
-                InternalValue = "A",
+                OptionValue = "A",
+                Id = 51282
             }, new ComboValue
             {
                 Label = second,
-                Value = second,
-                InternalValue = second
+                OptionValue = second,
             });
         }
 
@@ -120,28 +121,24 @@ namespace Digizuite.Test.IntegrationTests
                 new ComboValue
                 {
                     Label = "A",
-                    Value = "A",
-                    InternalValue = "A"
+                    OptionValue = "A",
                 },
                 new ComboValue
                 {
                     Label = first,
-                    Value = first,
-                    InternalValue = first
+                    OptionValue = first,
                 }
             }, new List<ComboValue>
             {
                 new ComboValue
                 {
                     Label = "B",
-                    Value = "B",
-                    InternalValue = "B"
+                    OptionValue = "B",
                 },
                 new ComboValue
                 {
                     Label = second,
-                    Value = second,
-                    InternalValue = second
+                    OptionValue = second,
                 }
             });
         }
@@ -190,22 +187,22 @@ namespace Digizuite.Test.IntegrationTests
                 new ComboValue
                 {
                     Label = "A",
-                    Value = "51276",
-                    InternalValue = "A"
+                    Id = 51276,
+                    OptionValue = "A",
                 },
                 new ComboValue
                 {
+                    Id = 51275,
                     Label = "B",
-                    Value = "51275",
-                    InternalValue = "B"
+                    OptionValue = "B",
                 }
             }, new List<ComboValue>
             {
                 new ComboValue
                 {
                     Label = "C",
-                    Value = "51274",
-                    InternalValue = "C"
+                    OptionValue = "C",
+                    Id = 51274
                 }
             });
         }
@@ -259,7 +256,7 @@ namespace Digizuite.Test.IntegrationTests
                 }
             };
 
-            await service.UpdateFields(TestAssetItemId, field);
+            await service.UpdateFields(TestAssetItemId, CancellationToken.None, field);
 
             var updated = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldId);
             
@@ -280,7 +277,7 @@ namespace Digizuite.Test.IntegrationTests
             
             slave.Value = new List<ItemReferenceOption>();
 
-            await service.UpdateFields(slaveAssetItemId, slave);
+            await service.UpdateFields(slaveAssetItemId, CancellationToken.None, slave);
 
             slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveFieldId);
             Assert.That(slave.Value, Is.Empty);

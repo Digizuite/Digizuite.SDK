@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
 using Digizuite.Models;
@@ -67,7 +68,8 @@ namespace Digizuite
             return uploadInfo.ItemId;
         }
 
-        private async Task<InitiateUploadResponse> InitiateUpload(string filename, string computerName)
+        private async Task<InitiateUploadResponse> InitiateUpload(string filename, string computerName,
+            CancellationToken cancellationToken = default)
         {
             var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
 
@@ -77,7 +79,7 @@ namespace Digizuite
                 .AddParameter("filename", filename);
 
             _logger.LogTrace("Sending initiate upload", nameof(filename), filename, nameof(computerName), computerName);
-            var res = await _restClient.Execute<DigiResponse<InitiateUploadResponse>>(Method.POST, request, ak).ConfigureAwait(false);
+            var res = await _restClient.Execute<DigiResponse<InitiateUploadResponse>>(Method.POST, request, ak, cancellationToken).ConfigureAwait(false);
             _logger.LogDebug("Initiate upload response", nameof(res.Content), res.Content);
 
             var response = res.Data;

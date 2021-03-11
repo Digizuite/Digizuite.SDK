@@ -2,7 +2,7 @@ using Digizuite.Models.Metadata.Values;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class ComboMetafield : Field<ComboValue>
+    public class ComboMetafield : Field<ComboValue?>
     {
         private string _viewType;
         public MetaFieldDataType Type => MetaFieldDataType.ComboValue;

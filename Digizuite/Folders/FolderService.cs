@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.Models;
 using Digizuite.Extensions;
@@ -36,7 +37,7 @@ namespace Digizuite.Folders
             return responses.SelectMany(r => r).ToList();
         }
 
-        public async Task<IEnumerable<FolderValue>> GetMemberFolders()
+        public async Task<IEnumerable<FolderValue>> GetMemberFolders(CancellationToken cancellationToken = default)
         {
             var request = new RestRequest("dmm3bwsv3/SearchService.js");
 
@@ -50,7 +51,7 @@ namespace Digizuite.Folders
                 .AddParameter("node", "root");
 
             _logger.LogDebug("Requesting root groups");
-            var res = await _restClient.Execute<DigiResponse<RootSystemToolsResponse>>(Method.GET, request, ak).ConfigureAwait(false);
+            var res = await _restClient.Execute<DigiResponse<RootSystemToolsResponse>>(Method.GET, request, ak, cancellationToken).ConfigureAwait(false);
 
             if (!res.Data.Success)
             {

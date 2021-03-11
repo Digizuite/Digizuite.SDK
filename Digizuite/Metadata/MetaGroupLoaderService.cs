@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Models;
 using Digizuite.Models.Metadata;
@@ -22,7 +23,8 @@ namespace Digizuite.Metadata
             _restClient = restClient;
         }
 
-        public async Task<List<SystemToolsNodeItem>> GetMetaGroupInGroup(string hierarchyId = "/")
+        public async Task<List<SystemToolsNodeItem>> GetMetaGroupInGroup(string hierarchyId = "/",
+            CancellationToken cancellationToken = default)
         {
             var request = new RestRequest("dmm3bwsv3/SearchService.js", Method.GET, DataFormat.Json);
             var ak = await _authenticationService.GetAccessKey().ConfigureAwait(false);
@@ -36,12 +38,12 @@ namespace Digizuite.Metadata
                 .AddParameter("limit", 9999)
                 .AddParameter("prevRef", "");
 
-            var res = await _restClient.Execute<DigiResponse<SystemToolsNodeItem>>(Method.GET, request, ak).ConfigureAwait(false);
+            var res = await _restClient.Execute<DigiResponse<SystemToolsNodeItem>>(Method.GET, request, ak, cancellationToken).ConfigureAwait(false);
 
             return res.Data.Items;
         }
 
-        public async Task<RootSystemToolsResponse> GetRootMetaGroups()
+        public async Task<RootSystemToolsResponse> GetRootMetaGroups(CancellationToken cancellationToken = default)
         {
             var request = new RestRequest("dmm3bwsv3/SearchService.js");
 
@@ -55,7 +57,7 @@ namespace Digizuite.Metadata
                 .AddParameter("node", "root");
 
             _logger.LogDebug("Requesting root groups");
-            var res = await _restClient.Execute<DigiResponse<RootSystemToolsResponse>>(Method.GET, request, ak).ConfigureAwait(false);
+            var res = await _restClient.Execute<DigiResponse<RootSystemToolsResponse>>(Method.GET, request, ak, cancellationToken).ConfigureAwait(false);
 
             if (!res.Data.Success)
             {

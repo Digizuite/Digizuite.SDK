@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Digizuite.Models;
 
 namespace Digizuite.Test.UnitTests
@@ -38,6 +39,12 @@ namespace Digizuite.Test.UnitTests
         public string DataVersionId
         {
             get => Disallow<string>();
+            set => Disallow(value);
+        }
+
+        public HashSet<ServiceType> DevelopmentServices
+        {
+            get => Disallow<HashSet<ServiceType>>();
             set => Disallow(value);
         }
 

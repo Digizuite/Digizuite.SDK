@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Models;
 using Digizuite.Samples;
@@ -32,8 +33,8 @@ namespace Digizuite.Test.UnitTests
 
             client.Setup(x =>
                     x.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                        It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string akey) =>
+                        It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string akey, CancellationToken ct) =>
                 {
                     Assert.IsNull(akey);
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
@@ -87,7 +88,7 @@ namespace Digizuite.Test.UnitTests
             var accessKey = await auth.GetAccessKey();
             client.Verify(
                 cli => cli.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                    It.IsAny<string>()), Times.Once);
+                    It.IsAny<string>(), CancellationToken.None), Times.Once);
             client.VerifyNoOtherCalls();
 
             Assert.AreEqual("e656f5fb-6c02-4f50-be00-df6c703a5387", accessKey, "Did not return expected accesskey");
@@ -107,8 +108,8 @@ namespace Digizuite.Test.UnitTests
 
             client.Setup(x =>
                     x.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                        It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string akey) =>
+                        It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string akey, CancellationToken ct) =>
                 {
                     Assert.IsNull(akey);
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
@@ -164,7 +165,7 @@ namespace Digizuite.Test.UnitTests
 
             client.Verify(
                 cli => cli.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                    It.IsAny<string>()), Times.Once);
+                    It.IsAny<string>(),CancellationToken.None), Times.Once);
             client.VerifyNoOtherCalls();
 
             Assert.AreEqual("e656f5fb-6c02-4f50-be00-df6c703a5387", accessKey, "Did not return expected accesskey");
@@ -184,8 +185,8 @@ namespace Digizuite.Test.UnitTests
 
             client.Setup(x =>
                     x.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                        It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string akey) =>
+                        It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string akey, CancellationToken ct) =>
                 {
                     var response = new RestResponse<DigiResponse<AuthenticateResponse>>()
                     {
@@ -211,7 +212,7 @@ namespace Digizuite.Test.UnitTests
 
             client.Verify(
                 cli => cli.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                    It.IsAny<string>()), Times.Once);
+                    It.IsAny<string>(), CancellationToken.None), Times.Once);
             client.VerifyNoOtherCalls();
         }
 
@@ -229,8 +230,8 @@ namespace Digizuite.Test.UnitTests
 
             client.Setup(x =>
                     x.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                        It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string akey) =>
+                        It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string akey, CancellationToken ct) =>
                 {
                     var response = new RestResponse<DigiResponse<AuthenticateResponse>>()
                     {
@@ -264,7 +265,7 @@ namespace Digizuite.Test.UnitTests
 
             client.Verify(
                 cli => cli.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                    It.IsAny<string>()), Times.Once);
+                    It.IsAny<string>(), CancellationToken.None), Times.Once);
             client.VerifyNoOtherCalls();
 
             Assert.AreEqual(accessKey1, accessKey2, "did not reuse login");
@@ -285,8 +286,8 @@ namespace Digizuite.Test.UnitTests
 
             client.Setup(x =>
                     x.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                        It.IsAny<string>()))
-                .ReturnsAsync((Method method, RestRequest request, string akey) =>
+                        It.IsAny<string>(), CancellationToken.None))
+                .ReturnsAsync((Method method, RestRequest request, string akey, CancellationToken ct) =>
                 {
                     var response = new RestResponse<DigiResponse<AuthenticateResponse>>()
                     {
@@ -319,7 +320,7 @@ namespace Digizuite.Test.UnitTests
 
             client.Verify(
                 cli => cli.Execute<DigiResponse<AuthenticateResponse>>(It.IsAny<Method>(), It.IsAny<RestRequest>(),
-                    It.IsAny<string>()), Times.Once);
+                    It.IsAny<string>(), CancellationToken.None), Times.Once);
             client.VerifyNoOtherCalls();
 
             Assert.AreEqual(30024, memberId, "Did not return expected accesskey");
@@ -406,7 +407,8 @@ namespace Digizuite.Test.UnitTests
                 Response = response;
             }
 
-            public Task<IRestResponse<T>> Execute<T>(Method method, RestRequest request, string accessKey = null)
+            public Task<IRestResponse<T>> Execute<T>(Method method, RestRequest request, string accessKey = null,
+                CancellationToken cancellationToken = default)
             {
                 Method = method;
                 Request = request;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Models;
 using Digizuite.Models.Metadata;
@@ -21,7 +22,8 @@ namespace Digizuite.Metadata
             _logger = logger;
         }
 
-        public async Task<List<MetaField>> GetMetaFieldsInGroup(int groupId)
+        public async Task<List<MetaField>> GetMetaFieldsInGroup(int groupId,
+            CancellationToken cancellationToken = default)
         {
             _logger.LogDebug("Loading metafields for group", nameof(groupId), groupId);
 
@@ -35,7 +37,7 @@ namespace Digizuite.Metadata
                 .AddParameter("metafieldGroupId", groupId)
                 .AddParameter("accessKey", ak);
 
-            var res = await _restClient.Execute<DigiResponse<MetaFieldListResponse>>(Method.GET, request).ConfigureAwait(false);
+            var res = await _restClient.Execute<DigiResponse<MetaFieldListResponse>>(Method.GET, request, cancellationToken: cancellationToken).ConfigureAwait(false);
 
             _logger.LogDebug("Metafield list response", "data", res.Data, "content", res.Content);
 

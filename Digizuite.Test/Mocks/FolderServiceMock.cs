@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Folders;
 using Digizuite.Models.Folders;
@@ -16,7 +17,7 @@ namespace Digizuite.Test.Mocks
             return Task.FromResult(MockFolderValues);
         }
 
-        public Task<IEnumerable<FolderValue>> GetMemberFolders()
+        public Task<IEnumerable<FolderValue>> GetMemberFolders(CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }

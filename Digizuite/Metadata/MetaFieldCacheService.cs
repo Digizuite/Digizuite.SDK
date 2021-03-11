@@ -58,7 +58,7 @@ namespace Digizuite.Metadata
             foreach (var group in groups)
             {
                 _logger.LogDebug("Loading MetaField group", "path", group.Path, "name", group.Name);
-                var fields = await _fieldsLoaderService.GetMetaFieldsInGroup(group.GroupId).ConfigureAwait(false);
+                var fields = await _fieldsLoaderService.GetMetaFieldsInGroup(@group.GroupId).ConfigureAwait(false);
                 result.AddRange(fields);
             }
 

@@ -9,5 +9,11 @@ namespace Digizuite.Helpers
             client.UseSerializer(() => new JsonNetSerializer());
             return client;
         }
+
+        public static IRestClient UseSystemTextJsonSerializer(this IRestClient client)
+        {
+            client.UseSerializer(() => new SystemTextJsonSerializer());
+            return client;
+        }
     }
 }

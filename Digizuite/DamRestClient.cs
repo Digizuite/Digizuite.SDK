@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Extensions;
 using Digizuite.Helpers;
 using Digizuite.Models;
 using RestSharp;
@@ -12,25 +14,26 @@ namespace Digizuite
     public class DamRestClient : IDamRestClient
     {
         private readonly IRestClient _client;
-        private readonly ILogger<DamRestClient> _logger;
-        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="configuration"></param>
-        /// <param name="logger">logger</param>
         /// <param name="client">optional IRestClient used for unit testing</param>
-        public DamRestClient(IConfiguration configuration, ILogger<DamRestClient> logger, IRestClient client = null)
+        public DamRestClient(IConfiguration configuration,  IRestClient? client = null)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
 
-            var baseUrl = _configuration.GetDmm3Bwsv3Url();
+
+            var baseUrl = configuration.GetDmm3Bwsv3Url();
             _client = client ?? new RestClient(baseUrl).UseSerializer(() => new JsonNetSerializer());
         }
+        
         /// <inheritdoc />
-        public Task<IRestResponse<T>>  Execute<T>(Method method, RestRequest request, string accessKey = null)
+        public Task<IRestResponse<T>>  Execute<T>(Method method, RestRequest request, string? accessKey = null, CancellationToken cancellationToken = default)
         {
             if (request == null)
             {
@@ -41,9 +44,9 @@ namespace Digizuite
             request.Method = method;
             if (!string.IsNullOrWhiteSpace(accessKey))
             {
-                request.AddOrUpdateParameter(DigizuiteConstants.AccessKeyParameter, accessKey);
+                request.AddAccessKey(accessKey!);
             }
-            return _client.ExecuteAsync<T>(request);
+            return _client.ExecuteAsync<T>(request, cancellationToken);
         }
     }
 }
