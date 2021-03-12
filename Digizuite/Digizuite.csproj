@@ -37,10 +37,7 @@
     <Compile Remove="Models\Metadata\Internal\NoteValue.cs" />
     <Compile Remove="Models\Metadata\Fields\UnknownField.cs" />
     <Compile Remove="Models\AuthenticateResponse.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Metadata\Internal" />
+    <Compile Remove="Models\Metadata\ReferenceItemType.cs" />
   </ItemGroup>
 
 </Project>

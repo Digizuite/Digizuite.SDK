@@ -5,6 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Metadata;
 using Digizuite.Metadata.ResponseModels;
+using Digizuite.Metadata.ResponseModels.Metadata;
+using Digizuite.Metadata.ResponseModels.MetaFields;
+using Digizuite.Metadata.ResponseModels.Properties;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
 using ComboValue = Digizuite.Models.Metadata.Values.ComboValue;
@@ -16,9 +19,9 @@ namespace Digizuite.Extensions
     {
         public static async Task<List<Field>> GetAllMetadata(this IMetadataValueService service,
             int assetItemId, List<int> metaFieldItemIds, int languageId = 0,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default, string? accessKey = null)
         {
-            var response = await service.GetRawMetadata(assetItemId, metaFieldItemIds, languageId, cancellationToken);
+            var response = await service.GetRawMetadata(assetItemId, metaFieldItemIds, languageId, cancellationToken, accessKey);
 
             var labelValues = response.Values
                 .GroupBy(v => v.LabelId)
@@ -371,7 +374,7 @@ namespace Digizuite.Extensions
         }
 
 
-        private static ComboValue ParseComboValueValue(Digizuite.Metadata.ResponseModels.ComboValue value)
+        private static ComboValue ParseComboValueValue(ComboValueResponse value)
         {
             return new()
             {
@@ -381,7 +384,7 @@ namespace Digizuite.Extensions
             };
         }
         
-        private static ComboValue ParseEditComboValueValue(Digizuite.Metadata.ResponseModels.ComboValue value)
+        private static ComboValue ParseEditComboValueValue(ComboValueResponse value)
         {
             return new()
             {
