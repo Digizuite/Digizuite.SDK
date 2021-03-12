@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Digizuite.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Digizuite.Samples
 {
@@ -17,13 +18,17 @@ namespace Digizuite.Samples
         {
             var config = new DigizuiteConfiguration()
             {
-                AccessKeyDuration = new TimeSpan(86400000L),
                 BaseUrl = new Uri("https://dam.dev.digizuite.com/"),
                 SystemUsername = "",
                 SystemPassword = ""
             };
-            var restClient = new DamRestClient(config);
-            using var auth = new DamAuthenticationService(config, restClient, new ConsoleLogger<DamAuthenticationService>());
+
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddDigizuite(config);
+
+            var services = serviceCollection.BuildServiceProvider();
+
+            var auth = services.GetRequiredService<IDamAuthenticationService>();
             var memberId = await auth.GetMemberId().ConfigureAwait(false);
             
             Console.WriteLine($"Authorized as member {memberId}");

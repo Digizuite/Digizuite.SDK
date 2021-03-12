@@ -9,13 +9,13 @@ namespace Digizuite.Helpers
     /// </summary>
     public class DigizuiteBoolConverter : JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             Contract.Requires(writer != null);
             writer.WriteValue(value);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             Contract.Requires(reader != null);
             switch (reader.Value)

@@ -18,7 +18,7 @@ namespace Digizuite
         }
 
         public async Task<Uri> GetAssetDownloadUrl(int assetId,
-            string accessKey = null, int mediaFormatId = -1, int destinationId = -1)
+            string? accessKey = null, int mediaFormatId = -1, int destinationId = -1)
         {
             if (string.IsNullOrWhiteSpace(accessKey))
             {

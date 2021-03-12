@@ -15,16 +15,13 @@
     <IncludeSymbols>true</IncludeSymbols>
     <PackageVersion>$(DamVersion).$(PatchVersion)$(VersionSuffix)</PackageVersion>
     <PackageProjectUrl>https://github.com/Digizuite/Digizuite.SDK</PackageProjectUrl>
+    <AssemblyName>Digizuite.Sdk.Core</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.3.0">
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.3.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

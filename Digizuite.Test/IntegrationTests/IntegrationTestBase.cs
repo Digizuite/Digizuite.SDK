@@ -24,7 +24,6 @@ namespace Digizuite.Test.IntegrationTests
             var apiUrl = Environment.GetEnvironmentVariable("DIGIZUITE_API_URL");
             var username = Environment.GetEnvironmentVariable("DIGIZUITE_USERNAME");
             var password = Environment.GetEnvironmentVariable("DIGIZUITE_PASSWORD");
-            var accessKeyDuration = new TimeSpan(2, 0, 0);
 
             if (string.IsNullOrWhiteSpace(apiUrl)) throw new ArgumentException("apiUrl was not set");
 
@@ -37,7 +36,6 @@ namespace Digizuite.Test.IntegrationTests
                 BaseUrl = new Uri(apiUrl),
                 SystemUsername = username,
                 SystemPassword = password,
-                AccessKeyDuration = accessKeyDuration
             };
             var serviceCollection = new ServiceCollection();
 

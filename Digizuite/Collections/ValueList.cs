@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Digizuite.Extensions;
 
-
+#nullable enable
 namespace Digizuite.Collections
 {
     public class ValueList<T> : ICollection<T>

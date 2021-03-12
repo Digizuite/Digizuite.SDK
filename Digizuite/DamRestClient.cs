@@ -8,6 +8,7 @@ using RestSharp;
 // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
 // ReSharper disable NotAccessedField.Local
 
+#nullable enable
 namespace Digizuite
 {
     /// <inheritdoc />

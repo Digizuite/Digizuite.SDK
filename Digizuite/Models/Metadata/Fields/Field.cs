@@ -20,11 +20,11 @@ namespace Digizuite.Models.Metadata.Fields
         public int VisibilityMetaFieldId { get; set; }
         public string VisibilityRegex { get; set; } = "";
 
-        public abstract string ToSingleString(string separator);
+        public abstract string? ToSingleString(string separator);
     }
     public abstract class Field<T> : Field
     {
-        public T Value { get; set; }
+        public T Value { get; set; } = default!;
 
         public override string ToString()
         {

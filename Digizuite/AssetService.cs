@@ -54,7 +54,7 @@ namespace Digizuite
         }
 
         /// <inheritdoc cref="IAssetService.GetAssets" />
-        public Task<SearchResponse<Asset>> GetAssets(SearchParameters parameters = null)
+        public Task<SearchResponse<Asset>> GetAssets(SearchParameters? parameters = null)
         {
             if (parameters == null)
             {

@@ -32,7 +32,7 @@ namespace Digizuite
         }
 
         public Task<int> Upload(Stream stream, string filename, string computerName,
-            IUploadProgressListener listener = null)
+            IUploadProgressListener? listener = null)
         {
             return InternalUpload(stream, filename, computerName, listener,
                 uploadInfo => FinishUpload(uploadInfo.UploadId, uploadInfo.ItemId));
@@ -40,7 +40,7 @@ namespace Digizuite
 
 
         public Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId,
-            KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener listener = null)
+            KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener? listener = null)
         {
             return InternalUpload(stream, filename, computerName, listener,
                 uploadInfo =>
@@ -48,7 +48,7 @@ namespace Digizuite
         }
 
         private async Task<int> InternalUpload(Stream stream, string filename, string computerName,
-            IUploadProgressListener listener, Func<InitiateUploadResponse, Task> completeUpload)
+            IUploadProgressListener? listener, Func<InitiateUploadResponse, Task> completeUpload)
         {
             var uploadInfo = await InitiateUpload(filename, computerName).ConfigureAwait(false);
             if (listener != null)
@@ -103,7 +103,7 @@ namespace Digizuite
             return item;
         }
 
-        private async Task UploadFileChunks(Stream stream, int itemId, IUploadProgressListener listener)
+        private async Task UploadFileChunks(Stream stream, int itemId, IUploadProgressListener? listener)
         {
             var buffer = new byte[SliceSize];
 

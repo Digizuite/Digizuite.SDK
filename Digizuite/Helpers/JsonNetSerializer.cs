@@ -24,8 +24,10 @@ namespace Digizuite.Helpers
         public string Serialize(object obj) =>
             JsonConvert.SerializeObject(obj);
 
+#pragma warning disable 618
         public string Serialize(Parameter parameter) =>
             JsonConvert.SerializeObject(parameter?.Value);
+#pragma warning restore 618
 
         public T Deserialize<T>(IRestResponse response)
         {

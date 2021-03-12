@@ -1,7 +1,4 @@
 using System;
-using System.Globalization;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,44 +12,35 @@ namespace Digizuite
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class DamAuthenticationService : IDisposable, IDamAuthenticationService
     {
-        private readonly IDamRestClient _restClient;
-
         private readonly IConfiguration _configuration;
-
+        private readonly ServiceHttpWrapper _serviceHttpWrapper;
         private readonly ILogger<DamAuthenticationService> _logger;
+        
         private readonly Timer _renewalTimer;
+        private readonly SemaphoreSlim _lock = new(1, 1);
 
-        private string _accessKey;
+        private AccessKey _accessKey = null!;
 
-        /// <summary>
-        /// </summary>
-        private DateTime _expirationTime;
-
-        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
-
-        private int _memberId;
-
-        public DamAuthenticationService(IConfiguration configuration, IDamRestClient restClient,
-            ILogger<DamAuthenticationService> logger)
+        public DamAuthenticationService(IConfiguration configuration, ILogger<DamAuthenticationService> logger, ServiceHttpWrapper serviceHttpWrapper)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _serviceHttpWrapper = serviceHttpWrapper ?? throw new ArgumentNullException(nameof(serviceHttpWrapper));
 
-            if (configuration.AccessKeyDuration.TotalMilliseconds <= 0) return;
-            _renewalTimer = new Timer(configuration.AccessKeyDuration.TotalMilliseconds * 0.9);
-            _renewalTimer.Elapsed += async (sender, args) =>
-            {
-                await Login(configuration.SystemUsername, _configuration.SystemPassword).ConfigureAwait(false);
-            };
-            _renewalTimer.Start();
+
+            _renewalTimer = new Timer();
+            _renewalTimer.Elapsed += (_, _) => { Login(configuration.SystemUsername, configuration.SystemPassword).ConfigureAwait(false); };
             _renewalTimer.AutoReset = true;
+            
+#pragma warning disable 4014
+            Login(configuration.SystemUsername, configuration.SystemPassword);
+#pragma warning restore 4014
         }
 
         /// <summary>
         ///     Indicates if the access key has expired completely
         /// </summary>
-        private bool HasExpired => _expirationTime < DateTime.Now;
+        private bool HasExpired => _accessKey.Expiration < DateTimeOffset.Now;
 
         /// <summary>
         ///     Gets the active access key for the system user
@@ -67,7 +55,7 @@ namespace Digizuite
             }
 
             _logger.LogTrace("Reusing previous access key");
-            return _accessKey;
+            return _accessKey.Token;
         }
 
         /// <summary>
@@ -82,8 +70,8 @@ namespace Digizuite
                 await Login(_configuration.SystemUsername, _configuration.SystemPassword).ConfigureAwait(false);
             }
 
-            _logger.LogTrace("Returning member id", nameof(_memberId), _memberId);
-            return _memberId;
+            _logger.LogTrace("Returning member id", nameof(_accessKey.MemberId), _accessKey.MemberId);
+            return _accessKey.MemberId;
         }
 
         public void Dispose()
@@ -108,82 +96,88 @@ namespace Digizuite
             }
         }
 
+        
+        private class LoginRequest
+        {
+            public string Username { get; }
+            public string Password { get; }
+            public PasswordEncoding PasswordEncoding { get; set; } = PasswordEncoding.Md5;
+            public AccessKeyOptions? Options { get; set; }
+
+            public LoginRequest(string username, string password)
+            {
+                Username = username;
+                Password = password;
+            }
+        }
+        
+        private enum PasswordEncoding
+        {
+            Md5,
+            PlainText
+        }
+
+        public class AccessKeyOptions
+        {
+            /// <summary>
+            /// The config id to create the access key for
+            /// </summary>
+            public string? ConfigId { get; set; }
+        }
+        
         private async Task<string> Login(string username, string password,
             CancellationToken cancellationToken = default )
         {
-            await _lock.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
                 _logger.LogTrace("Logging in", nameof(username), username, "PasswordLength", password.Length);
 
-                // Hash the password if it has not already been md5'ed beforehand 
-                if (!Regex.IsMatch(password, @"^[0-9a-fA-F]{32}$")) password = CalculateMD5Hash(password);
+                var passwordEncoding = Regex.IsMatch(password, @"^[0-9a-fA-F]{32}$") switch
+                {
+                    true => PasswordEncoding.Md5,
+                    false => PasswordEncoding.PlainText
+                };
+                
+                var (client, request) =
+                    _serviceHttpWrapper.GetClientAndRequest(ServiceType.LoginService, "/api/access-key");
 
-                var request = new RestRequest("ConnectService.js", DataFormat.Json);
-                request.AddParameter("method", "CreateAccesskey");
-                request.AddParameter("usertype", 2);
-                request.AddParameter("useversionedmetadata", 0);
-                request.AddParameter("page", 1);
-                request.AddParameter("limit", 25);
-                request.AddParameter("username", username);
-                request.AddParameter("password", password);
+                var body = new LoginRequest(username, password)
+                {
+                    PasswordEncoding = passwordEncoding
+                };
 
                 if (!string.IsNullOrWhiteSpace(_configuration.ConfigVersionId))
                 {
-                    request.AddParameter("configversionid", _configuration.ConfigVersionId);
-
-                    request.AddParameter("dataversionid",
-                        string.IsNullOrWhiteSpace(_configuration.DataVersionId)
-                            ? _configuration.ConfigVersionId
-                            : _configuration.DataVersionId);
+                    body.Options = new AccessKeyOptions
+                    {
+                        ConfigId = _configuration.ConfigVersionId
+                    };
                 }
 
-                var res = await _restClient.Execute<DigiResponse<AuthenticateResponse>>(Method.POST, request, cancellationToken:cancellationToken).ConfigureAwait(false);
+                request.AddJsonBody(body);
+            
+                var res = await client.ExecutePostAsync<AccessKey>(request, cancellationToken);
 
-                if (res.ErrorException != null)
+                if (!res.IsSuccessful)
                 {
-                    _logger.LogError(res.ErrorException, "Request failed", nameof(res.ErrorMessage), res.ErrorMessage);
-                    throw new AuthenticationException("Network request failed", res.ErrorException);
-                }
-                
-                if (!res.Data.Success)
-                {
-                    _logger.LogError("Authentication failed", "response", res.Content);
-                    throw new AuthenticationException("Authentication failed");
+                    _logger.LogError(res.ErrorException, "Authentication failed", nameof(res.Content), res.Content, nameof(res.StatusCode), res.StatusCode);
+                    throw new Exception("Request was unsuccessful");
                 }
 
-                var item = res.Data.Items[0];
-                _accessKey = item.AccessKey;
-                _memberId = int.Parse(item.MemberId, NumberStyles.Integer, CultureInfo.InvariantCulture);
-                _expirationTime = DateTime.Now.Add(_configuration.AccessKeyDuration);
+                _accessKey = res.Data;
+                var duration = _accessKey.Expiration - DateTimeOffset.Now;
+
+                _renewalTimer.Interval = duration.TotalMilliseconds * 0.9;
+                _renewalTimer.Start();
 
                 _logger.LogInformation("Authenticated successful");
-                return _accessKey;
+                return _accessKey.Token;
             }
             finally
             {
                 _lock.Release();
             }
         }
-
-
-#pragma warning disable CA5351
-        private static string CalculateMD5Hash(string input)
-        {
-            // step 1, calculate MD5 hash from input
-            using (var md5 = MD5.Create())
-            {
-                var inputBytes = Encoding.ASCII.GetBytes(input);
-                var hash = md5.ComputeHash(inputBytes);
-
-                // step 2, convert byte array to hex string
-                var sb = new StringBuilder();
-                // ReSharper disable once ForCanBeConvertedToForeach
-                for (var i = 0; i < hash.Length; i++) sb.Append(hash[i].ToString("x2", CultureInfo.InvariantCulture));
-
-                return sb.ToString();
-            }
-        }
-#pragma warning restore CA5351
     }
 }

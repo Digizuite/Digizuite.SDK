@@ -6,10 +6,10 @@ namespace Digizuite.BatchUpdate.Models
     {
         public string FieldName { get; set; }
 
-        public IBatchProperties Properties { get; set; }
-        public object Value { get; set; }
+        public IBatchProperties? Properties { get; set; }
+        public object? Value { get; set; }
 
-        protected BatchValue(string fieldName, object value, IBatchProperties properties)
+        protected BatchValue(string fieldName, object? value, IBatchProperties? properties)
         {
             FieldName = fieldName;
             Value = value;
