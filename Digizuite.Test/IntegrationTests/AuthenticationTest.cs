@@ -21,9 +21,8 @@ namespace Digizuite.Test.IntegrationTests
         {
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
             Configuration.SystemPassword = new string('0', 36);
-            var exceptionThrown =
-                Assert.Throws<AuthenticationException>(() => service.GetAccessKey().GetAwaiter().GetResult());
-            Assert.AreEqual("Authentication failed", exceptionThrown.Message);
+            Assert.That(() => service.GetAccessKey().GetAwaiter().GetResult(), Throws.TypeOf<AuthenticationException>()
+                .With.Property("Message").EqualTo("Authentication failed"));
         }
 
         [Test]

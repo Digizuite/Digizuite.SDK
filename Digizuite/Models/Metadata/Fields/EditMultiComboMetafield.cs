@@ -4,16 +4,13 @@ using Digizuite.Models.Metadata.Values;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class EditMultiComboMetafield : Field<List<ComboValue>>
+    public record EditMultiComboMetafield : Field<List<ComboValue>>
     {
         public MetaFieldDataType Type => MetaFieldDataType.EditMultiComboValue;
 
         public override string ToSingleString(string separator)
         {
-            if (Value == null)
-            {
-                return "";
-            }
+            if (Value == null) return "";
 
             return string.Join(separator, Value.Select(v => v.Label));
         }

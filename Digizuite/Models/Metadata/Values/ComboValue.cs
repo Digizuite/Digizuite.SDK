@@ -6,9 +6,9 @@ namespace Digizuite.Models.Metadata.Values
 {
     public record ComboValue
     {
-        public string Label { get; set; }
-        public string OptionValue { get; set; }
-        public int Id { get; set; }
+        public string Label { get; set; } = default!;
+        public string OptionValue { get; set; } = default!;
+        public int Id { get; set; } = default!;
 
         public virtual bool Equals(ComboValue? other)
         {

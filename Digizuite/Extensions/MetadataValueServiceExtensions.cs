@@ -117,6 +117,7 @@ namespace Digizuite.Extensions
         {
             return PopulateField(field, new ComboMetafield
             {
+                ViewType = field.ViewType,
                 Value = value.Value == null ? null : ParseComboValueValue(value.Value)
             });
         }
@@ -290,6 +291,7 @@ namespace Digizuite.Extensions
         {
             return PopulateField(field, new DateTimeMetafield
             {
+                SubType = field.ViewType,
                 Value = value.Value
             });
         }
@@ -309,6 +311,7 @@ namespace Digizuite.Extensions
         {
             return PopulateField(field, new TreeMetafield
             {
+                RecursiveToRoot = field.RecursiveToRoot,
                 Value = value.Values.Select(v => new TreeValue
                 {
                     Id = v.Id,

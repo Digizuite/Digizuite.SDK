@@ -13,7 +13,7 @@ namespace Digizuite.Models
         string SystemUsername { get; set; }
         string SystemPassword { get; set; }
         
-        string ConfigVersionId { get; set; }
+        string? ConfigVersionId { get; set; }
         
         HashSet<ServiceType> DevelopmentServices { get; set; }
     }

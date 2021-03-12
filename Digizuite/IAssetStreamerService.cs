@@ -18,6 +18,6 @@ namespace Digizuite
         /// <param name="destinationId">The destination id</param>
         /// <returns>A full uri for that asset for that format</returns>
         Task<Uri> GetAssetDownloadUrl(int assetId,
-            string accessKey = null, int mediaFormatId = -1, int destinationId = -1);
+            string? accessKey = null, int mediaFormatId = -1, int destinationId = -1);
     }
 }

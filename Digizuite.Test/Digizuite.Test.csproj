@@ -9,6 +9,7 @@
     <!-- CA1051: Do not declare visible fields -->
     <!-- Use configureAwait -->
     <NoWarn>CA1303,CA1707,CA1051,CA2007</NoWarn>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

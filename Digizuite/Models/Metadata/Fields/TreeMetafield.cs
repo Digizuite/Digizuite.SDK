@@ -4,7 +4,7 @@ using Digizuite.Models.Metadata.Values;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class TreeMetafield : Field<List<TreeValue>>
+    public record TreeMetafield : Field<List<TreeValue>>
     {
         public MetaFieldDataType Type => MetaFieldDataType.Tree;
         public TreeViewType ViewType { get; set; }

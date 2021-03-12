@@ -1,6 +1,5 @@
 using System;
 using Digizuite.Models;
-using Digizuite.Samples;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NUnit.Framework;
@@ -9,13 +8,12 @@ namespace Digizuite.Test.IntegrationTests
 {
     public abstract class IntegrationTestBase
     {
-        protected IConfiguration Configuration;
+        protected IConfiguration Configuration = null!;
 
-        protected IServiceProvider ServiceProvider;
+        protected IServiceProvider ServiceProvider = null!;
 
         protected virtual void SetupDependencies(IServiceCollection services)
         {
-            // services.Replace(new ServiceDescriptor(typeof(IHttpClientFactory), typeof(MakeFakeHttpClientFactory), ServiceLifetime.Singleton))
         }
         
         [SetUp]
@@ -77,7 +75,7 @@ namespace Digizuite.Test.IntegrationTests
 
     public class IntegrationTestBase<TService> : IntegrationTestBase where TService : class
     {
-        public TService Service => ServiceProvider.GetRequiredService<TService>();
+        protected TService Service => ServiceProvider.GetRequiredService<TService>();
 
         protected override void SetupDependencies(IServiceCollection services)
         {

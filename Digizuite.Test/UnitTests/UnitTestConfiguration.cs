@@ -30,13 +30,7 @@ namespace Digizuite.Test.UnitTests
             set => Disallow(value);
         }
 
-        public string ConfigVersionId
-        {
-            get => Disallow<string>();
-            set => Disallow(value);
-        }
-
-        public string DataVersionId
+        public string? ConfigVersionId
         {
             get => Disallow<string>();
             set => Disallow(value);

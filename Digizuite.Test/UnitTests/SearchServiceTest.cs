@@ -28,15 +28,15 @@ namespace Digizuite.Test.UnitTests
                 .ReturnsAsync(() => "someAccessKey");
 
             client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
-                .ReturnsAsync((Method method,RestRequest request, string accessKey, CancellationToken ct) =>
+                .ReturnsAsync((Method method,RestRequest request, string accessKey, CancellationToken _) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("someAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
                     Assert.That(request.Resource, Is.EqualTo("SearchService.js"));
                     
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value.Equals("5")), Is.True, "Expected Page is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value.Equals("3")), Is.True, "Expected PageSize is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value!.Equals("5")), Is.True, "Expected Page is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value!.Equals("3")), Is.True, "Expected PageSize is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value!.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
                     var response = new RestResponse<DigiResponse<Asset>>()
                     {
                         Data = new DigiResponse<Asset>()
@@ -56,7 +56,7 @@ namespace Digizuite.Test.UnitTests
 
             var src = new SearchService(client.Object, auth.Object, logger.Object);
             var parameters = new SearchParameters("GetAssets", 5, 3);
-            var result = await src.Search<Asset>(parameters, (string) null).ConfigureAwait(true);
+            var result = await src.Search<Asset>(parameters, null).ConfigureAwait(true);
             
             auth.Verify(x => x.GetAccessKey(), Times.Once,"if Search does not have n accessKey argument, Search should call GetAccessKey on the AuthService");
             auth.VerifyNoOtherCalls();
@@ -74,15 +74,15 @@ namespace Digizuite.Test.UnitTests
                 .ReturnsAsync(() => "someAccessKey");
 
             client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken _) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("specifiedAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
                     Assert.That(request.Resource, Is.EqualTo("SearchService.js"));
 
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value.Equals("5")), Is.True, "Expected Page is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value.Equals("3")), Is.True, "Expected PageSize is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value!.Equals("5")), Is.True, "Expected Page is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value!.Equals("3")), Is.True, "Expected PageSize is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value!.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
                     var response = new RestResponse<DigiResponse<Asset>>()
                     {
                         Data = new DigiResponse<Asset>()
@@ -120,17 +120,17 @@ namespace Digizuite.Test.UnitTests
                 .ReturnsAsync(() => "someAccessKey");
 
             client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken _) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("someAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
                     Assert.That(request.Resource, Is.EqualTo("SearchService.js"));
 
                     Assert.That(request.Parameters.Exists(p => p.Value == null), Is.False, "Parameters with NULL value is not removed");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value.Equals("5")), Is.True, "Expected Page is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value.Equals("3")), Is.True, "Expected PageSize is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == "Title" && p.Value.Equals("some title")), Is.True, "Expected Title is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value!.Equals("5")), Is.True, "Expected Page is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value!.Equals("3")), Is.True, "Expected PageSize is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value!.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == "Title" && p.Value!.Equals("some title")), Is.True, "Expected Title is not in Parameters");
                     var response = new RestResponse<DigiResponse<Asset>>()
                     {
                         Data = new DigiResponse<Asset>()
@@ -150,7 +150,7 @@ namespace Digizuite.Test.UnitTests
 
             var src = new SearchService(client.Object, auth.Object, logger.Object);
             var parameters = new SearchParameters("GetAssets", 5, 3);
-            parameters.Add("NullParam", (string)null);
+            parameters.Add("NullParam", (string?)null);
             parameters.Add("Title", "some title");
             var result = await src.Search<Asset>(parameters, null).ConfigureAwait(true);
 
@@ -170,21 +170,21 @@ namespace Digizuite.Test.UnitTests
                 .ReturnsAsync(() => "someAccessKey");
 
             client.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken _) =>
                 {
                     Assert.That(accessKey, Is.EqualTo("someAccessKey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
                     Assert.That(request.Resource, Is.EqualTo("SearchService.js"));
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value.Equals("1")), Is.True, "Expected Page is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value.Equals("1")), Is.True, "Expected PageSize is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value!.Equals("1")), Is.True, "Expected Page is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value!.Equals("1")), Is.True, "Expected PageSize is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value!.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
                     var response = new RestResponse<DigiResponse<Asset>>()
                     {
                         Data = new DigiResponse<Asset>()
                         {
                             Success = false,
                             Total = 0,
-                            Items = null
+                            Items = null!
                         }
                     };
                     return response;
@@ -214,7 +214,7 @@ namespace Digizuite.Test.UnitTests
             var firstSearch = new SearchService(firstClient.Object, auth.Object, logger.Object);
 
             firstClient.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
+                .ReturnsAsync((Method _, RestRequest _, string _, CancellationToken _) =>
                 {
                     var response = new RestResponse<DigiResponse<Asset>>()
                     {
@@ -224,8 +224,8 @@ namespace Digizuite.Test.UnitTests
                             Total = 22,
                             Items = new List<Asset>()
                             {
-                                new Asset() {AssetId = 1, ItemId = 9001, AssetType = AssetType.META, Name = "asset_1", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 00, 00) },
-                                new Asset() {AssetId = 2, ItemId = 9002, AssetType = AssetType.META, Name = "asset_2", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 01, 00) },
+                                new Asset() {AssetId = 1, ItemId = 9001, AssetType = AssetType.META, Name = "asset_1", PrevRef = 0, Thumb = null!, ImagePreview = null!, UploadMemberId = 23, VideoPreview = null!, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 00, 00) },
+                                new Asset() {AssetId = 2, ItemId = 9002, AssetType = AssetType.META, Name = "asset_2", PrevRef = 0, Thumb = null!, ImagePreview = null!, UploadMemberId = 23, VideoPreview = null!, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 01, 00) },
                             }
                         }
                     };
@@ -235,17 +235,17 @@ namespace Digizuite.Test.UnitTests
             var secondSearch = new SearchService(secondClient.Object, auth.Object, logger.Object);
 
             secondClient.Setup(x => x.Execute<DigiResponse<Asset>>(It.IsAny<Method>(), It.IsAny<RestRequest>(), It.IsAny<string>(), CancellationToken.None))
-                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken ct) =>
+                .ReturnsAsync((Method method, RestRequest request, string accessKey, CancellationToken _) =>
                 {
 
                     Assert.That(accessKey, Is.EqualTo("excpected_assetkey"), "AccessKey should be parsed on to DamRestClient");
                     Assert.That(method, Is.EqualTo(Method.POST), "Execute should be called with Method.POST");
                     Assert.That(request.Resource, Is.EqualTo("SearchService.js"));
 
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value.Equals("2")), Is.True, "Expected Page is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value.Equals("2")), Is.True, "Expected PageSize is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
-                    Assert.That(request.Parameters.Exists(p => p.Name == "sCatalogFolderId" && p.Value.Equals("40")), Is.True, "Expected sCatalogFolderId is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageKey}" && p.Value!.Equals("2")), Is.True, "Expected Page is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.PageSizeKey}" && p.Value!.Equals("2")), Is.True, "Expected PageSize is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == $"{SearchParameters.SearchNameKey}" && p.Value!.Equals("GetAssets")), Is.True, "Expected SearchName is not in Parameters");
+                    Assert.That(request.Parameters.Exists(p => p.Name == "sCatalogFolderId" && p.Value!.Equals("40")), Is.True, "Expected sCatalogFolderId is not in Parameters");
 
                     var response = new RestResponse<DigiResponse<Asset>>()
                     {
@@ -255,8 +255,8 @@ namespace Digizuite.Test.UnitTests
                             Total = 22,
                             Items = new List<Asset>()
                             {
-                                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META, Name = "asset_3", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
-                                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META, Name = "asset_4", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
+                                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META, Name = "asset_3", PrevRef = 0, Thumb = null!, ImagePreview = null!, UploadMemberId = 23, VideoPreview = null!, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
+                                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META, Name = "asset_4", PrevRef = 0, Thumb = null!, ImagePreview = null!, UploadMemberId = 23, VideoPreview = null!, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
                             }
                         }
                     };
@@ -277,8 +277,8 @@ namespace Digizuite.Test.UnitTests
 
             var expectedResult = new List<Asset>()
             {
-                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META, Name = "asset_3", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
-                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META, Name = "asset_4", PrevRef = 0, Thumb = null, ImagePreview = null, UploadMemberId = 23, VideoPreview = null, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
+                new Asset() {AssetId = 3, ItemId = 9003, AssetType = AssetType.META, Name = "asset_3", PrevRef = 0, Thumb = null!, ImagePreview = null!, UploadMemberId = 23, VideoPreview = null!, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
+                new Asset() {AssetId = 4, ItemId = 9004, AssetType = AssetType.META, Name = "asset_4", PrevRef = 0, Thumb = null!, ImagePreview = null!, UploadMemberId = 23, VideoPreview = null!, FileSize = 0, AssetVersionId = 0, IsPublic = true, Published = 0, WriteAccess = true, ImportDate = new DateTime(2020,02,14, 08, 02, 00) },
             };
             Assert.That(secondResult.Items, Is.EquivalentTo(expectedResult));
         }

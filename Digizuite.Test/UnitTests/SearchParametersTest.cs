@@ -67,9 +67,9 @@ namespace Digizuite.Test.UnitTests
         {
             var ex = Assert.Throws<ArgumentNullException>(() =>
             {
-                var _ = new SearchParameters<GetAssetsResponse>((SearchParameters) null);
+                var _ = new SearchParameters<GetAssetsResponse>(null);
             });
-            Assert.That(ex.ParamName, Is.EqualTo("parameters"));
+            Assert.That(ex!.ParamName, Is.EqualTo("parameters"));
         }
 
 
@@ -90,7 +90,7 @@ namespace Digizuite.Test.UnitTests
             {
                 var _ = par.PageSize;
             });
-            Assert.AreEqual("The stored page size was not a valid integer. Value was: 'nolimit'", ex.Message);
+            Assert.AreEqual("The stored page size was not a valid integer. Value was: 'nolimit'", ex!.Message);
         }
 
         [Test(Description = "Test Page property")]
@@ -110,7 +110,7 @@ namespace Digizuite.Test.UnitTests
             {
                 var _ = par.Page;
             });
-            Assert.AreEqual("The stored page was not a valid integer. Value was: 'first'", ex.Message);
+            Assert.AreEqual("The stored page was not a valid integer. Value was: 'first'", ex!.Message);
         }
 
         [Test(Description ="Test Method property")]
@@ -212,8 +212,8 @@ namespace Digizuite.Test.UnitTests
             Assert.That(par.AllKeys.Contains("dateRange"), "Excpected parameter dateRange not found");
             Assert.That(par.AllKeys.Contains("dateRange_end"), "Excpected parameter dateRange_end not found");
             Assert.That(par.AllKeys.Contains("dateRange_type_date"), "Expected _type_date not found");
-            Assert.That(par.GetValues("dateRange").Contains("01/01/0001 00:00:00"), "Expected FromDate value not found in parameter dateRange");
-            Assert.That(par.GetValues("dateRange_end").Contains("12/31/9999 23:59:59"), "Expected ToDate value not found in parameter dateRange_end");
+            Assert.That(par.GetValues("dateRange")!.Contains("01/01/0001 00:00:00"), "Expected FromDate value not found in parameter dateRange");
+            Assert.That(par.GetValues("dateRange_end")!.Contains("12/31/9999 23:59:59"), "Expected ToDate value not found in parameter dateRange_end");
         }
         [Test(Description = "Test SetDateBetween method with specific start date and default end date")]
         public void TestSetDateBetween2()
@@ -223,8 +223,8 @@ namespace Digizuite.Test.UnitTests
             Assert.That(par.AllKeys.Contains("dateRange"), "Excpected parameter dateRange not found");
             Assert.That(par.AllKeys.Contains("dateRange_end"), "Excpected parameter dateRange_end not found");
             Assert.That(par.AllKeys.Contains("dateRange_type_date"), "Expected _type_date not found");
-            Assert.That(par.GetValues("dateRange").Contains("02/29/2020 00:00:00"), "Expected FromDate value not found in parameter dateRange");
-            Assert.That(par.GetValues("dateRange_end").Contains("12/31/9999 23:59:59"), "Expected ToDate value not found in parameter dateRange_end");
+            Assert.That(par.GetValues("dateRange")!.Contains("02/29/2020 00:00:00"), "Expected FromDate value not found in parameter dateRange");
+            Assert.That(par.GetValues("dateRange_end")!.Contains("12/31/9999 23:59:59"), "Expected ToDate value not found in parameter dateRange_end");
         }
         [Test(Description = "Test SetDateBetween method with default start date and specific end date")]
         public void TestSetDateBetween3()
@@ -234,15 +234,15 @@ namespace Digizuite.Test.UnitTests
             Assert.That(par.AllKeys.Contains("dateRange"), "Excpected parameter dateRange not found");
             Assert.That(par.AllKeys.Contains("dateRange_end"), "Excpected parameter dateRange_end not found");
             Assert.That(par.AllKeys.Contains("dateRange_type_date"), "Expected _type_date not found");
-            Assert.That(par.GetValues("dateRange").Contains("01/01/0001 00:00:00"), "Expected FromDate value not found in parameter dateRange");
-            Assert.That(par.GetValues("dateRange_end").Contains("02/29/2020 00:00:00"), "Expected ToDate value not found in parameter dateRange_end");
+            Assert.That(par.GetValues("dateRange")!.Contains("01/01/0001 00:00:00"), "Expected FromDate value not found in parameter dateRange");
+            Assert.That(par.GetValues("dateRange_end")!.Contains("02/29/2020 00:00:00"), "Expected ToDate value not found in parameter dateRange_end");
         }
         [Test(Description = "Test SetDateBetween method thows an exception if fromdate is after todate")]
         public void TestSetDateBetween4()
         {
             var par = new SearchParameters("GetAssets");
             var ex = Assert.Throws<ArgumentException>(() => { par.SetDateBetween("dateRange", new DateTime(2020, 2, 2), new DateTime(2019, 2, 28)); });
-            Assert.AreEqual("from date is after to date", ex.Message);
+            Assert.AreEqual("from date is after to date", ex!.Message);
         }
     }
 }

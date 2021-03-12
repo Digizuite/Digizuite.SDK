@@ -59,21 +59,21 @@ namespace Digizuite.Metadata
             }).ToList();
         }
 
-        private class MetaFieldListResponseMetaFieldLabel
+        private record MetaFieldListResponseMetaFieldLabel
         {
-            public int MetafieldLabelId { get; set; }
-            public string MetafieldLabelLabel { get; set; }
+            public int MetafieldLabelId { get; set; } = default!;
+            public string MetafieldLabelLabel { get; set; } = default!;
         }
 
 
-        private class MetaFieldListResponse
+        private record MetaFieldListResponse
         {
-            public MetaFieldDataType DatatypeId { get; set; }
-            public string Guid { get; set; }
-            public int ItemId { get; set; }
-            public int MetafieldId { get; set; }
-            public MetaFieldListResponseMetaFieldLabel MetafieldLabel { get; set; }
-            public string Name { get; set; }
+            public MetaFieldDataType DatatypeId { get; set; } = default!;
+            public string Guid { get; set; } = default!;
+            public int ItemId { get; set; } = default!;
+            public int MetafieldId { get; set; } = default!;
+            public MetaFieldListResponseMetaFieldLabel MetafieldLabel { get; set; } = default!;
+            public string Name { get; set; } = default!;
         }
     }
 }

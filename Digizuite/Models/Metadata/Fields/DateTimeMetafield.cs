@@ -1,27 +1,13 @@
 using System;
 using System.Globalization;
+using Digizuite.Metadata.ResponseModels;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class DateTimeMetafield : Field<DateTime?>
+    public record DateTimeMetafield : Field<DateTime?>
     {
-        private string _subType;
+        public DateTimeViewType SubType { get; set; } = default!;
         public MetaFieldDataType Type => MetaFieldDataType.DateTime;
-
-        /// <summary>
-        /// must be either "date" or "datetime" 
-        /// </summary>
-        public string SubType
-        {
-            get => _subType;
-            set
-            {
-                if (value == "date" || value == "datetime")
-                {
-                    _subType = value;
-                }
-            }
-        }
 
         public override string ToSingleString(string separator)
         {

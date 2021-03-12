@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Digizuite.Models.Search;
 using Newtonsoft.Json;
 
 namespace Digizuite.Models
@@ -10,19 +9,25 @@ namespace Digizuite.Models
         int Page { get; set; }
         int PageSize { get; set; }
     }
-    
+
     public abstract class PagedParameters : IPagedParameters
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
     }
-    
-    public abstract class PagedResponse<TResponse, TParams>
-    where TParams : IPagedParameters
-    {
 
+    public abstract class PagedResponse<TResponse, TParams>
+        where TParams : IPagedParameters
+    {
         protected readonly TParams Parameters;
-        
+
+        protected PagedResponse(TParams parameters, IReadOnlyList<TResponse> items, int total)
+        {
+            Parameters = parameters;
+            Items = items;
+            Total = total;
+        }
+
         /// <summary>
         ///     The items returned from this request
         /// </summary>
@@ -33,17 +38,11 @@ namespace Digizuite.Models
         /// </summary>
         public int Total { get; }
 
-        protected PagedResponse(TParams parameters, IReadOnlyList<TResponse> items, int total)
-        {
-            Parameters = parameters;
-            Items = items;
-            Total = total;
-        }
-
         /// <summary>
         ///     Gets current page
         /// </summary>
         public int Page => Parameters.Page;
+
         /// <summary>
         ///     Gets the total number of pages available
         /// </summary>

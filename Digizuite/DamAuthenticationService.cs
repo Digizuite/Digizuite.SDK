@@ -2,9 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Digizuite.Exceptions;
 using Digizuite.Models;
-using RestSharp;
 using Timer = System.Timers.Timer;
 
 namespace Digizuite
@@ -88,8 +86,8 @@ namespace Digizuite
             {
                 if (disposing)
                 {
-                    _renewalTimer?.Dispose();
-                    _lock?.Dispose();
+                    _renewalTimer.Dispose();
+                    _lock.Dispose();
                 }
 
                 _disposed = true;

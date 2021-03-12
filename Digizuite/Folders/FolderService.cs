@@ -106,14 +106,14 @@ namespace Digizuite.Folders
         // ReSharper disable once ClassNeverInstantiated.Local
         private class FolderResponseItem
         {
-            public int ItemId { get; set; }
-            public int FolderId { get; set; }
-            public int PrevRef { get; set; }
-            public string Name { get; set; }
-            public int ChildCount { get; set; }
-            public int AssetsInFolder { get; set; }
-            public int AssetsInFolderRecursive { get; set; }
-            public int WriteAccess { get; set; }
+            public int ItemId { get; set; } = default!;
+            public int FolderId { get; set; } = default!;
+            public int PrevRef { get; set; } = default!;
+            public string Name { get; set; } = default!;
+            public int ChildCount { get; set; } = default!;
+            public int AssetsInFolder { get; set; } = default!;
+            public int AssetsInFolderRecursive { get; set; } = default!;
+            public int WriteAccess { get; set; } = default!;
         }
     }
 }

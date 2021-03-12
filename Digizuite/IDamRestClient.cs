@@ -18,6 +18,6 @@ namespace Digizuite
         /// <param name="accessKey">optional accessKey, if specified, the accessKey is added to the request parameters</param>
         /// <param name="cancellationToken"></param>
         /// <returns>the rest response</returns>
-        Task<IRestResponse<T>> Execute<T>(Method method, RestRequest request, string accessKey = null, CancellationToken cancellationToken = default);
+        Task<IRestResponse<T>> Execute<T>(Method method, RestRequest request, string? accessKey = null, CancellationToken cancellationToken = default);
     }
 }

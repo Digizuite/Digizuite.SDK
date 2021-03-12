@@ -14,7 +14,6 @@ namespace Digizuite.Test.UnitTests
         [Test(Description="Test that Method is handled correctly in DamRestClient")]
         public async Task TestDamRest1()
         {
-            string accessKey = null;
             var configuration = new DigizuiteConfiguration
             {
                 BaseUrl = new Uri("https://unittest-dam.dev.digizuite.com"), 
@@ -32,9 +31,9 @@ namespace Digizuite.Test.UnitTests
                 x.ExecuteAsync<DigiResponse<object>>(
                     It.IsAny<RestRequest>(), It.IsAny<System.Threading.CancellationToken>()
                 )
-            ).ReturnsAsync(() => null);
+            ).ReturnsAsync(() => null!);
             
-            await damRest.Execute<DigiResponse<object>>(Method.PATCH, restRequest.Object, accessKey);
+            await damRest.Execute<DigiResponse<object>>(Method.PATCH, restRequest.Object);
 
             Assert.AreEqual(Method.PATCH, restRequest.Object.Method);
             
@@ -61,7 +60,7 @@ namespace Digizuite.Test.UnitTests
                 x.ExecuteAsync<DigiResponse<object>>(
                     It.IsAny<RestRequest>(), It.IsAny<System.Threading.CancellationToken>()
                 )
-            ).ReturnsAsync(() => null);
+            ).ReturnsAsync(() => null!);
 
             await damRest.Execute<DigiResponse<object>>(Method.POST, restRequest.Object, accessKey);
 
@@ -92,7 +91,7 @@ namespace Digizuite.Test.UnitTests
                 x.ExecuteAsync<DigiResponse<object>>(
                     It.IsAny<RestRequest>(), It.IsAny<System.Threading.CancellationToken>()
                 )
-            ).ReturnsAsync(() => null);
+            ).ReturnsAsync(() => null!);
 
             await damRest.Execute<DigiResponse<object>>(Method.POST, restRequest.Object, accessKey);
 
@@ -121,7 +120,7 @@ namespace Digizuite.Test.UnitTests
                 x.ExecuteAsync<DigiResponse<object>>(
                     It.IsAny<RestRequest>(), It.IsAny<System.Threading.CancellationToken>()
                 )
-            ).ReturnsAsync(() => null);
+            ).ReturnsAsync(() => null!);
 
             var ex = Assert.Throws<ArgumentNullException>(() =>
                 {
@@ -129,7 +128,7 @@ namespace Digizuite.Test.UnitTests
 
                 }
             );
-            Assert.That(ex.ParamName, Is.EqualTo("request"));
+            Assert.That(ex!.ParamName, Is.EqualTo("request"));
             restRequest.VerifyNoOtherCalls();
         }
     }

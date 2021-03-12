@@ -36,31 +36,31 @@ namespace Digizuite.BatchUpdate.BatchBuilder
             return this;
         }
 
-        public IApplyableBatchBuilder WithValue(string fieldName, string value, IBatchProperties properties = null)
+        public IApplyableBatchBuilder WithValue(string fieldName, string value, IBatchProperties? properties = null)
         {
             _currentBatchPart.Values.Add(new StringBatchValue(fieldName, value, properties));
             return this;
         }
 
-        public IApplyableBatchBuilder WithValue(string fieldName, bool value, IBatchProperties properties = null)
+        public IApplyableBatchBuilder WithValue(string fieldName, bool value, IBatchProperties? properties = null)
         {
             _currentBatchPart.Values.Add(new BoolBatchValue(fieldName, value, properties));
             return this;
         }
 
-        public IApplyableBatchBuilder WithValue(string fieldName, int value, IBatchProperties properties = null)
+        public IApplyableBatchBuilder WithValue(string fieldName, int value, IBatchProperties? properties = null)
         {
             _currentBatchPart.Values.Add(new IntBatchValue(fieldName, value, properties));
             return this;
         }
 
-        public IApplyableBatchBuilder WithValue(string fieldName, IEnumerable<string> value, IBatchProperties properties = null)
+        public IApplyableBatchBuilder WithValue(string fieldName, IEnumerable<string> value, IBatchProperties? properties = null)
         {
             _currentBatchPart.Values.Add(new StringListBatchValue(fieldName, value.ToList(), properties));
             return this;
         }
 
-        public IApplyableBatchBuilder WithValue(string fieldName, IEnumerable<int> value, IBatchProperties properties = null)
+        public IApplyableBatchBuilder WithValue(string fieldName, IEnumerable<int> value, IBatchProperties? properties = null)
         {
             _currentBatchPart.Values.Add(new IntListBatchValue(fieldName, value.ToList(), properties));
             return this;

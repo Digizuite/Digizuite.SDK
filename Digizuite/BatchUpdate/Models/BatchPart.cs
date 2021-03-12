@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace Digizuite.BatchUpdate.Models
 {
@@ -7,7 +6,7 @@ namespace Digizuite.BatchUpdate.Models
     {
         public List<int> BaseIds { get; set; } = new List<int>();
         public BatchType BatchType { get; set; }
-        public string FieldName { get; set; } = "";
+        public string? FieldName { get; set; } = "";
         public List<int> ItemIds { get; set; } = new List<int>();
 
         public int RowId { get; set; } = 1;

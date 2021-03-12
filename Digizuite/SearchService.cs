@@ -31,7 +31,7 @@ namespace Digizuite
         /// <param name="parameters">The parameters to search with</param>
         /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
         /// <typeparam name="T">The type the response items should be converted into</typeparam>
-        public async Task<SearchResponse<T>> Search<T>(SearchParameters parameters, string accessKey = null)
+        public async Task<SearchResponse<T>> Search<T>(SearchParameters parameters, string? accessKey = null)
         {
             return await Search(new SearchParameters<T>(parameters), accessKey).ConfigureAwait(false);
         }
@@ -43,7 +43,7 @@ namespace Digizuite
         /// <param name="accessKey">Optional accessKey, if not specified use DamAuthentication</param>
         /// <param name="cancellationToken"></param>
         /// <typeparam name="T">The type of the response items should be converted into</typeparam>
-        public async Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string accessKey = null,
+        public async Task<SearchResponse<T>> Search<T>(SearchParameters<T> parameters, string? accessKey = null,
             CancellationToken cancellationToken = default)
         {
             // Copy the parameters immediately, so the user cannot change them under us

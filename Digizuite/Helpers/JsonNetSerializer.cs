@@ -29,7 +29,7 @@ namespace Digizuite.Helpers
             JsonConvert.SerializeObject(parameter?.Value);
 #pragma warning restore 618
 
-        public T Deserialize<T>(IRestResponse response)
+        public T? Deserialize<T>(IRestResponse response)
         {
             if (response == null)
             {
@@ -39,7 +39,7 @@ namespace Digizuite.Helpers
             return JsonConvert.DeserializeObject<T>(response.Content, new JsonSerializerSettings
             {
                 DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                Converters = _jsonConverters ?? new List<JsonConverter>()
+                Converters = _jsonConverters
             });
         }
 

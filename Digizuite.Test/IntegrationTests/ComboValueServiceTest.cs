@@ -10,14 +10,14 @@ namespace Digizuite.Test.IntegrationTests
     [TestFixture]
     public class ComboValueServiceTest : IntegrationTestBase<ComboValueService>
     {
-        private const int metaFieldLabelId = 51732;
+        private const int MetaFieldLabelId = 51732;
 
         [Test]
         public async Task CanCrud()
         {
             var guid = Guid.NewGuid().ToString();
 
-            var def = await Service.CreateComboValue(metaFieldLabelId, new ComboValueDefinition
+            var def = await Service.CreateComboValue(MetaFieldLabelId, new ComboValueDefinition
             {
                 Text = guid,
                 Value = guid,
@@ -36,7 +36,7 @@ namespace Digizuite.Test.IntegrationTests
 
             await Service.DeleteComboValue(def.Id);
 
-            var values = await Service.GetComboValuesForMetaField(metaFieldLabelId);
+            var values = await Service.GetComboValuesForMetaField(MetaFieldLabelId);
             
             Assert.That(values.Items, Has.None.With.Property(nameof(ComboValueDefinition.Id)).EqualTo(def.Id));
         }
@@ -44,7 +44,7 @@ namespace Digizuite.Test.IntegrationTests
         private async Task CheckCreatedValue(string expected, int id)
         {
             
-            var values = await Service.GetComboValuesForMetaField(metaFieldLabelId);
+            var values = await Service.GetComboValuesForMetaField(MetaFieldLabelId);
 
             var match = values.Items.Single(i => i.Id == id);
             Assert.That(match.Text, Is.EqualTo(expected));
