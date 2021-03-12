@@ -13,8 +13,8 @@ namespace Digizuite.BatchUpdate.Models
         public int RowId { get; set; } = 1;
 
         public RepositoryType RepositoryType { get; set; } = RepositoryType.Default;
-        
-        public string Target { get; set; }
+
+        public string Target { get; set; } = null!;
 
         public List<BatchValue> Values { get; set; } = new List<BatchValue>();
 

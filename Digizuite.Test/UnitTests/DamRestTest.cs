@@ -20,7 +20,6 @@ namespace Digizuite.Test.UnitTests
                 BaseUrl = new Uri("https://unittest-dam.dev.digizuite.com"), 
                 SystemUsername = "someUser", 
                 SystemPassword = "somepwd",
-                AccessKeyDuration = new TimeSpan(86400000L)
             };
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
@@ -50,7 +49,6 @@ namespace Digizuite.Test.UnitTests
                 BaseUrl = new Uri("https://unittest-dam.dev.digizuite.com"),
                 SystemUsername = "someUser",
                 SystemPassword = "somepwd",
-                AccessKeyDuration = new TimeSpan(86400000L)
             };
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
@@ -82,7 +80,6 @@ namespace Digizuite.Test.UnitTests
                 BaseUrl = new Uri("https://unittest-dam.dev.digizuite.com"),
                 SystemUsername = "someUser",
                 SystemPassword = "somepwd",
-                AccessKeyDuration = new TimeSpan(86400000L)
             };
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
@@ -113,7 +110,6 @@ namespace Digizuite.Test.UnitTests
                 BaseUrl = new Uri("https://unittest-dam.dev.digizuite.com"),
                 SystemUsername = "someUser",
                 SystemPassword = "somepwd",
-                AccessKeyDuration = new TimeSpan(86400000L)
             };
             var client = new Mock<IRestClient>(MockBehavior.Strict);
             var restRequest = new Mock<RestRequest>(MockBehavior.Strict);
@@ -129,7 +125,7 @@ namespace Digizuite.Test.UnitTests
 
             var ex = Assert.Throws<ArgumentNullException>(() =>
                 {
-                    damRest.Execute<DigiResponse<object>>(Method.POST, null, accessKey).GetAwaiter().GetResult();
+                    damRest.Execute<DigiResponse<object>>(Method.POST, null!, accessKey).GetAwaiter().GetResult();
 
                 }
             );

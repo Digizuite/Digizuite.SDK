@@ -5,11 +5,11 @@ namespace Digizuite.BatchUpdate.Models
 {
     public class BatchValuesJson
     {
-        public string Id { get; set; }
-        public string FieldId { get; set; }
+        public string Id { get; set; } = null!;
+        public string FieldId { get; set; } = null!;
         public BatchType ContainerType { get; set; }
         public int RowId { get; set; }
-        public List<int> ItemIds { get; set; }
+        public List<int>? ItemIds { get; set; }
         public RepositoryType RepositoryType { get; set; }
         public bool? ForceDelete { get; set; }
 
@@ -28,7 +28,7 @@ namespace Digizuite.BatchUpdate.Models
             }
         }
 
-        public List<int> BaseIds { get; set; }
+        public List<int>? BaseIds { get; set; }
 
         public int? BaseId
         {
@@ -45,8 +45,7 @@ namespace Digizuite.BatchUpdate.Models
             }
         }
 
-        public List<BatchValueJsonValue> Values { get; set; }
-        [JsonProperty("fieldName")]
-        public string FieldName { get; set; }
+        public List<BatchValueJsonValue> Values { get; set; } = null!;
+        [JsonProperty("fieldName")] public string FieldName { get; set; } = null!;
     }
 }
