@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Digizuite.Core\Digizuite.Core.csproj" />
-    <ProjectReference Include="..\Digizuite.Samples\Digizuite.Samples.csproj" />
     <ProjectReference Include="..\Digizuite\Digizuite.csproj" />
   </ItemGroup>
 
