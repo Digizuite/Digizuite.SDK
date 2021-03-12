@@ -15,6 +15,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <PackageVersion>$(DamVersion).$(PatchVersion)$(VersionSuffix)</PackageVersion>
     <PackageProjectUrl>https://github.com/Digizuite/Digizuite.SDK</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Digizuite/Digizuite.SDK</RepositoryUrl>
     <Nullable>enable</Nullable>
     <LangVersion>9</LangVersion>
     <AssemblyName>Digizuite.Sdk.Core</AssemblyName>

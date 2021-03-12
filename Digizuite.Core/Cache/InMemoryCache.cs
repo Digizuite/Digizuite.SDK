@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Extensions;
+using Digizuite.Logging;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Digizuite.Cache

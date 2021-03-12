@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Digizuite.Models;
 using Newtonsoft.Json;
 
-namespace Digizuite
+namespace Digizuite.Logging
 {
     /// <summary>
     /// Provides a convenient and simple implementation of the ILogger interface, for local development.

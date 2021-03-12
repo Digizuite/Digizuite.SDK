@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Logging;
 using Digizuite.Models;
 using Digizuite.Models.Metadata;
 using RestSharp;

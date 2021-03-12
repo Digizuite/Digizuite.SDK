@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate;
 using Digizuite.BatchUpdate.Models;
+using Digizuite.Logging;
 using Digizuite.Models.Folders;
 
 namespace Digizuite.Folders

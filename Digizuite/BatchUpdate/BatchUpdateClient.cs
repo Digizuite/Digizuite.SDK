@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.Models;
+using Digizuite.Logging;
 using Digizuite.Models;
 using Newtonsoft.Json;
 using RestSharp;

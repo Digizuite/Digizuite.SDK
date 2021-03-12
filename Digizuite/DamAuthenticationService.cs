@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
+using Digizuite.Logging;
 using Digizuite.Models;
 using Timer = System.Timers.Timer;
 

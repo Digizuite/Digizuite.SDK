@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Digizuite.Cache;
+using Digizuite.Logging;
 using Digizuite.Models.Metadata;
 
 namespace Digizuite.Metadata

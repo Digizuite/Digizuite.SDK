@@ -1,7 +1,7 @@
 ﻿using System;
 using Digizuite.Models;
 
-namespace Digizuite
+namespace Digizuite.Logging
 {
     public interface ILogger
     {

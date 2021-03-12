@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
+using Digizuite.Logging;
 using Digizuite.Models;
 using Digizuite.Models.Search;
 using RestSharp;

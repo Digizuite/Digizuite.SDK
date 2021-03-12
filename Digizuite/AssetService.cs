@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Digizuite.BatchUpdate;
 using Digizuite.BatchUpdate.Models;
 using Digizuite.Exceptions;
+using Digizuite.Logging;
 using Digizuite.Models;
 using Digizuite.Models.Search;
 

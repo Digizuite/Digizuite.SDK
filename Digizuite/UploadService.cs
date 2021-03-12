@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
+using Digizuite.Logging;
 using Digizuite.Models;
 using Newtonsoft.Json;
 using RestSharp;

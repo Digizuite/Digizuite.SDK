@@ -1,8 +1,9 @@
 using System;
 using Digizuite.Models;
+
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace Digizuite
+namespace Digizuite.Logging
 {
     public static class LoggerExtensions
     {

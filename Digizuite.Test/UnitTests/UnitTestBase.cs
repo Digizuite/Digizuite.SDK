@@ -1,4 +1,5 @@
 ﻿using System;
+using Digizuite.Logging;
 using Digizuite.Models;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
