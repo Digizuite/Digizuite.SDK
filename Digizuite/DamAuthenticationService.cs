@@ -2,6 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Exceptions;
 using Digizuite.Models;
 using Timer = System.Timers.Timer;
 
@@ -17,7 +18,7 @@ namespace Digizuite
         private readonly Timer _renewalTimer;
         private readonly SemaphoreSlim _lock = new(1, 1);
 
-        private AccessKey _accessKey = null!;
+        private AccessKey? _accessKey;
 
         public DamAuthenticationService(IConfiguration configuration, ILogger<DamAuthenticationService> logger, ServiceHttpWrapper serviceHttpWrapper)
         {
@@ -38,7 +39,7 @@ namespace Digizuite
         /// <summary>
         ///     Indicates if the access key has expired completely
         /// </summary>
-        private bool HasExpired => _accessKey.Expiration < DateTimeOffset.Now;
+        private bool HasExpired => _accessKey == null || _accessKey?.Expiration < DateTimeOffset.Now;
 
         /// <summary>
         ///     Gets the active access key for the system user
@@ -53,7 +54,7 @@ namespace Digizuite
             }
 
             _logger.LogTrace("Reusing previous access key");
-            return _accessKey.Token;
+            return _accessKey!.Token;
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace Digizuite
                 await Login(_configuration.SystemUsername, _configuration.SystemPassword).ConfigureAwait(false);
             }
 
-            _logger.LogTrace("Returning member id", nameof(_accessKey.MemberId), _accessKey.MemberId);
+            _logger.LogTrace("Returning member id", nameof(_accessKey.MemberId), _accessKey!.MemberId);
             return _accessKey.MemberId;
         }
 
@@ -160,7 +161,7 @@ namespace Digizuite
                 if (!res.IsSuccessful)
                 {
                     _logger.LogError(res.ErrorException, "Authentication failed", nameof(res.Content), res.Content, nameof(res.StatusCode), res.StatusCode);
-                    throw new Exception("Request was unsuccessful");
+                    throw new AuthenticationException("Authentication failed");
                 }
 
                 _accessKey = res.Data;
