@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Digizuite.Models
 {
-    public class ItemInfo
+    public record ItemInfo
     {
         public int BaseId { get; set; }
         public int ItemId { get; set; }

@@ -25,7 +25,7 @@ namespace Digizuite.Models.Search
         /// <param name="page">The page to load</param>
         /// <param name="pageSize">How many items to return</param>
         /// <param name="method">A method name in the api</param>
-        public SearchParameters(string searchName = null, int page = DefaultPage, int pageSize = DefaultPageSize, string method = null)
+        public SearchParameters(string? searchName = null, int page = DefaultPage, int pageSize = DefaultPageSize, string? method = null)
         {
             PageSize = pageSize;
             Page = page;
@@ -43,7 +43,7 @@ namespace Digizuite.Models.Search
         /// <summary>
         /// Alternative constructor for creating a copy of an existing set of search parameters
         /// </summary>
-        public SearchParameters(SearchParameters parameters) : base(parameters ?? new NameValueCollection())
+        public SearchParameters(SearchParameters? parameters) : base(parameters ?? new NameValueCollection())
         {
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
         }
@@ -89,7 +89,7 @@ namespace Digizuite.Models.Search
         /// <summary>
         /// Get or sets the name of the specific search that should be executed
         /// </summary>
-        public string SearchName
+        public string? SearchName
         {
             get => this[SearchNameKey];
             set => this[SearchNameKey] = value;
@@ -98,7 +98,7 @@ namespace Digizuite.Models.Search
         /// <summary>
         /// Get or sets the name of the method to execute
         /// </summary>
-        public string Method
+        public string? Method
         {
             get => this[MethodNameKey];
             set => this[MethodNameKey] = value;
@@ -230,7 +230,7 @@ namespace Digizuite.Models.Search
     public class SearchParameters<T> : SearchParameters
     {
         /// <inheritdoc/>
-        public SearchParameters(string searchName = null, int page = DefaultPage, int pageSize = DefaultPageSize, string method = null) : base(
+        public SearchParameters(string? searchName = null, int page = DefaultPage, int pageSize = DefaultPageSize, string? method = null) : base(
             searchName, page, pageSize, method)
         {
         }
@@ -239,7 +239,7 @@ namespace Digizuite.Models.Search
         /// Creates a new copy of an existing set of search parameters
         /// </summary>
         /// <param name="parameters"></param>
-        public SearchParameters(SearchParameters<T> parameters) : base(parameters)
+        public SearchParameters(SearchParameters<T>? parameters) : base(parameters)
         {
         }
 
@@ -247,7 +247,7 @@ namespace Digizuite.Models.Search
         /// Creates a type specific copy of an existing set of search parameters
         /// </summary>
         /// <param name="parameters"></param>
-        public SearchParameters(SearchParameters parameters) : base(parameters)
+        public SearchParameters(SearchParameters? parameters) : base(parameters)
         {
         }
     }

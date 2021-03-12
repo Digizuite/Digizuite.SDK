@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace Digizuite.BatchUpdate.Models
 {
     public abstract class BatchValue

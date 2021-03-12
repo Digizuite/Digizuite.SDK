@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class FloatMetafield : Field<double?>
+    public record FloatMetafield : Field<double?>
     {
         public MetaFieldDataType Type => MetaFieldDataType.Float;
 

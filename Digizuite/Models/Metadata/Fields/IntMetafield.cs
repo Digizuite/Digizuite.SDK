@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class IntMetafield : Field<int?>
+    public record IntMetafield : Field<int?>
     {
         public MetaFieldDataType Type => MetaFieldDataType.Int;
 

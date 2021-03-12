@@ -130,19 +130,19 @@ namespace Digizuite.Metadata
 
         private class ComboValueSearchResponse
         {
-            [JsonProperty("combovalue")] public string Text { get; set; }
+            [JsonProperty("combovalue")] public string Text { get; set; } = default!;
 
-            [JsonProperty("optionvalue")] public string Value { get; set; }
+            [JsonProperty("optionvalue")] public string Value { get; set; } = default!;
 
-            [JsonProperty("isPublic")] public bool IsPublic { get; set; }
+            [JsonProperty("isPublic")] public bool IsPublic { get; set; } = default!;
 
-            [JsonProperty("visible")] public bool Visible { get; set; }
+            [JsonProperty("visible")] public bool Visible { get; set; } = default!;
 
-            [JsonProperty("itemId")] public int ItemId { get; set; }
+            [JsonProperty("itemId")] public int ItemId { get; set; } = default!;
 
-            [JsonProperty("item_combo_valueid")] public int Id { get; set; }
+            [JsonProperty("item_combo_valueid")] public int Id { get; set; } = default!;
 
-            [JsonProperty("sortIndex")] public int SortIndex { get; set; }
+            [JsonProperty("sortIndex")] public int SortIndex { get; set; } = default!;
         }
     }
 }

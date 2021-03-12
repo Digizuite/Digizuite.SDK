@@ -4,7 +4,7 @@ using Digizuite.Models.Metadata.Values;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class MultiComboMetafield : Field<List<ComboValue>>
+    public record MultiComboMetafield : Field<List<ComboValue>>
     {
         public MetaFieldDataType Type => MetaFieldDataType.MultiComboValue;
 

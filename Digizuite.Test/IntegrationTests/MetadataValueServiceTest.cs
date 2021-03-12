@@ -47,7 +47,7 @@ namespace Digizuite.Test.IntegrationTests
         {
             if (actual is IEnumerable)
             {
-                Assert.That(actual, Is.EquivalentTo((IEnumerable)expected));
+                Assert.That(actual, Is.EquivalentTo(expected as IEnumerable));
             }
             else
             {
@@ -66,7 +66,9 @@ namespace Digizuite.Test.IntegrationTests
         public async Task CanLoadAndUpdateField_Combo()
         {
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
+#pragma warning disable 8631
             await TestChanges(10273, service.GetComboMetafield, new ComboValue()
+#pragma warning restore 8631
             {
                 Label = "A",
                 OptionValue = "A",
@@ -97,7 +99,9 @@ namespace Digizuite.Test.IntegrationTests
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
 
             var second = Guid.NewGuid().ToString();
+#pragma warning disable 8631
             await TestChanges(10277, service.GetEditComboMetafield, new ComboValue
+#pragma warning restore 8631
             {
                 Label = "A",
                 OptionValue = "A",
@@ -161,7 +165,9 @@ namespace Digizuite.Test.IntegrationTests
         public async Task CanLoadAndUpdateField_Link()
         {
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
+#pragma warning disable 8631
             await TestChanges(10285, service.GetLinkMetafield, "https://digizuite.com", "https://digizuite.com/foo");
+#pragma warning restore 8631
         }
         
         [Test]

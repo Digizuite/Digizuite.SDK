@@ -41,7 +41,7 @@ namespace Digizuite
             return await _cache.Get(cacheKey, TimeSpan.FromMinutes(60), async () =>
             {
                 _logger.LogDebug("Getting item info", "cacheKey", cacheKey);
-                var response = await _searchService.Search<ItemInfo>(parameters).ConfigureAwait(false);;
+                var response = await _searchService.Search<ItemInfo>(parameters).ConfigureAwait(false);
                 if (response.Items.Any())
                 {
                     _logger.LogDebug("Got item info", "cacheKey", cacheKey, "info", response.Items[0]);

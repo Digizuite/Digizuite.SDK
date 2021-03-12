@@ -5,11 +5,11 @@ namespace Digizuite.Models
 {
     public class RootSystemToolsResponse
     {
-        public int ChildCount { get; set; }
-        public int FolderId { get; set; }
-        public int ItemId { get; set; }
-        public CodedFolder SubRepositoryType { get; set; }
-        public int UniqueId { get; set; }
-        public List<SystemToolsNodeItem> Items { get; set; }
+        public int ChildCount { get; set; } = default!;
+        public int FolderId { get; set; } = default!;
+        public int ItemId { get; set; } = default!;
+        public CodedFolder SubRepositoryType { get; set; } = default!;
+        public int UniqueId { get; set; } = default!;
+        public List<SystemToolsNodeItem> Items { get; set; } = default!;
     }
 }

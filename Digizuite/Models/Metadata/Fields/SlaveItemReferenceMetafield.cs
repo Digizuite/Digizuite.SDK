@@ -3,7 +3,7 @@ using Digizuite.Models.Metadata.Values;
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class SlaveItemReferenceMetafield : ItemReferenceMetaField<ItemReferenceOption>
+    public record SlaveItemReferenceMetafield : ItemReferenceMetaField<ItemReferenceOption>
     {
         public MetaFieldDataType Type => MetaFieldDataType.SlaveItemReference;
         public int RefLabelId { get; set; }

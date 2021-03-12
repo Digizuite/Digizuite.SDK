@@ -9,8 +9,8 @@ namespace Digizuite.Test.Mocks
 {
     public class FolderServiceMock : IFolderService
     {
-        [SuppressMessage("ReSharper", "CA2227")] 
-        public List<FolderValue> MockFolderValues { get; set; }
+        [SuppressMessage("ReSharper", "CA2227")]
+        public List<FolderValue> MockFolderValues { get; set; } = default!;
 
         public Task<List<FolderValue>> GetFolders()
         {

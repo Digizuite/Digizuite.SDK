@@ -2,7 +2,7 @@
 
 namespace Digizuite.Models.Metadata.Fields
 {
-    public class BitMetafield : Field<bool>
+    public record BitMetafield : Field<bool>
     {
         public MetaFieldDataType Type => MetaFieldDataType.Bit;
 

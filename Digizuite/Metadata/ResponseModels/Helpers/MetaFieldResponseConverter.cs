@@ -42,7 +42,7 @@ namespace Digizuite.Metadata.ResponseModels.Helpers
                 MetaFieldDataType.EditMultiComboValue => Deserialize<EditMultiComboValueMetaFieldResponse>(doc, options),
                 MetaFieldDataType.Tree => Deserialize<TreeMetaFieldResponse>(doc, options),
                 MetaFieldDataType.Link => Deserialize<LinkMetaFieldResponse>(doc, options),
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown metafield data type")
             };
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using Digizuite.Models;
-using Digizuite.Samples;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
@@ -8,8 +7,8 @@ namespace Digizuite.Test.UnitTests
 {
     public abstract class UnitTestBase
     {
-        protected IConfiguration Configuration;
-        protected IServiceProvider ServiceProvider;
+        protected IConfiguration Configuration = null!;
+        protected IServiceProvider ServiceProvider = null!;
 
         protected virtual void SetupDependencies(IServiceCollection services)
         {

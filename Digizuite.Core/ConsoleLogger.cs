@@ -16,20 +16,26 @@ namespace Digizuite
             return true;
         }
         
-        public void Log(LogLevel level, Exception exception, string message, params object[] args)
+        public void Log(LogLevel level, Exception? exception, string message, params object[] args)
         {
             if (!IsLogLevelEnabled(level))
             {
                 return;
             }
-            
-            Console.WriteLine(JsonConvert.SerializeObject(new Dictionary<string, object>
+
+            var logLine = new Dictionary<string, object>
             {
                 {"level", level.ToString()},
                 {"message", message},
                 {"args", args},
-                {"exception", exception}
-            }));
+            };
+
+            if (exception != null)
+            {
+                logLine["exception"] = exception;
+            }
+            
+            Console.WriteLine(JsonConvert.SerializeObject(logLine));
         }
     }
 }

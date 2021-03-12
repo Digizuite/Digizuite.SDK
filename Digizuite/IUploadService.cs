@@ -13,7 +13,7 @@ namespace Digizuite
         /// <param name="computerName">Should be the name of the service uploading this file, e.g., "Digizuite Media Manager"</param>
         /// <param name="listener">An optional listener for hooking in as the upload moves along. Do any custom operations you might have to do here</param>
         /// <returns>The itemId of the newly uploaded asset</returns>
-        Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener listener = null);
+        Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null);
         
         /// <summary>
         /// Replaces an existing asset
@@ -27,7 +27,7 @@ namespace Digizuite
         /// <param name="listener">An optional listener for hooking in as the upload moves along. Do any custom operations you might have to do here</param>
         /// <returns>The itemId of the newly uploaded asset</returns>
         Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId,
-            KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener listener = null);
+            KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener? listener = null);
     }
 
     #pragma warning disable CA1717

@@ -146,9 +146,9 @@ namespace Digizuite.Metadata
 
         private class GroupSearch
         {
-            public int FolderId;
-            public string Hid;
-            public string ParentPath;
+            public int FolderId = default!;
+            public string Hid = default!;
+            public string ParentPath = default!;
         }
     }
 }
