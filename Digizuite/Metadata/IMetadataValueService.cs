@@ -16,9 +16,10 @@ namespace Digizuite.Metadata
         /// <param name="fieldItemIds">The item id of the field to load metadata for</param>
         /// <param name="languageId">The language id of the field to load metadata for</param>
         /// <param name="cancellationToken">A cancellationtoken to cancel the request</param>
+        /// <param name="accessKey">If another access key than the default should be used</param>
         /// <returns></returns>
         Task<MetadataEditorResponse> GetRawMetadata(int assetItemId, List<int> fieldItemIds,
-            int languageId = 0, CancellationToken cancellationToken = default);
+            int languageId = 0, CancellationToken cancellationToken = default, string? accessKey = null);
 
         /// <summary>
         ///     Updates the value of all the specified fields for the given asset.

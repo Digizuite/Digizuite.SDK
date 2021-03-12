@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Digizuite.Extensions;
+using Digizuite.Metadata.ResponseModels.MetaFields;
 using Digizuite.Models.Metadata;
 
 namespace Digizuite.Metadata.ResponseModels.Helpers

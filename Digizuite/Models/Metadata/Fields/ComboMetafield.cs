@@ -1,4 +1,5 @@
 using Digizuite.Metadata.ResponseModels;
+using Digizuite.Metadata.ResponseModels.Properties;
 using ComboValue = Digizuite.Models.Metadata.Values.ComboValue;
 
 namespace Digizuite.Models.Metadata.Fields

@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Digizuite.Metadata.ResponseModels;
+using Digizuite.Metadata.ResponseModels.Properties;
 
 namespace Digizuite.Models.Metadata.Fields
 {

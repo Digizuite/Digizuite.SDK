@@ -70,9 +70,9 @@ namespace Digizuite.Metadata
         }
 
         public async Task<MetadataEditorResponse> GetRawMetadata(int assetItemId, List<int> fieldItemIds,
-            int languageId = 0, CancellationToken cancellationToken = default)
+            int languageId = 0, CancellationToken cancellationToken = default, string? accessKey = null)
         {
-            var accessKey = await _authenticationService.GetAccessKey().ConfigureAwait(false);
+            accessKey ??= await _authenticationService.GetAccessKey().ConfigureAwait(false);
 
             var (client, request) =
                 _serviceHttpWrapper.GetClientAndRequest(ServiceType.LegacyService, "/api/metadata/editor");

@@ -8,11 +8,4 @@ namespace Digizuite.Metadata.ResponseModels
         public List<MetaFieldResponse> Fields { get; set; } = new();
         public List<MetadataResponse> Values { get; set; } = new();
     }
-
-    public record MetaGroupResponse(
-        string Name,
-        int GroupId,
-        int SortIndex,
-        bool Iterative
-    );
 }
