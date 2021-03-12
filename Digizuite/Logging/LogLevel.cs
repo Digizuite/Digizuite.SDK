@@ -1,4 +1,4 @@
-﻿namespace Digizuite.Models
+﻿namespace Digizuite.Logging
 {
     /// <summary>Defines logging severity levels.</summary>
     public enum LogLevel

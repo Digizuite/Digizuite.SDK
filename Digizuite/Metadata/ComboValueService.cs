@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.BatchBuilder;
+using Digizuite.Logging;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Models.Search;
 using Newtonsoft.Json;

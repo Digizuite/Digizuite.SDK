@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Collections;
 using Digizuite.Extensions;
+using Digizuite.Logging;
 using Digizuite.Metadata.RequestModels;
 using Digizuite.Metadata.RequestModels.UpdateModels;
 using Digizuite.Metadata.RequestModels.UpdateModels.Values;
