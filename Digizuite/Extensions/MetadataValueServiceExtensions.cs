@@ -56,6 +56,7 @@ namespace Digizuite.Extensions
                         (TreeMetaFieldResponse f, TreeMetadataResponse v) => ParseTreeMetafield(f, v),
                         (EditMultiComboValueMetaFieldResponse f, EditMultiComboValueMetadataResponse v) =>
                             ParseEditMultiComboMetafield(f, v),
+                        (EditComboValueMetaFieldResponse f, EditComboValueMetadataResponse v) => ParseEditComboMetafield(f, v),
                         _ => throw new ArgumentOutOfRangeException(nameof(field),
                             $"Unknown metafield/metadata value type combination. Got {field.GetType()}/{value.GetType()}")
                     };
@@ -68,7 +69,7 @@ namespace Digizuite.Extensions
         private static TField PopulateField<TField>(MetaFieldResponse response, TField field)
             where TField : Field
         {
-            field.ItemId = response.ItemId;
+            field.FieldItemId = response.ItemId;
             field.MetafieldId = response.MetafieldId;
             field.LabelId = response.LabelId;
             field.Label = response.Label;
