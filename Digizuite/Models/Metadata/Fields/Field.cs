@@ -2,7 +2,7 @@
 {
     public abstract record Field
     {
-        public int ItemId { get; set; }
+        public int FieldItemId { get; set; }
         public int MetafieldId { get; set; }
         public int LabelId { get; set; }
         public string Label { get; set; } = null!;
