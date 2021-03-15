@@ -63,12 +63,6 @@ namespace Digizuite.Test.IntegrationTests
             }
         }
 
-        protected override void SetupDependencies(IServiceCollection services)
-        {
-            Configuration.DevelopmentServices.Add(ServiceType.LegacyService);
-            base.SetupDependencies(services);
-        }
-
         [Test]
         public async Task CanLoadAndUpdateField_Bit()
         {
