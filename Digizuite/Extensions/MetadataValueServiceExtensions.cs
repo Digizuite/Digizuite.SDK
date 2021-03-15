@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Metadata;
+using Digizuite.Metadata.RequestModels;
 using Digizuite.Metadata.ResponseModels;
 using Digizuite.Metadata.ResponseModels.Metadata;
 using Digizuite.Metadata.ResponseModels.MetaFields;
@@ -18,10 +19,10 @@ namespace Digizuite.Extensions
     public static class MetadataValueServiceExtensions
     {
         public static async Task<List<Field>> GetAllMetadata(this IMetadataValueService service,
-            int assetItemId, List<int> metaFieldItemIds, int languageId = 0,
+            GetMetadataRequest request,
             CancellationToken cancellationToken = default, string? accessKey = null)
         {
-            var response = await service.GetRawMetadata(assetItemId, metaFieldItemIds, languageId, cancellationToken, accessKey);
+            var response = await service.GetRawMetadata(request, cancellationToken, accessKey);
 
             var labelValues = response.Values
                 .GroupBy(v => v.LabelId)
@@ -43,14 +44,18 @@ namespace Digizuite.Extensions
                         (BitMetaFieldResponse f, BitMetadataResponse v) => ParseBitMetafield(f, v),
                         (NoteMetaFieldResponse f, NoteMetadataResponse v) => ParseNoteMetafield(f, v),
                         (DateTimeMetaFieldResponse f, DateTimeMetadataResponse v) => ParseDateTimeMetafield(f, v),
-                        (MultiComboValueMetaFieldResponse f, MultiComboValueMetadataResponse v) => ParseMultiComboMetafield(f, v),
+                        (MultiComboValueMetaFieldResponse f, MultiComboValueMetadataResponse v) =>
+                            ParseMultiComboMetafield(f, v),
                         (ComboValueMetaFieldResponse f, ComboValueMetadataResponse v) => ParseComboMetafield(f, v),
-                        (MasterItemReferenceMetaFieldResponse f, MasterItemReferenceMetadataResponse v) => ParseMasterItemReferenceMetafield(f, v),
-                        (SlaveItemReferenceMetaFieldResponse f, SlaveItemReferenceMetadataResponse v) => ParseSlaveItemReferenceMetafield(f, v),
+                        (MasterItemReferenceMetaFieldResponse f, MasterItemReferenceMetadataResponse v) =>
+                            ParseMasterItemReferenceMetafield(f, v),
+                        (SlaveItemReferenceMetaFieldResponse f, SlaveItemReferenceMetadataResponse v) =>
+                            ParseSlaveItemReferenceMetafield(f, v),
                         (FloatMetaFieldResponse f, FloatMetadataResponse v) => ParseFloatMetafield(f, v),
                         (LinkMetaFieldResponse f, LinkMetadataResponse v) => ParseLinkMetafield(f, v),
                         (TreeMetaFieldResponse f, TreeMetadataResponse v) => ParseTreeMetafield(f, v),
-                        (EditMultiComboValueMetaFieldResponse f, EditMultiComboValueMetadataResponse v) => ParseEditMultiComboMetafield(f, v),
+                        (EditMultiComboValueMetaFieldResponse f, EditMultiComboValueMetadataResponse v) =>
+                            ParseEditMultiComboMetafield(f, v),
                         _ => throw new ArgumentOutOfRangeException(nameof(field),
                             $"Unknown metafield/metadata value type combination. Got {field.GetType()}/{value.GetType()}")
                     };
@@ -85,14 +90,13 @@ namespace Digizuite.Extensions
         /// </summary>
         /// <param name="service"></param>
         /// <param name="assetItemId">The itemId of the asset to load metadata for</param>
-        /// <param name="metafieldItemId">The itemId of the metafield to load</param>
-        /// <param name="languageId">The specific language to get the metafield in, if any</param>
+        /// <param name="metafieldLabelId">The labelId of the field to load</param>
         /// <param name="cancellationToken"></param>
         public static async Task<BitMetafield> GetBitMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
             var (field, value) = await service.GetSingleField<BitMetaFieldResponse, BitMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new BitMetadataResponse(false));
+                metafieldLabelId, cancellationToken, () => new BitMetadataResponse(false));
 
             return ParseBitMetafield(field, value);
         }
@@ -107,16 +111,17 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<ComboMetafield> GetComboMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
             var (field, value) = await service.GetSingleField<ComboValueMetaFieldResponse, ComboValueMetadataResponse>(
-                assetItemId, metafieldItemId, languageId, cancellationToken,
+                assetItemId, metafieldLabelId, cancellationToken,
                 () => new ComboValueMetadataResponse(null));
 
             return ParseComboMetafield(field, value);
         }
 
-        private static ComboMetafield ParseComboMetafield(ComboValueMetaFieldResponse field, ComboValueMetadataResponse value)
+        private static ComboMetafield ParseComboMetafield(ComboValueMetaFieldResponse field,
+            ComboValueMetadataResponse value)
         {
             return PopulateField(field, new ComboMetafield
             {
@@ -127,18 +132,19 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<EditComboMetafield> GetEditComboMetafield(this IMetadataValueService service,
-            int assetItemId, int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int assetItemId, int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            
-            var (field, value) = await service.GetSingleField<EditComboValueMetaFieldResponse, EditComboValueMetadataResponse>(
-                assetItemId, metafieldItemId, languageId, cancellationToken,
-                () => new EditComboValueMetadataResponse(null));
-            
-            
+            var (field, value) =
+                await service.GetSingleField<EditComboValueMetaFieldResponse, EditComboValueMetadataResponse>(
+                    assetItemId, metafieldLabelId, cancellationToken,
+                    () => new EditComboValueMetadataResponse(null));
+
+
             return ParseEditComboMetafield(field, value);
         }
 
-        private static EditComboMetafield ParseEditComboMetafield(EditComboValueMetaFieldResponse field, EditComboValueMetadataResponse value)
+        private static EditComboMetafield ParseEditComboMetafield(EditComboValueMetaFieldResponse field,
+            EditComboValueMetadataResponse value)
         {
             return PopulateField(field, new EditComboMetafield
             {
@@ -148,18 +154,19 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<MultiComboMetafield> GetMultiComboMetafield(this IMetadataValueService service,
-            int assetItemId, int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int assetItemId, int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            
-            var (field, value) = await service.GetSingleField<MultiComboValueMetaFieldResponse, MultiComboValueMetadataResponse>(
-                assetItemId, metafieldItemId, languageId, cancellationToken,
-                () => new MultiComboValueMetadataResponse(new()));
-            
-            
+            var (field, value) =
+                await service.GetSingleField<MultiComboValueMetaFieldResponse, MultiComboValueMetadataResponse>(
+                    assetItemId, metafieldLabelId, cancellationToken,
+                    () => new MultiComboValueMetadataResponse(new()));
+
+
             return ParseMultiComboMetafield(field, value);
         }
 
-        private static MultiComboMetafield ParseMultiComboMetafield(MultiComboValueMetaFieldResponse field, MultiComboValueMetadataResponse value)
+        private static MultiComboMetafield ParseMultiComboMetafield(MultiComboValueMetaFieldResponse field,
+            MultiComboValueMetadataResponse value)
         {
             return PopulateField(field, new MultiComboMetafield
             {
@@ -169,18 +176,19 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<EditMultiComboMetafield> GetEditMultiComboMetafield(this IMetadataValueService service,
-            int assetItemId, int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int assetItemId, int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            
-            var (field, value) = await service.GetSingleField<EditMultiComboValueMetaFieldResponse, EditMultiComboValueMetadataResponse>(
-                assetItemId, metafieldItemId, languageId, cancellationToken,
-                () => new EditMultiComboValueMetadataResponse(new()));
-            
-            
+            var (field, value) = await service
+                .GetSingleField<EditMultiComboValueMetaFieldResponse, EditMultiComboValueMetadataResponse>(
+                    assetItemId, metafieldLabelId, cancellationToken,
+                    () => new EditMultiComboValueMetadataResponse(new()));
+
+
             return ParseEditMultiComboMetafield(field, value);
         }
 
-        private static EditMultiComboMetafield ParseEditMultiComboMetafield(EditMultiComboValueMetaFieldResponse field, EditMultiComboValueMetadataResponse value)
+        private static EditMultiComboMetafield ParseEditMultiComboMetafield(EditMultiComboValueMetaFieldResponse field,
+            EditMultiComboValueMetadataResponse value)
         {
             return PopulateField(field, new EditMultiComboMetafield
             {
@@ -190,10 +198,10 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<IntMetafield> GetIntMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
             var (field, value) = await service.GetSingleField<IntMetaFieldResponse, IntMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new IntMetadataResponse(null));
+                metafieldLabelId, cancellationToken, () => new IntMetadataResponse(null));
 
             return ParseIntMetafield(field, value);
         }
@@ -207,11 +215,12 @@ namespace Digizuite.Extensions
         }
 
         /// <inheritdoc cref="GetBitMetafield"/>
-        public static async Task<StringMetafield> GetStringMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+        public static async Task<StringMetafield> GetStringMetafield(this IMetadataValueService service,
+            int assetItemId,
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            var (field, value) = await service.GetSingleField<StringMetaFieldResponse, StringMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new StringMetadataResponse(""));
+            var (field, value) = await service.GetSingleField<StringMetaFieldResponse, StringMetadataResponse>(
+                assetItemId, metafieldLabelId, cancellationToken, () => new StringMetadataResponse(""));
 
             return ParseStringMetafield(field, value);
         }
@@ -226,10 +235,10 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<LinkMetafield> GetLinkMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
             var (field, value) = await service.GetSingleField<LinkMetaFieldResponse, LinkMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new LinkMetadataResponse(null));
+                metafieldLabelId, cancellationToken, () => new LinkMetadataResponse(null));
 
             return ParseLinkMetafield(field, value);
         }
@@ -244,10 +253,10 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<FloatMetafield> GetFloatMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            var (field, value) = await service.GetSingleField<FloatMetaFieldResponse, FloatMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new FloatMetadataResponse(null));
+            var (field, value) = await service.GetSingleField<FloatMetaFieldResponse, FloatMetadataResponse>(
+                assetItemId, metafieldLabelId, cancellationToken, () => new FloatMetadataResponse(null));
 
             return ParseFloatMetafield(field, value);
         }
@@ -263,10 +272,10 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<NoteMetafield> GetNoteMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
             var (field, value) = await service.GetSingleField<NoteMetaFieldResponse, NoteMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new NoteMetadataResponse(""));
+                metafieldLabelId, cancellationToken, () => new NoteMetadataResponse(""));
 
             return ParseNoteMetafield(field, value);
         }
@@ -281,16 +290,17 @@ namespace Digizuite.Extensions
         }
 
         /// <inheritdoc cref="GetBitMetafield"/>
-        public static async Task<DateTimeMetafield> GetDateTimeMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+        public static async Task<DateTimeMetafield> GetDateTimeMetafield(this IMetadataValueService service,
+            int assetItemId, int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            var (field, value) = await service.GetSingleField<DateTimeMetaFieldResponse, DateTimeMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new DateTimeMetadataResponse(null));
+            var (field, value) = await service.GetSingleField<DateTimeMetaFieldResponse, DateTimeMetadataResponse>(
+                assetItemId, metafieldLabelId, cancellationToken, () => new DateTimeMetadataResponse(null));
 
             return ParseDateTimeMetafield(field, value);
         }
 
-        private static DateTimeMetafield ParseDateTimeMetafield(DateTimeMetaFieldResponse field, DateTimeMetadataResponse value)
+        private static DateTimeMetafield ParseDateTimeMetafield(DateTimeMetaFieldResponse field,
+            DateTimeMetadataResponse value)
         {
             return PopulateField(field, new DateTimeMetafield
             {
@@ -302,10 +312,10 @@ namespace Digizuite.Extensions
 
         /// <inheritdoc cref="GetBitMetafield"/>
         public static async Task<TreeMetafield> GetTreeMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
             var (field, value) = await service.GetSingleField<TreeMetaFieldResponse, TreeMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new TreeMetadataResponse(new()));
+                metafieldLabelId, cancellationToken, () => new TreeMetadataResponse(new()));
 
             return ParseTreeMetafield(field, value);
         }
@@ -325,16 +335,20 @@ namespace Digizuite.Extensions
         }
 
         /// <inheritdoc cref="GetBitMetafield"/>
-        public static async Task<MasterItemReferenceMetafield> GetMasterItemReferenceMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+        public static async Task<MasterItemReferenceMetafield> GetMasterItemReferenceMetafield(
+            this IMetadataValueService service, int assetItemId,
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            var (field, value) = await service.GetSingleField<MasterItemReferenceMetaFieldResponse, MasterItemReferenceMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new MasterItemReferenceMetadataResponse(new()));
+            var (field, value) =
+                await service.GetSingleField<MasterItemReferenceMetaFieldResponse, MasterItemReferenceMetadataResponse>(
+                    assetItemId, metafieldLabelId, cancellationToken,
+                    () => new MasterItemReferenceMetadataResponse(new()));
 
             return ParseMasterItemReferenceMetafield(field, value);
         }
 
-        private static MasterItemReferenceMetafield ParseMasterItemReferenceMetafield(MasterItemReferenceMetaFieldResponse field, MasterItemReferenceMetadataResponse value)
+        private static MasterItemReferenceMetafield ParseMasterItemReferenceMetafield(
+            MasterItemReferenceMetaFieldResponse field, MasterItemReferenceMetadataResponse value)
         {
             return PopulateField(field, new MasterItemReferenceMetafield
             {
@@ -350,16 +364,20 @@ namespace Digizuite.Extensions
         }
 
         /// <inheritdoc cref="GetBitMetafield"/>
-        public static async Task<SlaveItemReferenceMetafield> GetSlaveItemReferenceMetafield(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId = 0, CancellationToken cancellationToken = default)
+        public static async Task<SlaveItemReferenceMetafield> GetSlaveItemReferenceMetafield(
+            this IMetadataValueService service, int assetItemId,
+            int metafieldLabelId, CancellationToken cancellationToken = default)
         {
-            var (field, value) = await service.GetSingleField<SlaveItemReferenceMetaFieldResponse, SlaveItemReferenceMetadataResponse>(assetItemId,
-                metafieldItemId, languageId, cancellationToken, () => new SlaveItemReferenceMetadataResponse(new()));
+            var (field, value) =
+                await service.GetSingleField<SlaveItemReferenceMetaFieldResponse, SlaveItemReferenceMetadataResponse>(
+                    assetItemId, metafieldLabelId, cancellationToken,
+                    () => new SlaveItemReferenceMetadataResponse(new()));
 
             return ParseSlaveItemReferenceMetafield(field, value);
         }
 
-        private static SlaveItemReferenceMetafield ParseSlaveItemReferenceMetafield(SlaveItemReferenceMetaFieldResponse field, SlaveItemReferenceMetadataResponse value)
+        private static SlaveItemReferenceMetafield ParseSlaveItemReferenceMetafield(
+            SlaveItemReferenceMetaFieldResponse field, SlaveItemReferenceMetadataResponse value)
         {
             return PopulateField(field, new SlaveItemReferenceMetafield
             {
@@ -383,7 +401,7 @@ namespace Digizuite.Extensions
                 Id = value.Id
             };
         }
-        
+
         private static ComboValue ParseEditComboValueValue(ComboValueResponse value)
         {
             return new()
@@ -394,17 +412,22 @@ namespace Digizuite.Extensions
             };
         }
 
-        private static async Task<(TField, TData)> GetSingleField<TField, TData>(this IMetadataValueService service, int assetItemId,
-            int metafieldItemId, int languageId, CancellationToken cancellationToken, Func<TData> getDefaultValue)
+        private static async Task<(TField, TData)> GetSingleField<TField, TData>(this IMetadataValueService service,
+            int assetItemId, int metafieldLabelId, 
+            CancellationToken cancellationToken, Func<TData> getDefaultValue)
             where TField : MetaFieldResponse
             where TData : MetadataResponse
         {
-            
-            var response = await service.GetRawMetadata(assetItemId, new List<int> {metafieldItemId}, languageId,
-                cancellationToken).ConfigureAwait(false);
+            var requestBody = new GetMetadataRequest
+            {
+                ItemIds = new List<int>{assetItemId},
+                LabelIds = new HashSet<int>{metafieldLabelId}
+            };
+
+            var response = await service.GetRawMetadata(requestBody, cancellationToken).ConfigureAwait(false);
 
             var field = (TField) response.Fields.Single();
-            
+
             TData value;
             if (response.Values.Count == 0)
             {
