@@ -69,21 +69,12 @@ namespace Digizuite.Metadata
             }
         }
 
-        public async Task<MetadataEditorResponse> GetRawMetadata(int assetItemId, List<int> fieldItemIds,
-            int languageId = 0, CancellationToken cancellationToken = default, string? accessKey = null)
+        public async Task<MetadataEditorResponse> GetRawMetadata(GetMetadataRequest requestBody, CancellationToken cancellationToken = default, string? accessKey = null)
         {
             accessKey ??= await _authenticationService.GetAccessKey().ConfigureAwait(false);
 
             var (client, request) =
                 _serviceHttpWrapper.GetClientAndRequest(ServiceType.LegacyService, "/api/metadata/editor");
-
-            var requestBody = new GetMetadataRequest
-            {
-                ItemIds = new List<int> {assetItemId},
-                FieldItemIds = fieldItemIds.ToHashSetNetstandard()
-            };
-
-            if (languageId != 0) requestBody.Languages.Add(languageId);
 
             request
                 .AddJsonBody(requestBody)
@@ -100,8 +91,7 @@ namespace Digizuite.Metadata
 
             if (response.Data.Fields == null || response.Data.Fields.Count == 0)
             {
-                _logger.LogError("Request successful, no metafields returned", "response", response.Content,
-                    nameof(fieldItemIds), fieldItemIds);
+                _logger.LogError("Request successful, no metafields returned", "response", response.Content, nameof(requestBody), requestBody);
                 throw new Exception("Request successful, no metafields returned: " + response.Content);
             }
 
