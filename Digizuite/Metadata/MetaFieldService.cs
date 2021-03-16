@@ -37,7 +37,7 @@ namespace Digizuite.Metadata
 
             if (!response.IsSuccessful)
             {
-                _logger.LogError("Failed to load metafields", nameof(response.Content), response.Content);
+                _logger.LogError(response.ErrorException, "Failed to load metafields", nameof(response.Content), response.Content, nameof(response.StatusCode), response.StatusCode);
                 throw new Exception("Failed to load metafields: " + response.Content);
             }
             

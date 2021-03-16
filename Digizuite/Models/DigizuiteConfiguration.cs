@@ -21,7 +21,7 @@ namespace Digizuite.Models
         /// <summary>
         /// If localhost version of the core services should be called instead. 
         /// </summary>
-        public HashSet<ServiceType> DevelopmentServices { get; set; } = new();
+        public HashSet<ServiceType>? DevelopmentServices { get; set; } = new();
 
         public override string ToString()
         {

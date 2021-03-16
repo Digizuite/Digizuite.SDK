@@ -1,6 +1,6 @@
 ﻿namespace Digizuite.Models.Metadata.Values
 {
-    public class ComboValueDefinition
+    public record ComboValueDefinition
     {
         public int Id { get; set; }
         public int ItemId { get; set; }
