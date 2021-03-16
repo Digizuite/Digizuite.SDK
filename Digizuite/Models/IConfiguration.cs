@@ -15,6 +15,6 @@ namespace Digizuite.Models
         
         string? ConfigVersionId { get; set; }
         
-        HashSet<ServiceType> DevelopmentServices { get; set; }
+        HashSet<ServiceType>? DevelopmentServices { get; set; }
     }
 }

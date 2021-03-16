@@ -82,7 +82,7 @@ namespace Digizuite
 
         public DevServerConfigurations(IConfiguration configuration)
         {
-            _overridenServices = configuration.DevelopmentServices;
+            _overridenServices = configuration.DevelopmentServices ?? new HashSet<ServiceType>();
         }
 
 

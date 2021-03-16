@@ -12,6 +12,7 @@ namespace Digizuite.Test.IntegrationTests
     {
         private const int MetaFieldLabelId = 51732;
 
+        [Retry(5)]
         [Test]
         public async Task CanCrud()
         {
