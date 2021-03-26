@@ -35,8 +35,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="UnitTests\DamAuthenticationServiceTest.cs" />
-  </ItemGroup>
-
 </Project>
