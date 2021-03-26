@@ -11,12 +11,12 @@ namespace Digizuite.Logging
     /// </summary>
     public class ConsoleLogger<T> : ILogger<T>
     {
-        protected virtual bool IsLogLevelEnabled(LogLevel level)
+        public bool IsLogLevelEnabled(LogLevel level)
         {
             return true;
         }
-        
-        public void Log(LogLevel level, Exception? exception, string message, params object[] args)
+
+        public void Log(LogLevel level, Exception? exception, string message, params object?[] args)
         {
             if (!IsLogLevelEnabled(level))
             {

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.Models;
+using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Newtonsoft.Json;
-using RestSharp;
 using ValueType = Digizuite.BatchUpdate.Models.ValueType;
 
 namespace Digizuite.BatchUpdate
@@ -15,18 +16,18 @@ namespace Digizuite.BatchUpdate
     public class BatchUpdateClient : IBatchUpdateClient
     {
         private readonly IDamAuthenticationService _authenticationService;
-        private readonly IDamRestClient _restClient;
         private readonly IConfiguration _damInfo;
+        private readonly ServiceHttpWrapper _serviceHttpWrapper;
 
         private readonly ILogger<BatchUpdateClient> _logger;
 
         public BatchUpdateClient(ILogger<BatchUpdateClient> logger, IDamAuthenticationService authenticationService,
-            IConfiguration damInfo, IDamRestClient restClient)
+            IConfiguration damInfo, ServiceHttpWrapper serviceHttpWrapper)
         {
             _logger = logger;
             _authenticationService = authenticationService;
             _damInfo = damInfo;
-            _restClient = restClient;
+            _serviceHttpWrapper = serviceHttpWrapper;
         }
 
         public async Task<List<BatchUpdateResponse>> ApplyBatch(Batch batch, bool useVersionedMetadata = false,
@@ -42,23 +43,30 @@ namespace Digizuite.BatchUpdate
                 _damInfo.BaseUrl);
 
             var accessKey = await _authenticationService.GetAccessKey().ConfigureAwait(false);
-           
-            
-            var restRequest = new RestRequest("BatchUpdateService.js");
-            restRequest.AddParameter("updateXML", request.UpdateXml)
-                .AddParameter("values", request.Values)
-                .AddParameter("useVersionedMetadata", useVersionedMetadata);
 
-            var res = await _restClient.Execute<DigiResponse<BatchUpdateResponse>>(Method.POST, restRequest, accessKey, cancellationToken).ConfigureAwait(false);
-            if (!res.Data.Success)
+            var (client, restRequest) =
+                _serviceHttpWrapper.GetClientAndRequest(ServiceType.Dmm3bwsv3, "BatchUpdateService.js");
+
+            var parameters = new Dictionary<string, string>
             {
-                _logger.LogError("Batch Update request failed", "response", res.Content);
+                {"updateXML", request.UpdateXml},
+                {"values", request.Values},
+                {"useVersionedMetadata", useVersionedMetadata.ToString()}
+            };
+            restRequest.Body = new FormUrlEncodedBody(parameters);
+            restRequest.AddAccessKey(accessKey);
+            
+            
+            var res = await client.PostAsync<DigiResponse<BatchUpdateResponse>>(restRequest,cancellationToken).ConfigureAwait(false);
+            if (!res.Data!.Success)
+            {
+                _logger.LogError("Batch Update request failed", nameof(res), res);
                 throw new Exception("Batch update request failed");
             }
 
-            _logger.LogDebug("Batch update response", "response", res.Content);
+            _logger.LogDebug("Batch update response", nameof(res), res);
 
-            return res.Data.Items;
+            return res.Data!.Items;
         }
 
         private BatchRequestBodyPartial CreateBatchRequest(Batch batch)

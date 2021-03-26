@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Digizuite
@@ -12,9 +13,10 @@ namespace Digizuite
         /// <param name="filename">The name of the file to upload</param>
         /// <param name="computerName">Should be the name of the service uploading this file, e.g., "Digizuite Media Manager"</param>
         /// <param name="listener">An optional listener for hooking in as the upload moves along. Do any custom operations you might have to do here</param>
+        /// <param name="cancellationToken">A cancellation token for cancelling the requests if they are no longer relevant</param>
         /// <returns>The itemId of the newly uploaded asset</returns>
-        Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null);
-        
+        Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Replaces an existing asset
         /// </summary>
@@ -25,9 +27,10 @@ namespace Digizuite
         /// <param name="keepMetadata">If metadata should be kept or replace</param>
         /// <param name="overwrite">How the asset history should be considered</param>
         /// <param name="listener">An optional listener for hooking in as the upload moves along. Do any custom operations you might have to do here</param>
+        /// <param name="cancellationToken">A cancellation token for canceling the requests if they are no longer relevant</param>
         /// <returns>The itemId of the newly uploaded asset</returns>
         Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId,
-            KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener? listener = null);
+            KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener? listener = null, CancellationToken cancellationToken = default);
     }
 
     #pragma warning disable CA1717

@@ -1,10 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
+using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Digizuite.Models.Search;
-using RestSharp;
 
 namespace Digizuite
 {
@@ -13,14 +14,14 @@ namespace Digizuite
     /// </summary>
     public class SearchService : ISearchService
     {
-        private readonly IDamRestClient _restClient;
+        private readonly ServiceHttpWrapper _serviceHttpWrapper;
         private readonly IDamAuthenticationService _damAuthenticationService;
         private readonly ILogger<SearchService> _logger;
 
-        public SearchService(IDamRestClient restClient, IDamAuthenticationService damAuthenticationService,
+        public SearchService(ServiceHttpWrapper serviceHttpWrapper, IDamAuthenticationService damAuthenticationService,
             ILogger<SearchService> logger)
         {
-            _restClient = restClient;
+            _serviceHttpWrapper = serviceHttpWrapper;
             _damAuthenticationService = damAuthenticationService;
             _logger = logger;
         }
@@ -49,11 +50,10 @@ namespace Digizuite
         {
             // Copy the parameters immediately, so the user cannot change them under us
             parameters = new SearchParameters<T>(parameters);
-            if (string.IsNullOrWhiteSpace(accessKey))
-                accessKey = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
-            
-            var request = new RestRequest("SearchService.js");
-            
+            accessKey ??= await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
+
+            var (client, request) = _serviceHttpWrapper.GetSearchServiceClient();
+
             foreach (var key in parameters.AllKeys)
             {
                 var values = parameters.GetValues(key);
@@ -61,24 +61,27 @@ namespace Digizuite
                 {
                     continue;
                 }
+
                 foreach (var value in values)
                 {
-                    request.AddParameter(key, value);
+                    request.AddQueryParameter(key, value);
                 }
             }
 
+            request.AddAccessKey(accessKey);
+
             _logger.LogTrace("Sending search request");
-            var response = await _restClient.Execute<DigiResponse<T>>(Method.POST, request, accessKey, cancellationToken).ConfigureAwait(false);
+            var response = await client.GetAsync<DigiResponse<T>>(request, cancellationToken).ConfigureAwait(false);
             _logger.LogTrace("Got api response");
 
-            if (!response.Data.Success)
+            if (!response.Data!.Success)
             {
-                _logger.LogError("Search request failed", nameof(response), response.Data, nameof(response.Content), response.Content);
+                _logger.LogError("Search request failed", nameof(response), response);
                 throw new SearchFailedException("Search request failed");
             }
-            
-            
-            return new SearchResponse<T>(response.Data.Items, response.Data.Total, parameters);
+
+
+            return new SearchResponse<T>(response.Data!.Items, response.Data!.Total, parameters);
         }
     }
 }

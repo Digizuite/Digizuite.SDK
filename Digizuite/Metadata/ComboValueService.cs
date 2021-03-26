@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.BatchBuilder;
-using Digizuite.Logging;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Models.Search;
 using Newtonsoft.Json;
@@ -24,14 +23,12 @@ namespace Digizuite.Metadata
     public class ComboValueService : IComboValueService
     {
         private readonly IBatchBuilderService _batchBuilderService;
-        private readonly ILogger<ComboValueService> _logger;
         private readonly ISearchService _searchService;
 
-        public ComboValueService(IBatchBuilderService batchBuilderService, ILogger<ComboValueService> logger,
+        public ComboValueService(IBatchBuilderService batchBuilderService,
             ISearchService searchService)
         {
             _batchBuilderService = batchBuilderService;
-            _logger = logger;
             _searchService = searchService;
         }
 

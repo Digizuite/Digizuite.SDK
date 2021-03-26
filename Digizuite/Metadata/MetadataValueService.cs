@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Collections;
 using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Metadata.RequestModels;
 using Digizuite.Metadata.RequestModels.UpdateModels;
@@ -59,13 +60,12 @@ namespace Digizuite.Metadata
             request.AddAccessKey(accessKey)
                 .AddJsonBody(updateWrapper);
 
-
-            var response = await client.ExecutePostAsync(request, cancellationToken).ConfigureAwait(false);
+            var response = await client.PostAsync<object>(request, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessful)
             {
-                _logger.LogError(response.ErrorException, "Update metadata request failed", nameof(response.Content), response.Content, nameof(response.StatusCode), response.StatusCode, nameof(response.ErrorMessage), response.ErrorMessage);
-                throw new Exception("Update metadata request failed: " + response.Content);
+                _logger.LogError("Update metadata request failed", nameof(response), response);
+                throw new Exception("Update metadata request failed: " + response);
             }
         }
 
@@ -81,18 +81,18 @@ namespace Digizuite.Metadata
                 .AddAccessKey(accessKey);
 
 
-            var response = await client.ExecutePostAsync<MetadataEditorResponse>(request, cancellationToken)
+            var response = await client.PostAsync<MetadataEditorResponse>(request, cancellationToken)
                 .ConfigureAwait(false);
             if (!response.IsSuccessful)
             {
-                _logger.LogError(response.ErrorException, "GetMetadata failed", "response", response.Content, nameof(response.StatusCode), response.StatusCode, nameof(response.ErrorMessage), response.ErrorMessage);
-                throw new Exception("GetMetadata request failed: " + response.Content);
+                _logger.LogError("GetMetadata failed", nameof(response), response);
+                throw new Exception("GetMetadata request failed: " + response);
             }
 
-            if (response.Data.Fields == null || response.Data.Fields.Count == 0)
+            if (response.Data!.Fields == null || response.Data!.Fields.Count == 0)
             {
-                _logger.LogError("Request successful, no metafields returned", "response", response.Content, nameof(requestBody), requestBody);
-                throw new Exception("Request successful, no metafields returned: " + response.Content);
+                _logger.LogError("Request successful, no metafields returned", nameof(response), response);
+                throw new Exception("Request successful, no metafields returned: " + response);
             }
 
             _logger.LogTrace("Get metadata response", "response", response.Data);

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Timer = System.Timers.Timer;
@@ -157,16 +158,16 @@ namespace Digizuite
 
                 request.AddJsonBody(body);
             
-                var res = await client.ExecutePostAsync<AccessKey>(request, cancellationToken);
+                var res = await client.PostAsync<AccessKey>(request, cancellationToken);
 
                 if (!res.IsSuccessful)
                 {
-                    _logger.LogError(res.ErrorException, "Authentication failed", nameof(res.Content), res.Content, nameof(res.StatusCode), res.StatusCode);
+                    _logger.LogError("Authentication failed", nameof(res), res);
                     throw new AuthenticationException("Authentication failed");
                 }
 
                 _accessKey = res.Data;
-                var duration = _accessKey.Expiration - DateTimeOffset.Now;
+                var duration = _accessKey!.Expiration - DateTimeOffset.Now;
 
                 _renewalTimer.Interval = duration.TotalMilliseconds * 0.9;
                 _renewalTimer.Start();

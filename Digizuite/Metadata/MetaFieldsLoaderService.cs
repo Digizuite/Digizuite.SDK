@@ -2,25 +2,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Digizuite.Models.Metadata;
-using RestSharp;
 
 namespace Digizuite.Metadata
 {
     public class MetaFieldsLoaderService : IMetaFieldsLoaderService
     {
-        private IDamAuthenticationService _authenticationService;
-        private readonly IDamRestClient _restClient;
-        private ILogger<MetaFieldsLoaderService> _logger;
+        private readonly IDamAuthenticationService _authenticationService;
+        private readonly ILogger<MetaFieldsLoaderService> _logger;
+        private readonly ServiceHttpWrapper _serviceHttpWrapper;
 
-        public MetaFieldsLoaderService(IDamAuthenticationService authenticationService, IDamRestClient restClient,
-            ILogger<MetaFieldsLoaderService> logger)
+        public MetaFieldsLoaderService(IDamAuthenticationService authenticationService,
+            ILogger<MetaFieldsLoaderService> logger, ServiceHttpWrapper serviceHttpWrapper)
         {
             _authenticationService = authenticationService;
-            _restClient = restClient;
             _logger = logger;
+            _serviceHttpWrapper = serviceHttpWrapper;
         }
 
         public async Task<List<MetaField>> GetMetaFieldsInGroup(int groupId,
@@ -28,27 +29,28 @@ namespace Digizuite.Metadata
         {
             _logger.LogDebug("Loading metafields for group", nameof(groupId), groupId);
 
-            var request = new RestRequest("dmm3bwsv3/SearchService.js", Method.GET, DataFormat.Json);
+            var (client, request) = _serviceHttpWrapper.GetClientAndRequest(ServiceType.Dmm3bwsv3, "SearchService.js");
+
             var ak = await _authenticationService.GetAccessKey().ConfigureAwait(false);
             var memberId = await _authenticationService.GetMemberId().ConfigureAwait(false);
-            request.AddParameter("SearchName", "GetMetafields")
-                .AddParameter("memberId", memberId)
-                .AddParameter("page", 1)
-                .AddParameter("limit", 999999)
-                .AddParameter("metafieldGroupId", groupId)
-                .AddParameter("accessKey", ak);
+            request.AddQueryParameter("SearchName", "GetMetafields")
+                .AddQueryParameter("memberId", memberId)
+                .AddQueryParameter("page", 1)
+                .AddQueryParameter("limit", 999999)
+                .AddQueryParameter("metafieldGroupId", groupId)
+                .AddAccessKey(ak);
 
-            var res = await _restClient.Execute<DigiResponse<MetaFieldListResponse>>(Method.GET, request, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var res = await client.GetAsync<DigiResponse<MetaFieldListResponse>>(request, cancellationToken).ConfigureAwait(false);
 
-            _logger.LogDebug("Metafield list response", "data", res.Data, "content", res.Content);
+            _logger.LogDebug("Metafield list response", nameof(res), res);
 
-            if (!res.IsSuccessful || !res.Data.Success)
+            if (!res.IsSuccessful || !res.Data!.Success)
             {
                 _logger.LogError("failed to load metafields in group", nameof(groupId), groupId);
                 return new List<MetaField>();
             }
 
-            return res.Data.Items.Select(item => new MetaField
+            return res.Data!.Items.Select(item => new MetaField
             {
                 Name = item.Name,
                 Type = item.DatatypeId,

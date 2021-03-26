@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Digizuite.BatchUpdate;
 using Digizuite.BatchUpdate.BatchBuilder;
 using Digizuite.Cache;
@@ -5,6 +6,7 @@ using Digizuite.Folders;
 using Digizuite.Metadata;
 using Digizuite.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Digizuite
 {
@@ -24,7 +26,6 @@ namespace Digizuite
         /// </summary>
         public static IServiceCollection AddDigizuite(this IServiceCollection services, IConfiguration configuration, DigizuiteOption options = DigizuiteOption.Nothing)
         {
-            services.AddSingleton<IDamRestClient, DamRestClient>();
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
             services.AddSingleton<IBatchUpdateClient, BatchUpdateClient>();
             services.AddSingleton<ISearchService, SearchService>();
@@ -44,7 +45,10 @@ namespace Digizuite
             services.AddSingleton<IMetaFieldService, MetaFieldService>();
             services.AddSingleton<ServiceHttpWrapper>();
             services.AddSingleton<DevServerConfigurations>();
-            services.AddSingleton<HttpClientFactory>();
+            services.TryAddSingleton<HttpClient>((_) => new HttpClient(new HttpClientHandler()
+            {
+                AllowAutoRedirect = false
+            }));
             services.AddSingleton(configuration);
             
             if (!options.HasFlag(DigizuiteOption.SkipCache))

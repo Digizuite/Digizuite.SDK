@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -52,22 +53,22 @@ namespace Digizuite.Test.IntegrationTests
         private class SimpleUploadProgressListener : IUploadProgressListener
         {
             public int UploadInitiatedItemId;
-            public List<(int, long)> ChunkUploadedEvents = new List<(int, long)>();
+            public List<(int, long)> ChunkUploadedEvents = new();
             public int FinishedItemId;
 
-            public Task UploadInitiated(int itemId)
+            public Task UploadInitiated(int itemId, CancellationToken _)
             {
                 UploadInitiatedItemId = itemId;
                 return Task.CompletedTask;
             }
 
-            public Task ChunkUploaded(int itemId, long totalUploaded)
+            public Task ChunkUploaded(int itemId, long totalUploaded, CancellationToken _)
             {
                 ChunkUploadedEvents.Add((itemId, totalUploaded));
                 return Task.CompletedTask;
             }
 
-            public Task FinishedUpload(int itemId)
+            public Task FinishedUpload(int itemId, CancellationToken _)
             {
                 FinishedItemId = itemId;
                 return Task.CompletedTask;
