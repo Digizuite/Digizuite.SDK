@@ -39,7 +39,7 @@ namespace Digizuite
         /// <summary>
         ///     Gets the assets matching the specified search parameters
         /// </summary>
-        Task<SearchResponse<Asset>> GetAssets(SearchParameters parameters = null);
+        Task<SearchResponse<Asset>> GetAssets(SearchParameters? parameters = null);
 
         /// <summary>
         ///     Deletes the specified asset

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Metadata.ResponseModels;
 
@@ -33,17 +34,17 @@ namespace Digizuite.Metadata
 
             request.AddAccessKey(accessKey);
 
-            var response = await client.ExecuteGetAsync<List<MetaFieldResponse>>(request, cancellationToken);
+            var response = await client.GetAsync<List<MetaFieldResponse>>(request, cancellationToken);
 
             if (!response.IsSuccessful)
             {
-                _logger.LogError(response.ErrorException, "Failed to load metafields", nameof(response.Content), response.Content, nameof(response.StatusCode), response.StatusCode);
-                throw new Exception("Failed to load metafields: " + response.Content);
+                _logger.LogError("Failed to load metafields", nameof(response), response);
+                throw new Exception("Failed to load metafields: " + response);
             }
             
             _logger.LogDebug("Loaded metafields without issues");
 
-            return response.Data;
+            return response.Data!;
         }
     }
 }

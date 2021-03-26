@@ -5,11 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.Models;
 using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Digizuite.Models.Folders;
 using Digizuite.Models.Metadata;
-using RestSharp;
 
 namespace Digizuite.Folders
 {
@@ -18,14 +18,14 @@ namespace Digizuite.Folders
         private readonly IDamAuthenticationService _damAuthenticationService;
         private readonly ILogger<FolderService> _logger;
         private readonly ISearchService _searchService;
-        private readonly IDamRestClient _restClient;
+        private readonly ServiceHttpWrapper _serviceHttpWrapper;
 
-        public FolderService(ILogger<FolderService> logger, ISearchService searchService,IDamAuthenticationService damAuthenticationService, IDamRestClient restClient)
+        public FolderService(ILogger<FolderService> logger, ISearchService searchService,IDamAuthenticationService damAuthenticationService, ServiceHttpWrapper serviceHttpWrapper)
         {
             _logger = logger;
             _searchService = searchService;
             _damAuthenticationService = damAuthenticationService;
-            _restClient = restClient;
+            _serviceHttpWrapper = serviceHttpWrapper;
         }
 
         public async Task<List<FolderValue>> GetFolders()
@@ -40,27 +40,27 @@ namespace Digizuite.Folders
 
         public async Task<IEnumerable<FolderValue>> GetMemberFolders(CancellationToken cancellationToken = default)
         {
-            var request = new RestRequest("dmm3bwsv3/SearchService.js");
+            var (client, request) = _serviceHttpWrapper.GetSearchServiceClient();
 
             var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
             var memberId = await _damAuthenticationService.GetMemberId().ConfigureAwait(false);
             request
-                .AddParameter("method", "GetSystemToolsTree")
-                .AddParameter("memberId", memberId)
-                .AddParameter("page", 1)
-                .AddParameter("limit", 9999)
-                .AddParameter("node", "root");
+                .AddQueryParameter("method", "GetSystemToolsTree")
+                .AddQueryParameter("memberId", memberId)
+                .AddQueryParameter("page", 1)
+                .AddQueryParameter("limit", 9999)
+                .AddQueryParameter("node", "root");
 
             _logger.LogDebug("Requesting root groups");
-            var res = await _restClient.Execute<DigiResponse<RootSystemToolsResponse>>(Method.GET, request, ak, cancellationToken).ConfigureAwait(false);
+            var res = await client.GetAsync<DigiResponse<RootSystemToolsResponse>>(request, cancellationToken).ConfigureAwait(false);
 
-            if (!res.Data.Success)
+            if (!res.Data!.Success)
             {
                 _logger.LogError("GetSystemToolsTree failed", "response", res);
                 throw new Exception("GetSystemToolsTree failed");
             }
 
-            return res.Data.Items
+            return res.Data!.Items
                 .Where(item => item.SubRepositoryType == CodedFolder.Admin_Users_And_Groups)
                 .SelectMany(item => item.Items)
                 .Where(item => item.SubRepositoryType == CodedFolder.Admin_Users)

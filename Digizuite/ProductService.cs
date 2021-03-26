@@ -1,8 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
+using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
-using RestSharp;
 
 namespace Digizuite
 {
@@ -11,41 +12,42 @@ namespace Digizuite
     {
         private readonly IDamAuthenticationService _damAuthenticationService;
         private readonly ILogger<ProductService> _logger;
-        private readonly IDamRestClient _restClient;
+        private readonly ServiceHttpWrapper _serviceHttpWrapper;
 
-        public ProductService(IDamRestClient restClient, IDamAuthenticationService damAuthenticationService,
-            ILogger<ProductService> logger)
+        public ProductService( IDamAuthenticationService damAuthenticationService,
+            ILogger<ProductService> logger, ServiceHttpWrapper serviceHttpWrapper)
         {
-            _restClient = restClient;
             _damAuthenticationService = damAuthenticationService;
             _logger = logger;
+            _serviceHttpWrapper = serviceHttpWrapper;
         }
 
         public async Task<string> GetProductItemGuidFromVersionId(string versionId, string? accessKey = null,
             CancellationToken cancellationToken = default)
         {
+            var (client, request) =
+                _serviceHttpWrapper.GetClientAndRequest(ServiceType.Dmm3bwsv3, "MetadataService.js");
+            
             _logger.LogDebug("GetProductItemGuidFromVersionId", nameof(versionId), versionId);
-            if (string.IsNullOrWhiteSpace(accessKey))
-                accessKey = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
+            accessKey ??= await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
 
-            var request = new RestRequest("MetadataService.js");
-            request.AddParameter("method", "GetProductItemGuidFromVersionId");
-            // ReSharper disable once StringLiteralTypo
-            request.AddParameter("versionId", versionId);
-            var response = await _restClient
-                .Execute<DigiSingleResult<string>>(Method.POST, request, accessKey, cancellationToken)
+            request
+                .AddQueryParameter("method", "GetProductItemGuidFromVersionId")
+                .AddQueryParameter("versionId", versionId)
+                .AddAccessKey(accessKey);
+            
+            var response = await client.PostAsync<DigiSingleResult<string>>(request, cancellationToken)
                 .ConfigureAwait(false);
             _logger.LogTrace("Got api response", response);
 
-            if (!response.Data.Success)
+            if (!response.Data!.Success)
             {
-                _logger.LogError("request failed", nameof(response), response.Data, nameof(response.Content),
-                    response.Content);
+                _logger.LogError("request failed", nameof(response), response);
                 throw new ProductVersionNotFoundException(
-                    $"{nameof(GetProductItemGuidFromVersionId)} did not find a Product ItemGuid for Version {versionId}");
+                    $"Did not find a Product ItemGuid for Version {versionId}");
             }
 
-            return response.Data.Result;
+            return response.Data!.Result;
         }
 
         private class DigiSingleResult<T>

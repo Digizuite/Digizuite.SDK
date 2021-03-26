@@ -3,71 +3,75 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Extensions;
+using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Digizuite.Models.Metadata;
-using RestSharp;
 
 namespace Digizuite.Metadata
 {
     public class MetaGroupLoaderService : IMetaGroupLoaderService
     {
         private readonly IDamAuthenticationService _authenticationService;
-        private readonly IDamRestClient _restClient;
+        private readonly ServiceHttpWrapper _serviceHttpWrapper;
         private readonly ILogger<MetaGroupLoaderService> _logger;
 
         public MetaGroupLoaderService(IDamAuthenticationService authenticationService,
-            ILogger<MetaGroupLoaderService> logger,  IDamRestClient restClient)
+            ILogger<MetaGroupLoaderService> logger, ServiceHttpWrapper serviceHttpWrapper)
         {
             _authenticationService = authenticationService;
             _logger = logger;
-            _restClient = restClient;
+            _serviceHttpWrapper = serviceHttpWrapper;
         }
 
         public async Task<List<SystemToolsNodeItem>> GetMetaGroupInGroup(string hierarchyId = "/",
             CancellationToken cancellationToken = default)
         {
-            var request = new RestRequest("dmm3bwsv3/SearchService.js", Method.GET, DataFormat.Json);
+            var (client, request) = _serviceHttpWrapper.GetSearchServiceClient();
+            
             var ak = await _authenticationService.GetAccessKey().ConfigureAwait(false);
             var memberId = await _authenticationService.GetMemberId().ConfigureAwait(false);
             request
-                .AddParameter("hid", hierarchyId)
-                .AddParameter("subRepositoryType", 65)
-                .AddParameter("method", "GetSystemToolsTree")
-                .AddParameter("memberId", memberId)
-                .AddParameter("page", 1)
-                .AddParameter("limit", 9999)
-                .AddParameter("prevRef", "");
+                .AddQueryParameter("hid", hierarchyId)
+                .AddQueryParameter("subRepositoryType", 65)
+                .AddQueryParameter("method", "GetSystemToolsTree")
+                .AddQueryParameter("memberId", memberId)
+                .AddQueryParameter("page", 1)
+                .AddQueryParameter("limit", 9999)
+                .AddQueryParameter("prevRef", "")
+                .AddAccessKey(ak);
 
-            var res = await _restClient.Execute<DigiResponse<SystemToolsNodeItem>>(Method.GET, request, ak, cancellationToken).ConfigureAwait(false);
+            var res = await client.GetAsync<DigiResponse<SystemToolsNodeItem>>(request, cancellationToken).ConfigureAwait(false);
 
-            return res.Data.Items;
+            return res.Data!.Items;
         }
 
         public async Task<RootSystemToolsResponse> GetRootMetaGroups(CancellationToken cancellationToken = default)
         {
-            var request = new RestRequest("dmm3bwsv3/SearchService.js");
+            var (client, request) = _serviceHttpWrapper.GetSearchServiceClient();
 
             var ak = await _authenticationService.GetAccessKey().ConfigureAwait(false);
             var memberId = await _authenticationService.GetMemberId().ConfigureAwait(false);
             request
-                .AddParameter("method", "GetSystemToolsTree")
-                .AddParameter("memberId", memberId)
-                .AddParameter("page", 1)
-                .AddParameter("limit", 9999)
-                .AddParameter("node", "root");
+                .AddQueryParameter("method", "GetSystemToolsTree")
+                .AddQueryParameter("memberId", memberId)
+                .AddQueryParameter("page", 1)
+                .AddQueryParameter("limit", 9999)
+                .AddQueryParameter("node", "root")
+                .AddAccessKey(ak);
 
             _logger.LogDebug("Requesting root groups");
-            var res = await _restClient.Execute<DigiResponse<RootSystemToolsResponse>>(Method.GET, request, ak, cancellationToken).ConfigureAwait(false);
+            var res = await client.GetAsync<DigiResponse<RootSystemToolsResponse>>( request,  cancellationToken).ConfigureAwait(false);
 
-            if (!res.Data.Success)
+            if (!res.Data!.Success)
             {
                 _logger.LogError("Requesting root groups failed", "response", res);
                 throw new Exception("Requesting root groups failed");
             }
 
             _logger.LogDebug("Requested root groups");
-            return res.Data.Items.Single(item => item.SubRepositoryType == CodedFolder.Admin_MetaGroup);
+            return res.Data!.Items.Single(item => item.SubRepositoryType == CodedFolder.Admin_MetaGroup);
         }
 
         public async Task<Tuple<List<MetaFieldGroup>, List<MetaFieldGroupFolder>>> GetAllMetaDataGroups()
