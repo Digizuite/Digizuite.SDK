@@ -1,4 +1,3 @@
-using Digizuite.Metadata.RequestModels.UpdateModels.Helpers;
 using Digizuite.Metadata.RequestModels.UpdateModels.Values;
 
 namespace Digizuite.Metadata.RequestModels.UpdateModels
