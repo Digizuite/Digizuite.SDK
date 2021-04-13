@@ -1,5 +1,4 @@
 using System;
-using Digizuite.Metadata.RequestModels.UpdateModels.Helpers;
 
 namespace Digizuite.Metadata.RequestModels.UpdateModels
 {

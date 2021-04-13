@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-
-namespace Digizuite.Models.Metadata.Values
+﻿namespace Digizuite.Models.Metadata.Values
 {
     public record ComboValue
     {

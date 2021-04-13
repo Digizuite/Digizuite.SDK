@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Digizuite.Models;
 using Newtonsoft.Json;
 
 namespace Digizuite.Logging
