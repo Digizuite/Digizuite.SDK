@@ -112,7 +112,7 @@ namespace Digizuite.HttpAbstraction
                     _logger.LogError(e, "Deserialization exception");
                 }
 
-                await copyTask.ConfigureAwait(false);
+                await copyTask.ContinueWith(_ => writerStream.Dispose(), cancellationToken).ConfigureAwait(false);
 
                 return (await bodyTask.ConfigureAwait(false), null);
             }

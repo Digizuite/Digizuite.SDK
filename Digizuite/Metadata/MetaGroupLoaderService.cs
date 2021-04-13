@@ -143,7 +143,6 @@ namespace Digizuite.Metadata
             }
             else
             {
-                Console.WriteLine($"Unknown group type: {group.SubRepositoryType}");
                 _logger.LogWarning($"Don't know how to handle group type: {group.SubRepositoryType}", group);
             }
         }
