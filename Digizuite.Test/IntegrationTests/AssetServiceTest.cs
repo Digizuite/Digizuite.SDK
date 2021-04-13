@@ -1,6 +1,8 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Digizuite.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NUnit.Framework;
 
 namespace Digizuite.Test.IntegrationTests

@@ -22,10 +22,8 @@ namespace Digizuite.HttpAbstraction
 
         public async Task Serialize<T>(T item, Stream stream, CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("Before serialize");
             await JsonSerializer.SerializeAsync(stream, item, JsonSerializerOptions, cancellationToken)
                 .ConfigureAwait(false);
-            Console.WriteLine("After serialize");
         }
     }
 }

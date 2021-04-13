@@ -9,9 +9,10 @@ namespace Digizuite.Logging
     /// Provides a convenient and simple implementation of the ILogger interface, for local development.
     /// Extend the class with your own custom subclass if you want to be able to control the loglevel.
     /// </summary>
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global - The virtual methods are intended to be overwritten
     public class ConsoleLogger<T> : ILogger<T>
     {
-        public bool IsLogLevelEnabled(LogLevel level)
+        public virtual bool IsLogLevelEnabled(LogLevel level)
         {
             return true;
         }
