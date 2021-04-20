@@ -72,6 +72,13 @@ namespace Digizuite
 
             return (client, request);
         }
+
+        public (IRestClient client, RestRequest request) GetRawClient(string baseUrl, string path)
+        {
+            var uri = GetUri("", baseUrl, path);
+
+            return (_coreRestClient, new RestRequest(uri));
+        }
     }
 
     public class DevServerConfigurations

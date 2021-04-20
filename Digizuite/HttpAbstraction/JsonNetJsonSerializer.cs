@@ -23,7 +23,8 @@ namespace Digizuite.HttpAbstraction
 
             using var sr = new StreamReader(content);
             using var jsonTextReader = new JsonTextReader(sr);
-            return Task.FromResult(_serializer.Deserialize<T>(jsonTextReader));
+            var body = _serializer.Deserialize<T>(jsonTextReader);
+            return Task.FromResult(body);
         }
 
         public Task Serialize<T>(T item, Stream stream, CancellationToken cancellationToken = default)
