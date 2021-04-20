@@ -36,6 +36,10 @@ namespace Digizuite.Test.IntegrationTests
             // Just use the access key service to test, since that is the first thing people will have problems with
             var ak = await ServiceProvider.GetRequiredService<IDamAuthenticationService>().GetAccessKey();
             Assert.That(ak, Is.Not.Null);
+
+            var metaAsset = await ServiceProvider.GetRequiredService<IAssetService>()
+                .CreateMetaAsset("rest client rest", 40);
+            Assert.That(metaAsset, Is.Not.Null);
         }
         
     }
