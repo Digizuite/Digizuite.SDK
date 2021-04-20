@@ -99,9 +99,9 @@ namespace Digizuite
         Dmm3bwsv3
     }
 
-    internal static class ServiceHttpWrapperExtensions
+    public static class ServiceHttpWrapperExtensions
     {
-        internal static (IRestClient Client, RestRequest Request) GetSearchServiceClient(this ServiceHttpWrapper serviceHttpWrapper)
+        public static (IRestClient Client, RestRequest Request) GetSearchServiceClient(this ServiceHttpWrapper serviceHttpWrapper)
         {
             return serviceHttpWrapper.GetClientAndRequest(ServiceType.Dmm3bwsv3, "SearchService.js");
         }

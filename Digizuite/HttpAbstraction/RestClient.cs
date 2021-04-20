@@ -32,27 +32,8 @@ namespace Digizuite.HttpAbstraction
 
         public async Task<RestResponse<T?>> SendAsync<T>(RestRequest request, CancellationToken cancellationToken)
         {
-            var uri = GetUrl(request);
+            using var response = await SendRequest(request, cancellationToken);
 
-            using var message = new HttpRequestMessage(request.Method, uri);
-            var bodyTask = Task.CompletedTask;
-            
-            if (request.Body != null)
-            {
-                (message.Content, bodyTask) = request.Body.GetBody(_serializationSettings, cancellationToken);
-            }
-            foreach (string key in request.Headers)
-            {
-                var value = request.Headers[key];
-                message.Headers.Add(key, value);
-            }
-            
-            message.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-            var requestTask = _client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-            await bodyTask.ConfigureAwait(false);
-            using var response = await requestTask.ConfigureAwait(false);
-            
             var (responseBody, rawResponse) = await ReadResponseBody<T>(response, cancellationToken);
 
             _logger.LogDebug("Raw api response", nameof(rawResponse), rawResponse ?? null);
@@ -63,6 +44,43 @@ namespace Digizuite.HttpAbstraction
             
             return new RestResponse<T?>(responseBody, response.StatusCode);
         }
+
+        public async Task<RestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken)
+        {
+            using var response = await SendRequest(request, cancellationToken);
+
+            var content = await response.Content.ReadAsStringAsync();
+            
+            _logger.LogDebug("Raw api response", nameof(content), content);
+
+            return new RestResponse(response.StatusCode, content);
+        }
+        
+        private async Task<HttpResponseMessage> SendRequest(RestRequest request, CancellationToken cancellationToken)
+        {
+            var uri = GetUrl(request);
+
+            using var message = new HttpRequestMessage(request.Method, uri);
+            var bodyTask = Task.CompletedTask;
+
+            if (request.Body != null)
+            {
+                (message.Content, bodyTask) = request.Body.GetBody(_serializationSettings, cancellationToken);
+            }
+
+            foreach (string key in request.Headers)
+            {
+                var value = request.Headers[key];
+                message.Headers.Add(key, value);
+            }
+
+            message.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+            var requestTask = _client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            await bodyTask.ConfigureAwait(false);
+            return await requestTask.ConfigureAwait(false);
+        }
+
 
         private async Task<(T?, string? responseContent)> ReadResponseBody<T>(HttpResponseMessage response, CancellationToken cancellationToken)
         {
@@ -135,6 +153,7 @@ namespace Digizuite.HttpAbstraction
     public interface IRestClient
     {
         Task<RestResponse<T?>> SendAsync<T>(RestRequest request, CancellationToken cancellationToken);
+        Task<RestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken);
     }
 
     public static class RestClientExtensions
@@ -153,5 +172,21 @@ namespace Digizuite.HttpAbstraction
 
             return client.SendAsync<T>(request, cancellationToken);
         }
+
+        public static Task<RestResponse> GetAsync(this IRestClient client, RestRequest request,
+            CancellationToken cancellationToken)
+        {
+            request.Method = HttpMethod.Get;
+
+            return client.SendAsync(request, cancellationToken);
+        } 
+        
+        public static Task<RestResponse> PostAsync(this IRestClient client, RestRequest request,
+            CancellationToken cancellationToken)
+        {
+            request.Method = HttpMethod.Post;
+
+            return client.SendAsync(request, cancellationToken);
+        } 
     }
 }
