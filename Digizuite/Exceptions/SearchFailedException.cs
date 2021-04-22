@@ -7,7 +7,7 @@ namespace Digizuite.Exceptions
     /// </summary>
     public class SearchFailedException : Exception
     {
-        public SearchFailedException(string message, Exception innerException) : base(message, innerException)
+        public SearchFailedException(string message, Exception? innerException) : base(message, innerException)
         {
         }
 

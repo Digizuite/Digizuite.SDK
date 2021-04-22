@@ -1,41 +1,45 @@
 ﻿using System;
 using System.Globalization;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Digizuite.Helpers
+namespace Digizuite.HttpAbstraction
 {
-    public class DigizuiteIntConverter : JsonConverter
+    public class DigizuiteIntConverter : JsonConverter<int>
     {
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            writer?.WriteValue(value);
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-        {
-            switch (reader?.Value)
+            return reader.TokenType switch
             {
-                case string s:
-                {
-                    if (string.IsNullOrWhiteSpace(s)) return default(int);
-                    if (int.TryParse(s, out int iVal))
-                    {
-                        return iVal;
-                    }
-                    throw new Exception($"Cannot create int from the given reader value {reader.Value}");
-                }
-                case long l:
-                    return (int)Convert.ChangeType(l, TypeCode.Int32, CultureInfo.InvariantCulture.NumberFormat);
-                case int i:
-                    return i;
-                default:
-                    throw new Exception($"Cannot create bool from the given reader value {reader?.Value}");
-            }
+                JsonTokenType.String when int.TryParse(reader.GetString(), out var si) => si,
+                JsonTokenType.Number when reader.TryGetInt32(out var ni) => ni,
+                JsonTokenType.String when string.IsNullOrWhiteSpace(reader.GetString()) => 0,
+                _ => throw new Exception($"Value is not a valid int {reader.ValueSequence.ToString()}")
+            };
         }
 
-        public override bool CanConvert(Type objectType)
+        public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
         {
-            return objectType == typeof(int);
+            writer.WriteNumberValue(value);
+        }
+    }
+    
+    public class DigizuiteLongConverter : JsonConverter<long>
+    {
+        public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return reader.TokenType switch
+            {
+                JsonTokenType.String when long.TryParse(reader.GetString(), out var si) => si,
+                JsonTokenType.Number when reader.TryGetInt64(out var ni) => ni,
+                JsonTokenType.String when string.IsNullOrWhiteSpace(reader.GetString()) => 0,
+                _ => throw new Exception($"Value is not a valid long {reader.ValueSequence.ToString()}")
+            };
+        }
+
+        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options)
+        {
+            writer.WriteNumberValue(value);
         }
     }
 }

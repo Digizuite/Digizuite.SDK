@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace Digizuite.BatchUpdate.Models
@@ -46,6 +47,6 @@ namespace Digizuite.BatchUpdate.Models
         }
 
         public List<BatchValueJsonValue> Values { get; set; } = null!;
-        [JsonProperty("fieldName")] public string FieldName { get; set; } = null!;
+        [JsonPropertyName("fieldName")] public string FieldName { get; set; } = null!;
     }
 }

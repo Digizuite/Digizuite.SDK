@@ -74,10 +74,12 @@ namespace Digizuite
             var response = await client.GetAsync<DigiResponse<T>>(request, cancellationToken).ConfigureAwait(false);
             _logger.LogTrace("Got api response");
 
-            if (!response.Data!.Success)
+
+
+            if (!response.IsSuccessful || !response.Data!.Success)
             {
                 _logger.LogError("Search request failed", nameof(response), response);
-                throw new SearchFailedException("Search request failed");
+                throw new SearchFailedException("Search request failed", response.Exception);
             }
 
 
