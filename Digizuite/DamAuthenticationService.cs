@@ -163,7 +163,7 @@ namespace Digizuite
                 if (!res.IsSuccessful)
                 {
                     _logger.LogError("Authentication failed", nameof(res), res);
-                    throw new AuthenticationException("Authentication failed");
+                    throw new AuthenticationException("Authentication failed", res.Exception);
                 }
 
                 _accessKey = res.Data;

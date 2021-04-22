@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Digizuite.HttpAbstraction
 {
-    public class SystemTextJsonSerializer : IHttpSerializer
+    public class DigizuiteCoreSerializer : IHttpSerializer
     {
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {

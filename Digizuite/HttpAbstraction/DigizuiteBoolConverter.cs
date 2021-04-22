@@ -1,39 +1,34 @@
 using System;
 using System.Diagnostics.Contracts;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Digizuite.Helpers
+namespace Digizuite.HttpAbstraction
 {
     /// <summary>
     /// Converts between the strange ways the Digizuite can represent a bool, to a proper bool
     /// </summary>
-    public class DigizuiteBoolConverter : JsonConverter
+    public class DigizuiteBoolConverter : JsonConverter<bool>
     {
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            Contract.Requires(writer != null);
-            writer?.WriteValue(value);
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-        {
-            Contract.Requires(reader != null);
-            switch (reader?.Value)
+            return reader.TokenType switch
             {
-                case string s:
-                    return s == "1" || s == "true";
-                case int i:
-                    return i == 1;
-                case bool b:
-                    return b;
-                default:
-                    throw new Exception("Cannot create bool from the given reader value");
-            }
+                JsonTokenType.True => true,
+                JsonTokenType.False => false,
+                JsonTokenType.Number when reader.TryGetInt32(out var i) => i == 1,
+                JsonTokenType.String => reader.GetString() switch
+                {
+                    "true" or "1" => true,
+                    _ => false
+                },
+                _ => false
+            };
         }
 
-        public override bool CanConvert(Type objectType)
+        public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
         {
-            return objectType == typeof(bool);
+            writer.WriteBooleanValue(value);
         }
     }
 }

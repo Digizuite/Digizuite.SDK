@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Digizuite.BatchUpdate.BatchBuilder;
 using Digizuite.Models.Metadata.Values;
@@ -128,19 +129,19 @@ namespace Digizuite.Metadata
 
         private class ComboValueSearchResponse
         {
-            [JsonProperty("combovalue")] public string Text { get; set; } = default!;
+            [JsonPropertyName("combovalue")] public string Text { get; set; } = default!;
 
-            [JsonProperty("optionvalue")] public string Value { get; set; } = default!;
+            [JsonPropertyName("optionvalue")] public string Value { get; set; } = default!;
 
-            [JsonProperty("isPublic")] public bool IsPublic { get; set; } = default!;
+            [JsonPropertyName("isPublic")] public bool IsPublic { get; set; } = default!;
 
-            [JsonProperty("visible")] public bool Visible { get; set; } = default!;
+            [JsonPropertyName("visible")] public bool Visible { get; set; } = default!;
 
-            [JsonProperty("itemId")] public int ItemId { get; set; } = default!;
+            [JsonPropertyName("itemId")] public int ItemId { get; set; } = default!;
 
-            [JsonProperty("item_combo_valueid")] public int Id { get; set; } = default!;
+            [JsonPropertyName("item_combo_valueid")] public int Id { get; set; } = default!;
 
-            [JsonProperty("sortIndex")] public int SortIndex { get; set; } = default!;
+            [JsonPropertyName("sortIndex")] public int SortIndex { get; set; } = default!;
         }
     }
 }

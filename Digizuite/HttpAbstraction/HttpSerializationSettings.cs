@@ -2,6 +2,6 @@
 {
     public class HttpSerializationSettings
     {
-        public IHttpSerializer Serializer = new JsonNetJsonSerializer();
+        public IHttpSerializer Serializer = new Dimmer3Serializer();
     }
 }

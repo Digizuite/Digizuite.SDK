@@ -42,11 +42,11 @@ namespace Digizuite
 
             _coreRestClient = new RestClient(httpClient, new HttpSerializationSettings
             {
-                Serializer = new SystemTextJsonSerializer()
+                Serializer = new DigizuiteCoreSerializer()
             }, logger);
             _dmm3bwsv3RestClient = new RestClient(httpClient, new HttpSerializationSettings
             {
-                Serializer = new JsonNetJsonSerializer()
+                Serializer = new Dimmer3Serializer()
             }, logger);
         }
 

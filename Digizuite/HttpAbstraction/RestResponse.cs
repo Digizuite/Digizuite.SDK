@@ -1,35 +1,42 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace Digizuite.HttpAbstraction
 {
-    public record RestResponse
+    public record BaseRestResponse
     {
         public readonly HttpStatusCode StatusCode;
 
-        public bool IsSuccessful => StatusCode is >= HttpStatusCode.OK and < HttpStatusCode.MultipleChoices;
+        public bool IsSuccessful => Exception == null && StatusCode is >= HttpStatusCode.OK and < HttpStatusCode.MultipleChoices;
 
-        public readonly string Content;
+        public readonly Exception? Exception;
 
-        public RestResponse(HttpStatusCode statusCode, string content)
+        public BaseRestResponse(HttpStatusCode statusCode, Exception? exception)
         {
             StatusCode = statusCode;
+            Exception = exception;
+        }
+    }
+    
+    
+    public record RestResponse : BaseRestResponse
+    {
+        public readonly string Content;
+
+        public RestResponse(HttpStatusCode statusCode, Exception? exception, string content) : base(statusCode, exception)
+        {
             Content = content;
         }
     }
     
     
-    public record RestResponse<T>
+    public record RestResponse<T> : BaseRestResponse
     {
-        public readonly HttpStatusCode StatusCode;
-
-        public bool IsSuccessful => StatusCode is >= HttpStatusCode.OK and < HttpStatusCode.MultipleChoices;
-        
         public readonly T Data;
 
-        public RestResponse(T data, HttpStatusCode statusCode)
+        public RestResponse(HttpStatusCode statusCode, Exception? exception, T data) : base(statusCode, exception)
         {
             Data = data;
-            StatusCode = statusCode;
         }
     }
 
@@ -37,7 +44,7 @@ namespace Digizuite.HttpAbstraction
     {
         public readonly string Content;
 
-        public DebugRestResponse(T data, HttpStatusCode statusCode, string content) : base(data, statusCode)
+        public DebugRestResponse(HttpStatusCode statusCode, Exception? exception, T data, string content) : base(statusCode, exception, data)
         {
             Content = content;
         }

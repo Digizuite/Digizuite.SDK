@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Digizuite.Models;
 
+#nullable disable
 namespace Digizuite.Test.UnitTests
 {
     internal class UnitTestConfiguration : IConfiguration
@@ -30,7 +31,7 @@ namespace Digizuite.Test.UnitTests
             set => Disallow(value);
         }
 
-        public string? ConfigVersionId
+        public string ConfigVersionId
         {
             get => Disallow<string>();
             set => Disallow(value);
