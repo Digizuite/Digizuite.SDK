@@ -12,7 +12,6 @@ namespace Digizuite.Test.IntegrationTests
     {
         private const int MetaFieldLabelId = 51732;
 
-        [Retry(5)]
         [Test]
         public async Task CanCrud()
         {
@@ -34,12 +33,23 @@ namespace Digizuite.Test.IntegrationTests
             await Service.UpdateComboValue(def);
 
             await CheckCreatedValue(secondGuid, def.Id);
-
+            
             await Service.DeleteComboValue(def.Id);
 
-            var values = await Service.GetComboValuesForMetaField(MetaFieldLabelId);
-            
-            Assert.That(values.Items, Has.None.With.Property(nameof(ComboValueDefinition.Id)).EqualTo(def.Id));
+            for (var i = 0; i < 60; i++)
+            {
+                var values = await Service.GetComboValuesForMetaField(MetaFieldLabelId);
+
+                var exists = values.Items.Any(cv => cv.Id == def.Id);
+
+                if (!exists)
+                {
+                    Assert.Pass();
+                }
+
+                await Task.Delay(1000);
+            }
+            Assert.Fail("Combo value was not deleted");
         }
 
         private async Task CheckCreatedValue(string expected, int id)
