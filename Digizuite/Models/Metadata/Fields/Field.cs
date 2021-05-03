@@ -15,6 +15,8 @@
         public bool Audited { get; set; }
         public int VisibilityMetaFieldId { get; set; }
         public string VisibilityRegex { get; set; } = "";
+        
+        public int TargetItemId { get; set; }
 
         public abstract string? ToSingleString(string separator);
     }
