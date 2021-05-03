@@ -66,22 +66,24 @@ namespace Digizuite.Extensions
             }).ToList();
         }
 
-        private static TField PopulateField<TField>(MetaFieldResponse response, TField field)
+        private static TField PopulateField<TField>(MetaFieldResponse fieldResponse, MetadataResponse valueResponse,
+            TField field)
             where TField : Field
         {
-            field.FieldItemId = response.ItemId;
-            field.MetafieldId = response.MetafieldId;
-            field.LabelId = response.LabelId;
-            field.Label = response.Label;
-            field.LanguageId = response.LanguageId;
-            field.ReadOnly = response.Readonly;
-            field.Required = response.Required;
-            field.SortIndex = response.SortIndex;
-            field.AutoTranslated = response.AutoTranslated;
-            field.AutoTranslateOverwriteExisting = response.AutoTranslatedOverwriteExisting;
-            field.Audited = response.Audited;
-            field.VisibilityMetaFieldId = response.VisibilityMetaFieldId;
-            field.VisibilityRegex = response.VisibilityRegex;
+            field.FieldItemId = fieldResponse.ItemId;
+            field.MetafieldId = fieldResponse.MetafieldId;
+            field.LabelId = fieldResponse.LabelId;
+            field.Label = fieldResponse.Label;
+            field.LanguageId = fieldResponse.LanguageId;
+            field.ReadOnly = fieldResponse.Readonly;
+            field.Required = fieldResponse.Required;
+            field.SortIndex = fieldResponse.SortIndex;
+            field.AutoTranslated = fieldResponse.AutoTranslated;
+            field.AutoTranslateOverwriteExisting = fieldResponse.AutoTranslatedOverwriteExisting;
+            field.Audited = fieldResponse.Audited;
+            field.VisibilityMetaFieldId = fieldResponse.VisibilityMetaFieldId;
+            field.VisibilityRegex = fieldResponse.VisibilityRegex;
+            field.TargetItemId = valueResponse.ItemId;
 
             return field;
         }
@@ -104,7 +106,7 @@ namespace Digizuite.Extensions
 
         private static BitMetafield ParseBitMetafield(BitMetaFieldResponse field, BitMetadataResponse value)
         {
-            return PopulateField(field, new BitMetafield
+            return PopulateField(field, value, new BitMetafield
             {
                 Value = value.Value
             });
@@ -124,7 +126,7 @@ namespace Digizuite.Extensions
         private static ComboMetafield ParseComboMetafield(ComboValueMetaFieldResponse field,
             ComboValueMetadataResponse value)
         {
-            return PopulateField(field, new ComboMetafield
+            return PopulateField(field, value, new ComboMetafield
             {
                 ViewType = field.ViewType,
                 Value = value.Value == null ? null : ParseComboValueValue(value.Value)
@@ -147,7 +149,7 @@ namespace Digizuite.Extensions
         private static EditComboMetafield ParseEditComboMetafield(EditComboValueMetaFieldResponse field,
             EditComboValueMetadataResponse value)
         {
-            return PopulateField(field, new EditComboMetafield
+            return PopulateField(field, value, new EditComboMetafield
             {
                 Value = value.Value == null ? null : ParseEditComboValueValue(value.Value)
             });
@@ -169,7 +171,7 @@ namespace Digizuite.Extensions
         private static MultiComboMetafield ParseMultiComboMetafield(MultiComboValueMetaFieldResponse field,
             MultiComboValueMetadataResponse value)
         {
-            return PopulateField(field, new MultiComboMetafield
+            return PopulateField(field, value, new MultiComboMetafield
             {
                 Value = value.Values.Select(ParseComboValueValue).ToList()
             });
@@ -191,7 +193,7 @@ namespace Digizuite.Extensions
         private static EditMultiComboMetafield ParseEditMultiComboMetafield(EditMultiComboValueMetaFieldResponse field,
             EditMultiComboValueMetadataResponse value)
         {
-            return PopulateField(field, new EditMultiComboMetafield
+            return PopulateField(field, value, new EditMultiComboMetafield
             {
                 Value = value.Values.Select(ParseEditComboValueValue).ToList()
             });
@@ -209,7 +211,7 @@ namespace Digizuite.Extensions
 
         private static IntMetafield ParseIntMetafield(IntMetaFieldResponse field, IntMetadataResponse value)
         {
-            return PopulateField(field, new IntMetafield
+            return PopulateField(field, value, new IntMetafield
             {
                 Value = value.Value
             });
@@ -228,7 +230,7 @@ namespace Digizuite.Extensions
 
         private static StringMetafield ParseStringMetafield(StringMetaFieldResponse field, StringMetadataResponse value)
         {
-            return PopulateField(field, new StringMetafield
+            return PopulateField(field, value, new StringMetafield
             {
                 Value = value.Value
             });
@@ -246,7 +248,7 @@ namespace Digizuite.Extensions
 
         private static LinkMetafield ParseLinkMetafield(LinkMetaFieldResponse field, LinkMetadataResponse value)
         {
-            return PopulateField(field, new LinkMetafield
+            return PopulateField(field, value, new LinkMetafield
             {
                 Value = value.Value
             });
@@ -264,7 +266,7 @@ namespace Digizuite.Extensions
 
         private static FloatMetafield ParseFloatMetafield(FloatMetaFieldResponse field, FloatMetadataResponse value)
         {
-            return PopulateField(field, new FloatMetafield
+            return PopulateField(field, value, new FloatMetafield
             {
                 Value = value.Value
             });
@@ -283,7 +285,7 @@ namespace Digizuite.Extensions
 
         private static NoteMetafield ParseNoteMetafield(NoteMetaFieldResponse field, NoteMetadataResponse value)
         {
-            return PopulateField(field, new NoteMetafield
+            return PopulateField(field, value, new NoteMetafield
             {
                 IsHtml = field.ShowRichTextEditor,
                 Value = value.Value
@@ -303,7 +305,7 @@ namespace Digizuite.Extensions
         private static DateTimeMetafield ParseDateTimeMetafield(DateTimeMetaFieldResponse field,
             DateTimeMetadataResponse value)
         {
-            return PopulateField(field, new DateTimeMetafield
+            return PopulateField(field, value, new DateTimeMetafield
             {
                 SubType = field.ViewType,
                 Value = value.Value
@@ -323,7 +325,7 @@ namespace Digizuite.Extensions
 
         private static TreeMetafield ParseTreeMetafield(TreeMetaFieldResponse field, TreeMetadataResponse value)
         {
-            return PopulateField(field, new TreeMetafield
+            return PopulateField(field, value, new TreeMetafield
             {
                 RecursiveToRoot = field.RecursiveToRoot,
                 Value = value.Values.Select(v => new TreeValue
@@ -351,7 +353,7 @@ namespace Digizuite.Extensions
         private static MasterItemReferenceMetafield ParseMasterItemReferenceMetafield(
             MasterItemReferenceMetaFieldResponse field, MasterItemReferenceMetadataResponse value)
         {
-            return PopulateField(field, new MasterItemReferenceMetafield
+            return PopulateField(field, value, new MasterItemReferenceMetafield
             {
                 MaxItems = field.MaxCount,
                 RefType = field.ItemType,
@@ -380,7 +382,7 @@ namespace Digizuite.Extensions
         private static SlaveItemReferenceMetafield ParseSlaveItemReferenceMetafield(
             SlaveItemReferenceMetaFieldResponse field, SlaveItemReferenceMetadataResponse value)
         {
-            return PopulateField(field, new SlaveItemReferenceMetafield
+            return PopulateField(field, value, new SlaveItemReferenceMetafield
             {
                 RefType = field.ItemType,
                 Value = value.Items.Select(v => new ItemReferenceOption
