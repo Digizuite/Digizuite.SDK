@@ -8,6 +8,11 @@ namespace Digizuite.Models.Metadata.Fields
     {
         public MetaFieldDataType Type => MetaFieldDataType.MultiComboValue;
 
+        public MultiComboMetafield()
+        {
+            Value = new List<ComboValue>();
+        }
+        
         public override string ToSingleString(string separator)
         {
             if (Value == null)
