@@ -10,6 +10,11 @@ namespace Digizuite.Models.Metadata.Fields
         public TreeViewType ViewType { get; set; }
         public bool RecursiveToRoot { get; set; }
 
+        public TreeMetafield()
+        {
+            Value = new List<TreeValue>();
+        }
+        
         public override string ToSingleString(string separator)
         {
             if (Value == null)
