@@ -59,6 +59,30 @@ namespace Digizuite
             return _accessKey!.Token;
         }
 
+        public async Task<string> Impersonate(int memberId, AccessKeyOptions options)
+        {
+            string accessKey = null;
+            _logger.LogTrace("Getting access key");
+            if (HasExpired)
+            {
+                _logger.LogTrace("Loading new access key", nameof(HasExpired), HasExpired);
+                accessKey = await Login(_configuration.SystemUsername, _configuration.SystemPassword).ConfigureAwait(false);
+            }
+            else
+            {
+                _logger.LogTrace("Reusing previous access key");
+                accessKey = _accessKey!.Token;
+            }
+
+            if (string.IsNullOrWhiteSpace(accessKey))
+            {
+                throw new AuthenticationException("Authentication failed, not yet authenticated");    
+            }
+            var accessKeyImpersonated = await GenerateImpersonatedToken(accessKey, memberId, options).ConfigureAwait(false);
+
+            return accessKeyImpersonated;
+        }
+
         /// <summary>
         ///     Gets the member id of the authenticated user
         /// </summary>
@@ -110,6 +134,19 @@ namespace Digizuite
                 Username = username;
                 Password = password;
             }
+        }
+
+        private class ImpersonationRequest
+        {
+            /// <summary>
+            /// The id of the member to impersonate
+            /// </summary>
+            public int MemberId { get; set; }
+        
+            /// <summary>
+            /// Any options to use when creating the access key
+            /// </summary>
+            public AccessKeyOptions? Options { get; set; }
         }
         
         private enum PasswordEncoding
@@ -194,5 +231,33 @@ namespace Digizuite
                 _lock.Release();
             }
         }
+        
+        private async Task<string> GenerateImpersonatedToken(string accessKey, int memberId, AccessKeyOptions? options, 
+            CancellationToken cancellationToken = default )
+        {
+            await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
+            _logger.LogTrace("Getting Impersonated AccessKey", memberId, options);
+            
+            var (client, request) =
+                _serviceHttpWrapper.GetClientAndRequest(ServiceType.LoginService, "/api/access-key/impersonate");
+
+            var body = new ImpersonationRequest() 
+            {
+                MemberId = memberId,
+                Options = options
+            };
+            request.AddJsonBody(body);
+            request.AddQueryParameter("accessKey", accessKey);
+            
+            var res = await client.PostAsync<AccessKey>(request, cancellationToken);
+
+            if (!res.IsSuccessful)
+            {
+                _logger.LogError("Impersonation failed", nameof(res), res);
+                throw new AuthenticationException("impersonation failed", res.Exception);
+            }
+            return res.Data!.Token;
+        }
+       
     }
 }
