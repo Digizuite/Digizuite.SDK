@@ -6,5 +6,10 @@ namespace Digizuite.Models.Metadata.Fields
     {
         public int MaxItems { get; set; }
         public ItemType RefType { get; set; }
+
+        public ItemReferenceMetaField()
+        {
+            Value = new List<T>();
+        }
     }
 }
