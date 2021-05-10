@@ -14,7 +14,8 @@ namespace Digizuite.HttpAbstraction
             PropertyNameCaseInsensitive = true,
             Converters =
             {
-                new JsonStringEnumConverter()
+                new JsonStringEnumConverter(),
+                new TimeSpanConverter()
             }
         };
 

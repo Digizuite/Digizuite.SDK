@@ -17,7 +17,8 @@ namespace Digizuite.HttpAbstraction
                 new DigizuiteBoolConverter(),
                 new DigizuiteIntConverter(),
                 new DigizuiteLongConverter(),
-                new JsonStringEnumConverter()
+                new JsonStringEnumConverter(),
+                new TimeSpanConverter()
             }
         };
 
