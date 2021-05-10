@@ -124,6 +124,20 @@ namespace Digizuite
             /// The config id to create the access key for
             /// </summary>
             public string? ConfigId { get; set; }
+            /// <summary>
+            /// The language id to create the access key for
+            /// </summary>
+            public int? LanguageId { get; set; }
+        
+            /// <summary>
+            /// If the users language should be updated going forward
+            /// </summary>
+            public bool PersistLanguage { get; set; }
+        
+            /// <summary>
+            /// How long the access key should be valid
+            /// </summary>
+            public TimeSpan? Duration { get; set; }
         }
         
         private async Task<string> Login(string username, string password,
