@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,20 @@ namespace Digizuite.Test.IntegrationTests
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
             var memberId = await service.GetMemberId().ConfigureAwait(false);
             Assert.AreEqual(30024, memberId);
+        }
+
+        [Test]
+        public async Task CanImpersonateAccessKey()
+        {
+            var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();
+            var ak = await service.Impersonate(30024, new DamAuthenticationService.AccessKeyOptions()
+            {
+                ConfigId = "/1/",
+                Duration = new TimeSpan(7, 0, 0, 0),
+                LanguageId = 3,
+                PersistLanguage = false
+            });
+            Assert.That(ak, Is.Not.Empty);
         }
     }
 }
