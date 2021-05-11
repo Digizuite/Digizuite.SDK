@@ -230,7 +230,7 @@ namespace Digizuite
             var (client, request) =
                 _serviceHttpWrapper.GetClientAndRequest(ServiceType.LoginService, "/api/access-key/impersonate");
 
-            var body = new ImpersonationRequest() 
+            var body = new ImpersonationRequest
             {
                 MemberId = memberId,
                 Options = options
@@ -240,12 +240,9 @@ namespace Digizuite
             
             var res = await client.PostAsync<AccessKey>(request, cancellationToken);
 
-            if (!res.IsSuccessful)
-            {
-                _logger.LogError("Impersonation failed", nameof(res), res);
-                throw new AuthenticationException("impersonation failed", res.Exception);
-            }
-            return res.Data!.Token;
+            if (res.IsSuccessful) return res.Data!.Token;
+            _logger.LogError("Impersonation failed", nameof(res), res);
+            throw new AuthenticationException("impersonation failed", res.Exception);
         }
        
     }
