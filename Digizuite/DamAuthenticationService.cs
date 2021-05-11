@@ -61,18 +61,7 @@ namespace Digizuite
 
         public async Task<string> Impersonate(int memberId, AccessKeyOptions options)
         {
-            string accessKey = null;
-            _logger.LogTrace("Getting access key");
-            if (HasExpired)
-            {
-                _logger.LogTrace("Loading new access key", nameof(HasExpired), HasExpired);
-                accessKey = await Login(_configuration.SystemUsername, _configuration.SystemPassword).ConfigureAwait(false);
-            }
-            else
-            {
-                _logger.LogTrace("Reusing previous access key");
-                accessKey = _accessKey!.Token;
-            }
+            var accessKey = await GetAccessKey();
 
             if (string.IsNullOrWhiteSpace(accessKey))
             {
