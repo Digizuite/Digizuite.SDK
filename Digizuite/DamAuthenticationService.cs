@@ -225,7 +225,6 @@ namespace Digizuite
         private async Task<string> GenerateImpersonatedToken(string accessKey, int memberId, AccessKeyOptions? options, 
             CancellationToken cancellationToken = default )
         {
-            await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogTrace("Getting Impersonated AccessKey", nameof(memberId), memberId, nameof(options), options);
             
             var (client, request) =
