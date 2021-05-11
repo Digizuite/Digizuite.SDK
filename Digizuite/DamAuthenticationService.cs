@@ -236,7 +236,7 @@ namespace Digizuite
             CancellationToken cancellationToken = default )
         {
             await _lock.WaitAsync(cancellationToken).ConfigureAwait(false);
-            _logger.LogTrace("Getting Impersonated AccessKey", memberId, options);
+            _logger.LogTrace("Getting Impersonated AccessKey", nameof(memberId), memberId, nameof(options), options);
             
             var (client, request) =
                 _serviceHttpWrapper.GetClientAndRequest(ServiceType.LoginService, "/api/access-key/impersonate");
