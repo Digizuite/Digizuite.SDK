@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Digizuite.Exceptions;
+using Digizuite.Extensions;
 using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
@@ -236,7 +237,7 @@ namespace Digizuite
                 Options = options
             };
             request.AddJsonBody(body);
-            request.AddQueryParameter("accessKey", accessKey);
+            request.AddAccessKey(accessKey);
             
             var res = await client.PostAsync<AccessKey>(request, cancellationToken);
 
