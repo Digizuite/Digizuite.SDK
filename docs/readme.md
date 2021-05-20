@@ -25,7 +25,7 @@ Once the packages are installed you can start using them. We recommend using a d
 system like `Microsoft.Extensions.DependencyInjection` to manage the Digizuite services. In fact
 if you are using dotnet core, we provide an extension method `AddDigizuite` for quickly adding 
 the Digizuite services to your service provider. You should also make sure to register an instance
-of `Digizuite.Models.Configuration` so the services knows how to interact with the Digizuite. 
+of `Digizuite.Models.DigizuiteConfiguration` so the services knows how to interact with the Digizuite. 
 
 To test that everything is working you can fire of a basic search using `ISearchService`:
 ```c#
@@ -37,7 +37,7 @@ var parameters = new SearchParameters("GetAssets")
     {"sCatalogFolderId", "40"}
 };
 
-var results = await searchService.Search<GetAssetsResponse>(parameters);
+var results = await searchService.Search<Digizuite.Models.Asset>(parameters);
 ```
 
 For additional full examples, check out the 
