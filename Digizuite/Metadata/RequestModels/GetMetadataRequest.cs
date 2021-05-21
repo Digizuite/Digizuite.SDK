@@ -30,5 +30,25 @@ namespace Digizuite.Metadata.RequestModels
         /// If no value is specified for this list, then the current AccessKey language is used
         /// </summary>
         public HashSet<int> Languages { get; set; } = new();
+        
+        /// <summary>
+        /// How should the api deal with auto translate cases.
+        /// </summary>
+        public AutoTranslateHandling AutoTranslateHandling { get; set; } = AutoTranslateHandling.OnlyPrimaryLanguage;
+    }
+    
+    
+    public enum AutoTranslateHandling
+    {
+        /// <summary>
+        /// Only the access key language is returned. All values are the same across all languages
+        /// anyway, and only one language needs to be shown in editor with support for this
+        /// </summary>
+        OnlyPrimaryLanguage,
+        /// <summary>
+        /// All requested languages are returned, even if the field is "AutoTranslateOverwriteExisting",
+        /// and all values are the same.
+        /// </summary>
+        AllLanguages
     }
 }
