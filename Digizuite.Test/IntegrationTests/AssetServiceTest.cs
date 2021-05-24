@@ -26,6 +26,7 @@ namespace Digizuite.Test.IntegrationTests
             Assert.That(loadedAssetByAssetId, Is.EqualTo(asset));
         }
 
+        [Ignore("DAM-5082", Until = "6/11/2021 11:43:09 AM")]
         [Test]
         public async Task CreatesMetaAssetWithoutIssues()
         {
