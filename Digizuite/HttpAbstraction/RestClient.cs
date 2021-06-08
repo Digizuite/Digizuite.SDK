@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Pipelines;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Digizuite.Helpers;
 using Digizuite.Logging;
+using JetBrains.Annotations;
 
 namespace Digizuite.HttpAbstraction
 {
@@ -31,18 +33,19 @@ namespace Digizuite.HttpAbstraction
         }
 
         public async Task<RestResponse<T?>> SendAsync<T>(RestRequest request, CancellationToken cancellationToken)
+        where T:notnull
         {
             using var response = await SendRequest(request, cancellationToken);
 
-            var (responseBody, rawResponse, exception) = await ReadResponseBody<T>(response, cancellationToken);
+            var (responseBody, rawResponse, exception, activityId) = await ReadResponseBody<T>(response, cancellationToken);
 
-            _logger.LogTrace("Raw api response", nameof(rawResponse), rawResponse ?? null);
+            _logger.LogTrace("Raw api response", nameof(rawResponse), rawResponse,  nameof(activityId), activityId);
             if (rawResponse != null)
             {
-                return new DebugRestResponse<T?>(response.StatusCode, exception, responseBody, rawResponse);
+                return new DebugRestResponse<T?>(response.StatusCode, exception, responseBody, rawResponse, activityId);
             }
             
-            return new RestResponse<T?>(response.StatusCode, exception, responseBody);
+            return new RestResponse<T?>(response.StatusCode, exception, responseBody, activityId);
         }
 
         public async Task<RestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken)
@@ -50,10 +53,11 @@ namespace Digizuite.HttpAbstraction
             using var response = await SendRequest(request, cancellationToken);
 
             var content = await response.Content.ReadAsStringAsync();
+            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders) ? activityHeaders.FirstOrDefault() : null;
             
-            _logger.LogTrace("Raw api response", nameof(content), content);
+            _logger.LogTrace("Raw api response", nameof(content), content, nameof(activityId), activityId);
 
-            return new RestResponse(response.StatusCode, null, content);
+            return new RestResponse(response.StatusCode, null, content, activityId);
         }
         
         private async Task<HttpResponseMessage> SendRequest(RestRequest request, CancellationToken cancellationToken)
@@ -82,11 +86,15 @@ namespace Digizuite.HttpAbstraction
         }
 
 
-        private async Task<(T?, string? responseContent, Exception? exception)> ReadResponseBody<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+        private async Task<ReadResponseResult<T>> ReadResponseBody<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+        where T:notnull
         {
+            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders) ? activityHeaders.FirstOrDefault() : null;
+
+
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
-                return (default, "", null);
+                return new ReadResponseResult<T>(default, "", null, activityId);
             }
             
             if (_logger.IsLogLevelEnabled(LogLevel.Debug) || !response.IsSuccessStatusCode)
@@ -111,7 +119,7 @@ namespace Digizuite.HttpAbstraction
 
                 var rawResponse = Encoding.UTF8.GetString(stream.ToArray());
 
-                return (body, rawResponse, deserializationException);
+                return new ReadResponseResult<T>(body, rawResponse, deserializationException, activityId);
             }
             else
             {
@@ -136,7 +144,8 @@ namespace Digizuite.HttpAbstraction
 
                 await copyTask.ContinueWith(_ => writerStream.Dispose(), cancellationToken).ConfigureAwait(false);
 
-                return (await bodyTask.ConfigureAwait(false), null, deserializationException);
+                var bodyResult = await bodyTask.ConfigureAwait(false);
+                return new ReadResponseResult<T>(bodyResult, null, deserializationException, activityId);
             }
         }
 
@@ -152,11 +161,37 @@ namespace Digizuite.HttpAbstraction
 
             return builder.Uri;
         }
+        
+        private readonly struct ReadResponseResult<T>
+            where T:notnull
+        {
+            public readonly T? Body;
+            public readonly string? ResponseContent;
+            public readonly Exception? Exception;
+            public readonly string? ActivityId;
+
+            public ReadResponseResult(T? body, string? responseContent, Exception? exception, string? activityId)
+            {
+                Body = body;
+                ResponseContent = responseContent;
+                Exception = exception;
+                ActivityId = activityId;
+            }
+
+            public void Deconstruct(out T? body, out string? responseContent, out Exception? exception, out string? activityId)
+            {
+                body = Body;
+                responseContent = ResponseContent;
+                exception = Exception;
+                activityId = ActivityId;
+            }
+        }
     }
 
     public interface IRestClient
     {
-        Task<RestResponse<T?>> SendAsync<T>(RestRequest request, CancellationToken cancellationToken);
+        Task<RestResponse<T?>> SendAsync<T>(RestRequest request, CancellationToken cancellationToken)
+            where T:notnull;
         Task<RestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken);
     }
 
@@ -191,6 +226,6 @@ namespace Digizuite.HttpAbstraction
             request.Method = HttpMethod.Post;
 
             return client.SendAsync(request, cancellationToken);
-        } 
+        }
     }
 }

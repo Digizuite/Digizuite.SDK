@@ -9,6 +9,8 @@ using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
 using Digizuite.Test.TestUtils;
 using Digizuite.Extensions;
+using Digizuite.Metadata.RequestModels.UpdateModels;
+using Digizuite.Metadata.RequestModels.UpdateModels.Values;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
@@ -300,6 +302,107 @@ namespace Digizuite.Test.IntegrationTests
             Assert.That(slave.Value, Is.Empty);
             var master = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterLabelId);
             Assert.That(master.Value, Is.Empty);
+        }
+
+        [Test]
+        public async Task MultiMethods()
+        {
+            const int multiComboLabelId = 51687;
+            const int testAssetItemId = 10205;
+
+            var comboA = new ComboValue
+            {
+                Label = "A",
+                Id = 51276,
+                OptionValue = "A",
+            };
+            var comboB = new ComboValue
+            {
+                Id = 51275,
+                Label = "B",
+                OptionValue = "B",
+            };
+            var comboC = new ComboValue
+            {
+                Label = "C",
+                OptionValue = "C",
+                Id = 51274
+            };
+            
+            var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
+
+            // Clear the field
+            await service.ApplyUpdate(new[]
+            {
+                new MultiComboValueMetadataUpdate
+                {
+                    TargetItemIds = {testAssetItemId},
+                    MetaFieldLabelId = multiComboLabelId
+                }
+            });
+
+
+            var field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            Assert.That(field.Value, Is.Empty);
+            
+            // Set the first value
+            await service.ApplyUpdate(new[]
+            {
+                new MultiComboValueMetadataUpdate
+                {
+                    TargetItemIds = {testAssetItemId},
+                    MetaFieldLabelId = multiComboLabelId,
+                    ComboValues =
+                    {
+                        new ExistingCombo(comboA.Id)
+                    }
+                }
+            });
+            
+            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            Assert.That(field.Value, Has.Exactly(1).Items);
+            Assert.That(field.Value, Has.Exactly(1).Items.EqualTo(comboA));
+            
+            
+            // Merge
+            await service.ApplyUpdate(new[]
+            {
+                new MultiComboValueMetadataUpdate
+                {
+                    TargetItemIds = {testAssetItemId},
+                    MetaFieldLabelId = multiComboLabelId,
+                    UpdateMethod = MultiUpdateMethod.Merge,
+                    ComboValues =
+                    {
+                        new ExistingCombo(comboB.Id)
+                    }
+                }
+            });
+
+            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            Assert.That(field.Value, Has.Exactly(2).Items);
+            Assert.That(field.Value, Is.EquivalentTo(new []{comboA, comboB}));
+            
+            
+            // Unset
+            await service.ApplyUpdate(new[]
+            {
+                new MultiComboValueMetadataUpdate
+                {
+                    TargetItemIds = {testAssetItemId},
+                    MetaFieldLabelId = multiComboLabelId,
+                    UpdateMethod = MultiUpdateMethod.Unset,
+                    ComboValues =
+                    {
+                        new ExistingCombo(comboB.Id)
+                    }
+                }
+            });
+
+            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            Assert.That(field.Value, Has.Exactly(1).Items);
+            Assert.That(field.Value, Has.Exactly(1).Items.EqualTo(comboA));
+
         }
     }
 }
