@@ -11,40 +11,39 @@ using System.Threading.Tasks;
 using System.Web;
 using Digizuite.Helpers;
 using Digizuite.Logging;
-using JetBrains.Annotations;
 
 namespace Digizuite.HttpAbstraction
 {
     public class RestClient : IRestClient
     {
-        private readonly ILogger<RestClient> _logger;
         private readonly HttpClient _client;
+        private readonly ILogger<RestClient> _logger;
 
         private readonly HttpSerializationSettings _serializationSettings;
 
-        public RestClient(HttpClient httpClient, HttpSerializationSettings serializationSettings, ILogger<RestClient> logger)
+        public RestClient(HttpClient httpClient, HttpSerializationSettings serializationSettings,
+            ILogger<RestClient> logger)
         {
             Guard.AgainstNull(httpClient, nameof(httpClient));
             Guard.AgainstNull(serializationSettings, nameof(serializationSettings));
-            
+
             _serializationSettings = serializationSettings;
             _logger = logger;
             _client = httpClient;
         }
 
         public async Task<RestResponse<T?>> SendAsync<T>(RestRequest request, CancellationToken cancellationToken)
-        where T:notnull
+            where T : notnull
         {
             using var response = await SendRequest(request, cancellationToken);
 
-            var (responseBody, rawResponse, exception, activityId) = await ReadResponseBody<T>(response, cancellationToken);
+            var (responseBody, rawResponse, exception, activityId) =
+                await ReadResponseBody<T>(response, cancellationToken);
 
-            _logger.LogTrace("Raw api response", nameof(rawResponse), rawResponse,  nameof(activityId), activityId);
+            _logger.LogTrace("Raw api response", nameof(rawResponse), rawResponse, nameof(activityId), activityId);
             if (rawResponse != null)
-            {
                 return new DebugRestResponse<T?>(response.StatusCode, exception, responseBody, rawResponse, activityId);
-            }
-            
+
             return new RestResponse<T?>(response.StatusCode, exception, responseBody, activityId);
         }
 
@@ -53,13 +52,15 @@ namespace Digizuite.HttpAbstraction
             using var response = await SendRequest(request, cancellationToken);
 
             var content = await response.Content.ReadAsStringAsync();
-            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders) ? activityHeaders.FirstOrDefault() : null;
-            
+            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders)
+                ? activityHeaders.FirstOrDefault()
+                : null;
+
             _logger.LogTrace("Raw api response", nameof(content), content, nameof(activityId), activityId);
 
             return new RestResponse(response.StatusCode, null, content, activityId);
         }
-        
+
         private async Task<HttpResponseMessage> SendRequest(RestRequest request, CancellationToken cancellationToken)
         {
             var uri = GetUrl(request);
@@ -68,9 +69,7 @@ namespace Digizuite.HttpAbstraction
             var bodyTask = Task.CompletedTask;
 
             if (request.Body != null)
-            {
                 (message.Content, bodyTask) = request.Body.GetBody(_serializationSettings, cancellationToken);
-            }
 
             foreach (string key in request.Headers)
             {
@@ -86,17 +85,18 @@ namespace Digizuite.HttpAbstraction
         }
 
 
-        private async Task<ReadResponseResult<T>> ReadResponseBody<T>(HttpResponseMessage response, CancellationToken cancellationToken)
-        where T:notnull
+        private async Task<ReadResponseResult<T>> ReadResponseBody<T>(HttpResponseMessage response,
+            CancellationToken cancellationToken)
+            where T : notnull
         {
-            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders) ? activityHeaders.FirstOrDefault() : null;
+            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders)
+                ? activityHeaders.FirstOrDefault()
+                : null;
 
 
             if (response.StatusCode == HttpStatusCode.NoContent)
-            {
                 return new ReadResponseResult<T>(default, "", null, activityId);
-            }
-            
+
             if (_logger.IsLogLevelEnabled(LogLevel.Debug) || !response.IsSuccessStatusCode)
             {
                 // Use more memory intensive implementation to allow easier debugging
@@ -126,7 +126,7 @@ namespace Digizuite.HttpAbstraction
                 var pipe = new Pipe();
 
                 using var writerStream = pipe.Writer.AsStream();
-                
+
                 var copyTask = response.Content.CopyToAsync(writerStream);
 
                 Exception? deserializationException = null;
@@ -161,9 +161,9 @@ namespace Digizuite.HttpAbstraction
 
             return builder.Uri;
         }
-        
+
         private readonly struct ReadResponseResult<T>
-            where T:notnull
+            where T : notnull
         {
             public readonly T? Body;
             public readonly string? ResponseContent;
@@ -178,7 +178,8 @@ namespace Digizuite.HttpAbstraction
                 ActivityId = activityId;
             }
 
-            public void Deconstruct(out T? body, out string? responseContent, out Exception? exception, out string? activityId)
+            public void Deconstruct(out T? body, out string? responseContent, out Exception? exception,
+                out string? activityId)
             {
                 body = Body;
                 responseContent = ResponseContent;
@@ -191,13 +192,16 @@ namespace Digizuite.HttpAbstraction
     public interface IRestClient
     {
         Task<RestResponse<T?>> SendAsync<T>(RestRequest request, CancellationToken cancellationToken)
-            where T:notnull;
+            where T : notnull;
+
         Task<RestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken);
     }
 
     public static class RestClientExtensions
     {
-        public static Task<RestResponse<T?>> PostAsync<T>(this IRestClient client, RestRequest request, CancellationToken cancellation)
+        public static Task<RestResponse<T?>> PostAsync<T>(this IRestClient client, RestRequest request,
+            CancellationToken cancellation)
+            where T : notnull
         {
             request.Method = HttpMethod.Post;
 
@@ -206,6 +210,7 @@ namespace Digizuite.HttpAbstraction
 
         public static Task<RestResponse<T?>> GetAsync<T>(this IRestClient client, RestRequest request,
             CancellationToken cancellationToken)
+            where T : notnull
         {
             request.Method = HttpMethod.Get;
 
@@ -218,8 +223,8 @@ namespace Digizuite.HttpAbstraction
             request.Method = HttpMethod.Get;
 
             return client.SendAsync(request, cancellationToken);
-        } 
-        
+        }
+
         public static Task<RestResponse> PostAsync(this IRestClient client, RestRequest request,
             CancellationToken cancellationToken)
         {

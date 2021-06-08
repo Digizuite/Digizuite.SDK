@@ -146,7 +146,7 @@ namespace Digizuite.BatchUpdate
                     BaseIds = baseIds.Count == 0 ? null : baseIds,
                     RepositoryType = repositoryType,
                     Values = parts.Select(part => part.Item2).ToList(),
-                    ForceDelete = forceDelete ? true : (bool?) null
+                    ForceDelete = forceDelete ? true : null
                 };
 
                 if (fieldName != null) valueJson.FieldName = fieldName;

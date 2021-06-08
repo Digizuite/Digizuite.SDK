@@ -23,7 +23,7 @@ namespace Digizuite.HttpAbstraction
             Uri = new Uri(uri);
         }
 
-        public IBodyParameters? Body { get; set; } = null;
+        public IBodyParameters? Body { get; set; }
     }
 
     public static class RestRequestExtensions
