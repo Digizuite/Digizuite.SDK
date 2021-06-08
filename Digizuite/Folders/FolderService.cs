@@ -49,7 +49,8 @@ namespace Digizuite.Folders
                 .AddQueryParameter("memberId", memberId)
                 .AddQueryParameter("page", 1)
                 .AddQueryParameter("limit", 9999)
-                .AddQueryParameter("node", "root");
+                .AddQueryParameter("node", "root")
+                .AddAccessKey(ak);
 
             _logger.LogDebug("Requesting root groups");
             var res = await client.GetAsync<DigiResponse<RootSystemToolsResponse>>(request, cancellationToken).ConfigureAwait(false);
