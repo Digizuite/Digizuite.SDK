@@ -19,6 +19,7 @@ namespace Digizuite
             {ServiceType.DslService, "https://localhost:5063"},
             {ServiceType.LoginService, "https://localhost:5091"},
             {ServiceType.LegacyService, "https://localhost:5012"},
+            {ServiceType.NotificationService, "https://localhost:5201"},
             {ServiceType.Dmm3bwsv3, "http://local.dev.digizuite.com/dev/dmm3bwsv3"}
         };
 
@@ -31,6 +32,7 @@ namespace Digizuite
             {ServiceType.DslService, "/DigizuiteCore/dsl-service"},
             {ServiceType.LoginService, "/DigizuiteCore/LoginService"},
             {ServiceType.LegacyService, "/DigizuiteCore/LegacyService"},
+            {ServiceType.NotificationService, "/DigizuiteCore/NotificationService"},
             {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
         };
 
@@ -52,19 +54,16 @@ namespace Digizuite
 
         private Uri GetUri(string baseUrl, string servicePath, string requestedPath)
         {
-            var url = string.IsNullOrWhiteSpace(baseUrl) ? servicePath.TrimEnd('/') + "/" + requestedPath.TrimStart('/') : $"{baseUrl.TrimEnd('/')}/{servicePath.Trim('/')}/{requestedPath.TrimStart('/')}";
+            var url = string.IsNullOrWhiteSpace(baseUrl) 
+                ? servicePath.TrimEnd('/') + "/" + requestedPath.TrimStart('/') 
+                : $"{baseUrl.TrimEnd('/')}/{servicePath.Trim('/')}/{requestedPath.TrimStart('/')}";
 
             return new Uri(url);
         }
         
         public (IRestClient Client, RestRequest Request) GetClientAndRequest(ServiceType serviceType, string path)
         {
-            var isDev = _devServerConfigurations.IsDevelopmentMode(serviceType);
-
-            var baseUrl = isDev ? "" : _configuration.BaseUrl.ToString();
-            var pathUrl = isDev ? _developmentServiceUrls[serviceType] : _productionServiceUrls[serviceType];
-
-            var uri = GetUri(baseUrl, pathUrl, path);
+            var uri = GetServiceUrl(serviceType, path);
 
             var client = serviceType == ServiceType.Dmm3bwsv3 ? _dmm3bwsv3RestClient : _coreRestClient;
 
@@ -78,6 +77,16 @@ namespace Digizuite
             var uri = GetUri("", baseUrl, path);
 
             return (_coreRestClient, new RestRequest(uri));
+        }
+
+        public Uri GetServiceUrl(ServiceType serviceType, string path)
+        {
+            var isDev = _devServerConfigurations.IsDevelopmentMode(serviceType);
+
+            var baseUrl = isDev ? "" : _configuration.BaseUrl.ToString();
+            var pathUrl = isDev ? _developmentServiceUrls[serviceType] : _productionServiceUrls[serviceType];
+
+            return GetUri(baseUrl, pathUrl, path);
         }
     }
 
@@ -103,7 +112,8 @@ namespace Digizuite
         DslService,
         LoginService,
         LegacyService,
-        Dmm3bwsv3
+        Dmm3bwsv3,
+        NotificationService
     }
 
     public static class ServiceHttpWrapperExtensions
