@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Digizuite.Metadata.RequestModels.UpdateModels.Helpers;
@@ -15,7 +16,14 @@ namespace Digizuite.Metadata.RequestModels.UpdateModels
         /// <summary>
         /// The labelId of the metafield to update
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int MetaFieldLabelId { get; set; }
+        
+        /// <summary>
+        /// The ItemGuid of the metafield to update
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public Guid MetaFieldItemGuid { get; set; }
 
         /// <summary>
         /// If true, normal auto translate behavior is skipped. You probably don't want to set this
