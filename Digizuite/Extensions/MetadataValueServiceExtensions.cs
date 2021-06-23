@@ -446,10 +446,10 @@ namespace Digizuite.Extensions
 
 
         public static Task UpdateFields(this IMetadataValueService service,
-            int assetItemId, CancellationToken cancellationToken = default,
+            int assetItemId, string? accessKey = null, CancellationToken cancellationToken = default,
             params Field[] fields)
         {
-            return service.UpdateFields(new[] {assetItemId}, cancellationToken, fields);
+            return service.UpdateFields(new[] {assetItemId}, accessKey, cancellationToken, fields);
         }
     }
 }

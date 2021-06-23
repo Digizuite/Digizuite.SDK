@@ -39,7 +39,7 @@ namespace Digizuite.Test.IntegrationTests
             Assert.That(field.TargetItemId, Is.EqualTo(TestAssetItemId));
             field.Value = first;
 
-            await service.UpdateFields(TestAssetItemId, CancellationToken.None, field);
+            await service.UpdateFields(TestAssetItemId, fields: field);
 
             var updated = await load(TestAssetItemId, labelId, CancellationToken.None);
 
@@ -48,7 +48,7 @@ namespace Digizuite.Test.IntegrationTests
 
             field.Value = second;
 
-            await service.UpdateFields(TestAssetItemId, CancellationToken.None, field);
+            await service.UpdateFields(TestAssetItemId, fields: field);
 
             updated = await load(TestAssetItemId, labelId, CancellationToken.None);
             Assert.That(updated.TargetItemId, Is.EqualTo(TestAssetItemId));
@@ -275,7 +275,7 @@ namespace Digizuite.Test.IntegrationTests
                 }
             };
 
-            await service.UpdateFields(TestAssetItemId, CancellationToken.None, field);
+            await service.UpdateFields(TestAssetItemId, fields: field);
 
             var updated = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterLabelId);
 
@@ -296,7 +296,7 @@ namespace Digizuite.Test.IntegrationTests
 
             slave.Value = new List<ItemReferenceOption>();
 
-            await service.UpdateFields(slaveAssetItemId, CancellationToken.None, slave);
+            await service.UpdateFields(slaveAssetItemId, fields: slave);
 
             slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveLabelId);
             Assert.That(slave.Value, Is.Empty);

@@ -31,7 +31,7 @@ namespace Digizuite.Metadata
         }
 
         /// <inheritdoc />
-        public async Task UpdateFields(IEnumerable<int> assetItemId, CancellationToken cancellationToken = default,
+        public async Task UpdateFields(IEnumerable<int> assetItemId, string? accessKey = null, CancellationToken cancellationToken = default,
             params Field[] fields)
         {
             var updates = fields.Select(CreateUpdateRequests).ToList();
@@ -40,13 +40,13 @@ namespace Digizuite.Metadata
 
             foreach (var update in updates) update.TargetItemIds = itemIds;
 
-            await ApplyUpdate(updates, cancellationToken);
+            await ApplyUpdate(updates, accessKey, cancellationToken);
         }
 
-        public async Task ApplyUpdate(IEnumerable<MetadataUpdate> updates,
+        public async Task ApplyUpdate(IEnumerable<MetadataUpdate> updates, string? accessKey = null,
             CancellationToken cancellationToken = default)
         {
-            var accessKey = await _authenticationService.GetAccessKey().ConfigureAwait(false);
+            accessKey ??= await _authenticationService.GetAccessKey().ConfigureAwait(false);
 
             var updateWrapper = new UpdateMetadataRequest
             {
