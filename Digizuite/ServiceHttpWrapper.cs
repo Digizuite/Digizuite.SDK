@@ -20,6 +20,7 @@ namespace Digizuite
             {ServiceType.LoginService, "https://localhost:5091"},
             {ServiceType.LegacyService, "https://localhost:5012"},
             {ServiceType.NotificationService, "https://localhost:5201"},
+            {ServiceType.FileService, "https://localhost:5081"},
             {ServiceType.Dmm3bwsv3, "http://local.dev.digizuite.com/dev/dmm3bwsv3"}
         };
 
@@ -33,6 +34,7 @@ namespace Digizuite
             {ServiceType.LoginService, "/DigizuiteCore/LoginService"},
             {ServiceType.LegacyService, "/DigizuiteCore/LegacyService"},
             {ServiceType.NotificationService, "/DigizuiteCore/NotificationService"},
+            {ServiceType.FileService, "/DigizuiteCore/FileService"},
             {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
         };
 
@@ -132,7 +134,8 @@ namespace Digizuite
         LoginService,
         LegacyService,
         Dmm3bwsv3,
-        NotificationService
+        NotificationService,
+        FileService
     }
 
     public static class ServiceHttpWrapperExtensions
