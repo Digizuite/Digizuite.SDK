@@ -12,7 +12,7 @@ namespace Digizuite.Exceptions
         {
         }
 
-        public UploadException(string message, Exception innerException) : base(message, innerException)
+        public UploadException(string message, Exception? innerException) : base(message, innerException)
         {
         }
     }

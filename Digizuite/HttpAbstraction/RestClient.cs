@@ -79,9 +79,14 @@ namespace Digizuite.HttpAbstraction
 
             message.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
+            _logger.LogTrace("Opening request");
             var requestTask = _client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            _logger.LogTrace("Request task created, waiting for body to be written");
             await bodyTask.ConfigureAwait(false);
-            return await requestTask.ConfigureAwait(false);
+            _logger.LogTrace("Body task finished. Waiting for request task to finish");
+            var responseMessage = await requestTask.ConfigureAwait(false);
+            _logger.LogTrace("Request task finished");
+            return responseMessage;
         }
 
 

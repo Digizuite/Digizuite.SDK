@@ -29,7 +29,6 @@ namespace Digizuite
             services.AddSingleton<IDamAuthenticationService, DamAuthenticationService>();
             services.AddSingleton<IBatchUpdateClient, BatchUpdateClient>();
             services.AddSingleton<ISearchService, SearchService>();
-            services.AddSingleton<IUploadService, UploadService>();
             services.AddSingleton<IMetadataValueService, MetadataValueService>();
             services.AddSingleton<IAssetStreamerService, AssetStreamerService>();
             services.AddSingleton<IAssetService, AssetService>();
@@ -45,7 +44,7 @@ namespace Digizuite
             services.AddSingleton<IMetaFieldService, MetaFieldService>();
             services.AddSingleton<ServiceHttpWrapper>();
             services.AddSingleton<DevServerConfigurations>();
-            services.TryAddSingleton<HttpClient>((_) => new HttpClient(new HttpClientHandler()
+            services.TryAddSingleton((_) => new HttpClient(new HttpClientHandler()
             {
                 AllowAutoRedirect = false
             }));
@@ -55,6 +54,15 @@ namespace Digizuite
             {
                 services.AddSingleton(typeof(ICache<>), typeof(InMemoryCache<>));
                 services.AddMemoryCache();
+            }
+
+            if (options.HasFlag(DigizuiteOption.UseNewUploadService))
+            {
+                services.AddSingleton<IUploadService, NewUploadService>();
+            }
+            else
+            {
+                services.AddSingleton<IUploadService, OldUploadService>();
             }
 
             return services;
