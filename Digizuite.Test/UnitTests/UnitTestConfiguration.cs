@@ -7,41 +7,17 @@ namespace Digizuite.Test.UnitTests
 {
     internal class UnitTestConfiguration : IConfiguration
     {
-        public Uri BaseUrl
-        {
-            get => Disallow<Uri>();
-            set => Disallow(value);
-        }
+        public Uri BaseUrl => Disallow<Uri>();
 
-        public TimeSpan AccessKeyDuration
-        {
-            get => Disallow<TimeSpan>();
-            set => Disallow(value);
-        }
+        public string SystemUsername => Disallow<string>();
 
-        public string SystemUsername
-        {
-            get => Disallow<string>();
-            set => Disallow(value);
-        }
+        public string SystemPassword => Disallow<string>();
 
-        public string SystemPassword
-        {
-            get => Disallow<string>();
-            set => Disallow(value);
-        }
+        public string ConfigVersionId => Disallow<string>();
 
-        public string ConfigVersionId
-        {
-            get => Disallow<string>();
-            set => Disallow(value);
-        }
+        public HashSet<ServiceType> DevelopmentServices => Disallow<HashSet<ServiceType>>();
 
-        public HashSet<ServiceType> DevelopmentServices
-        {
-            get => Disallow<HashSet<ServiceType>>();
-            set => Disallow(value);
-        }
+        public long UploadChunkSize => Disallow<long>();
 
         // ReSharper disable once UnusedParameter.Local
         private static T Disallow<T>(T _ = default)

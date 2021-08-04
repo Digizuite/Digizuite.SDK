@@ -8,13 +8,15 @@ namespace Digizuite.Models
         /// <summary>
         /// The base url for all DC requests
         /// </summary>
-        Uri BaseUrl { get; set; }
+        Uri BaseUrl { get; }
 
-        string SystemUsername { get; set; }
-        string SystemPassword { get; set; }
+        string SystemUsername { get; }
+        string SystemPassword { get; }
         
-        string? ConfigVersionId { get; set; }
+        string? ConfigVersionId { get; }
         
-        HashSet<ServiceType>? DevelopmentServices { get; set; }
+        HashSet<ServiceType>? DevelopmentServices { get; }
+        
+        long UploadChunkSize { get; }
     }
 }

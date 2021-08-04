@@ -23,10 +23,12 @@ namespace Digizuite.Models
         /// </summary>
         public HashSet<ServiceType>? DevelopmentServices { get; set; } = new();
 
+        public long UploadChunkSize { get; set; } = 1000 * 1000 * 10;
+
         public override string ToString()
         {
             return
-                $"{nameof(BaseUrl)}: {BaseUrl}, {nameof(SystemUsername)}: {SystemUsername}, {nameof(SystemPassword)}: {SystemPassword.Length}, {nameof(ConfigVersionId)}: {ConfigVersionId}";
+                $"{nameof(BaseUrl)}: {BaseUrl}, {nameof(SystemUsername)}: {SystemUsername}, {nameof(SystemPassword)}: {SystemPassword.Length}, {nameof(ConfigVersionId)}: {ConfigVersionId}, {nameof(UploadChunkSize)}: {UploadChunkSize} bytes";
         }
 
     }
