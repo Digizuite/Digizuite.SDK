@@ -39,6 +39,11 @@ namespace Digizuite.HttpAbstraction
             return request.AddQueryParameter(key, value.ToString());
         }
 
+        public static RestRequest AddQueryParameter(this RestRequest request, string key, long value)
+        {
+            return request.AddQueryParameter(key, value.ToString());
+        }
+
         public static RestRequest AddQueryParameter(this RestRequest request, string key, bool value)
         {
             return request.AddQueryParameter(key, value.ToString().ToLower());
