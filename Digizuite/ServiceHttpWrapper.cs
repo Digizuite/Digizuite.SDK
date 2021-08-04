@@ -92,7 +92,12 @@ namespace Digizuite
         public Uri GetServiceUrl(ServiceType serviceType, string path)
         {
             var isDev = _devServerConfigurations.IsDevelopmentMode(serviceType);
-            var pathUrl = isDev ? _developmentServiceUrls[serviceType] : _configuration.RunInDocker ? _dockerProductionUrls[serviceType] : _productionServiceUrls[serviceType];
+            var pathUrl = (isDev, _configuration.RunInDocker) switch
+            {
+                (true, _) => _developmentServiceUrls[serviceType],
+                (_, true) => _dockerProductionUrls[serviceType],
+                _ => _productionServiceUrls[serviceType],
+            };
 
             var baseUrl = "";
             if (!Uri.IsWellFormedUriString(pathUrl, UriKind.Absolute))
