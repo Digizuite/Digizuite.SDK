@@ -11,6 +11,10 @@ namespace Digizuite.Test.IntegrationTests
         [TestCase(ServiceType.DslService, true, false, "api/test", "https://localhost:5063/api/test")]
         [TestCase(ServiceType.DslService, true, true, "api/test", "https://localhost:5063/api/test")]
         [TestCase(ServiceType.DslService, false, true, "api/test", "http://digizuitecore_dslservice/api/test")]
+        [TestCase(ServiceType.Dmm3bwsv3, false, false, "api/test", "https://dam.digizuite.com/dmm3bwsv3/api/test")]
+        [TestCase(ServiceType.Dmm3bwsv3, true, false, "api/test", "http://local.dev.digizuite.com/dev/dmm3bwsv3/api/test")]
+        [TestCase(ServiceType.Dmm3bwsv3, true, true, "api/test", "http://local.dev.digizuite.com/dev/dmm3bwsv3/api/test")]
+        [TestCase(ServiceType.Dmm3bwsv3, false, true, "api/test", "https://dam.digizuite.com/dmm3bwsv3/api/test")]
         public void GeneratesCorrectUrl(ServiceType serviceType, bool isDevelopment, bool isInDocker, string path,
             string expectedUrl)
         {
