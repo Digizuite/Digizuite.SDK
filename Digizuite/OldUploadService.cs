@@ -16,7 +16,6 @@ namespace Digizuite
 {
     public class OldUploadService : IUploadService
     {
-        private const long SliceSize = 1000 * 1000 * 10;
         private const string UploadEndpoint = "UploadService.js";
         private const string UploadFileChunkEndpoint = "UploadFileChunk.js";
         private readonly IDamAuthenticationService _damAuthenticationService;
@@ -107,7 +106,7 @@ namespace Digizuite
 
         private async Task UploadFileChunks(Stream stream, int itemId, IUploadProgressListener? listener, CancellationToken cancellationToken)
         {
-            var buffer = new byte[SliceSize];
+            var buffer = new byte[_configuration.UploadChunkSize];
 
             using var webClient = new WebClient();
             long totalUploaded = 0;

@@ -25,10 +25,12 @@ namespace Digizuite.Models
 
         public bool RunInDocker { get; set; }
 
+        public long UploadChunkSize { get; set; } = 1000 * 1000 * 10;
+
         public override string ToString()
         {
             return
-                $"{nameof(BaseUrl)}: {BaseUrl}, {nameof(SystemUsername)}: {SystemUsername}, {nameof(SystemPassword)}: {SystemPassword.Length}, {nameof(ConfigVersionId)}: {ConfigVersionId}";
+                $"{nameof(BaseUrl)}: {BaseUrl}, {nameof(SystemUsername)}: {SystemUsername}, {nameof(SystemPassword)}: {SystemPassword.Length}, {nameof(ConfigVersionId)}: {ConfigVersionId}, {nameof(UploadChunkSize)}: {UploadChunkSize} bytes";
         }
 
     }

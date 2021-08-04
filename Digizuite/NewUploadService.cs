@@ -5,21 +5,23 @@ using Digizuite.Exceptions;
 using Digizuite.Extensions;
 using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
+using Digizuite.Models;
 
 namespace Digizuite
 {
     public class NewUploadService : IUploadService
     {
-        private const long SliceSize = 1000 * 1000 * 10;
         private readonly ServiceHttpWrapper _serviceHttpWrapper;
         private readonly ILogger<NewUploadService> _logger;
         private readonly IDamAuthenticationService _damAuthenticationService;
+        private readonly IConfiguration _configuration;
 
-        public NewUploadService(ServiceHttpWrapper serviceHttpWrapper, ILogger<NewUploadService> logger, IDamAuthenticationService damAuthenticationService)
+        public NewUploadService(ServiceHttpWrapper serviceHttpWrapper, ILogger<NewUploadService> logger, IDamAuthenticationService damAuthenticationService, IConfiguration configuration)
         {
             _serviceHttpWrapper = serviceHttpWrapper;
             _logger = logger;
             _damAuthenticationService = damAuthenticationService;
+            _configuration = configuration;
         }
 
         public async Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null,
@@ -117,11 +119,11 @@ namespace Digizuite
                 request.AddQueryParameter("Filename", filename);
             }
 
-            request.AddQueryParameter("LastChunkIfSizeLessThan", SliceSize);
+            request.AddQueryParameter("LastChunkIfSizeLessThan", _configuration.UploadChunkSize);
             var ak = await _damAuthenticationService.GetAccessKey();
             request.AddAccessKey(ak);
 
-            using var limitedStream = new LimitedReaderStream(stream, SliceSize);
+            using var limitedStream = new LimitedReaderStream(stream, _configuration.UploadChunkSize);
             request.Body = new StreamBody(limitedStream);
 
             _logger.LogDebug("Sending chunk");
