@@ -9,7 +9,18 @@ using NUnit.Framework;
 namespace Digizuite.Test.IntegrationTests
 {
     [TestFixture]
-    public class UploadServiceTest : IntegrationTestBase
+    public class OldUploadServiceTest : UploadServiceTest
+    {
+        protected override DigizuiteOption Options => DigizuiteOption.Nothing;
+    }
+
+    [TestFixture]
+    public class NewUploadServiceTest : UploadServiceTest
+    {
+        protected override DigizuiteOption Options => DigizuiteOption.UseNewUploadService;
+    }
+    
+    public abstract class UploadServiceTest : IntegrationTestBase
     {
         private const string TestFileName = "TestFiles/large_test_image.png";
 
@@ -42,7 +53,7 @@ namespace Digizuite.Test.IntegrationTests
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
 #pragma warning restore CA2000
             var listener = new SimpleUploadProgressListener();
-            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 56,
+            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 57,
                 KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener).ConfigureAwait(false);
 
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));

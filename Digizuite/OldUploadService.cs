@@ -14,18 +14,18 @@ using Newtonsoft.Json;
 
 namespace Digizuite
 {
-    public class UploadService : IUploadService
+    public class OldUploadService : IUploadService
     {
         private const long SliceSize = 1000 * 1000 * 10;
         private const string UploadEndpoint = "UploadService.js";
         private const string UploadFileChunkEndpoint = "UploadFileChunk.js";
         private readonly IDamAuthenticationService _damAuthenticationService;
         private readonly ServiceHttpWrapper _serviceHttpWrapper;
-        private readonly ILogger<UploadService> _logger;
+        private readonly ILogger<OldUploadService> _logger;
         private readonly IConfiguration _configuration;
 
-        public UploadService(IDamAuthenticationService damAuthenticationService, ServiceHttpWrapper serviceHttpWrapper,
-            ILogger<UploadService> logger, IConfiguration configuration)
+        public OldUploadService(IDamAuthenticationService damAuthenticationService, ServiceHttpWrapper serviceHttpWrapper,
+            ILogger<OldUploadService> logger, IConfiguration configuration)
         {
             _damAuthenticationService = damAuthenticationService;
             _serviceHttpWrapper = serviceHttpWrapper;
@@ -142,7 +142,7 @@ namespace Digizuite
 
                 var resp = JsonConvert.DeserializeObject<DigiResponse<object>>(actualResponse);
 
-                if (!resp.Success)
+                if (!resp!.Success)
                 {
                     _logger.LogError("Failed to upload file chunk", nameof(resp), resp);
                     throw new UploadException("Failed to upload file chunk");
