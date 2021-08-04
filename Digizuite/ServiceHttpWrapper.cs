@@ -36,6 +36,16 @@ namespace Digizuite
             {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
         };
 
+        private readonly Dictionary<ServiceType, string> _dockerProductionUrls = new()
+        {
+            {ServiceType.BusinessWorkflow, "http://digizuitecore_businessworkflowservice"},
+            {ServiceType.DslService, "http://digizuitecore_dslservice"},
+            {ServiceType.LoginService, "http://digizuitecore_loginservice"},
+            {ServiceType.LegacyService, "http://digizuitecore_legacyservice"},
+            {ServiceType.NotificationService, "http://digizuitecore_notificationservice"},
+            {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
+        };
+
         public ServiceHttpWrapper(DevServerConfigurations devServerConfigurations,
             IConfiguration configuration, HttpClient httpClient, ILogger<RestClient> logger)
         {
@@ -82,9 +92,13 @@ namespace Digizuite
         public Uri GetServiceUrl(ServiceType serviceType, string path)
         {
             var isDev = _devServerConfigurations.IsDevelopmentMode(serviceType);
+            var pathUrl = isDev ? _developmentServiceUrls[serviceType] : _configuration.RunInDocker ? _dockerProductionUrls[serviceType] : _productionServiceUrls[serviceType];
 
-            var baseUrl = isDev ? "" : _configuration.BaseUrl.ToString();
-            var pathUrl = isDev ? _developmentServiceUrls[serviceType] : _productionServiceUrls[serviceType];
+            var baseUrl = "";
+            if (!Uri.IsWellFormedUriString(pathUrl, UriKind.Absolute))
+            {
+                baseUrl = _configuration.BaseUrl.ToString();
+            }
 
             return GetUri(baseUrl, pathUrl, path);
         }

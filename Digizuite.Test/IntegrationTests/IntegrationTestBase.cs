@@ -9,7 +9,7 @@ namespace Digizuite.Test.IntegrationTests
 {
     public abstract class IntegrationTestBase
     {
-        protected IConfiguration Configuration = null!;
+        protected DigizuiteConfiguration Configuration = null!;
 
         protected IServiceProvider ServiceProvider = null!;
 
