@@ -29,12 +29,10 @@ namespace Digizuite.HttpAbstraction
                 count = (int) _remainingToRead;
             }
 
-            Console.WriteLine($"Reading {count} bytes from stream");
             
             var amountRead = _underlyingStream.Read(buffer, offset, count);
             _remainingToRead -= amountRead;
             TotalRead += amountRead;
-            Console.WriteLine($"Actually read {amountRead}");
             return amountRead;
         }
 
@@ -59,13 +57,10 @@ namespace Digizuite.HttpAbstraction
             {
                 count = (int)_remainingToRead;
             }
-
-            Console.WriteLine($"Reading {count} bytes from stream (async)");
             
             var amountRead = await _underlyingStream.ReadAsync(buffer, offset, count, cancellationToken);
             _remainingToRead -= amountRead;
             TotalRead += amountRead;
-            Console.WriteLine($"Actually read {amountRead} (async)");
             return amountRead;
         }
 
