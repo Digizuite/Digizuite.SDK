@@ -23,6 +23,8 @@ namespace Digizuite.Models
         /// </summary>
         public HashSet<ServiceType>? DevelopmentServices { get; set; } = new();
 
+        public bool RunInDocker { get; set; }
+
         public override string ToString()
         {
             return

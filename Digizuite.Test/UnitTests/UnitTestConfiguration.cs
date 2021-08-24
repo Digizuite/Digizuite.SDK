@@ -43,6 +43,8 @@ namespace Digizuite.Test.UnitTests
             set => Disallow(value);
         }
 
+        public bool RunInDocker => Disallow<bool>();
+
         // ReSharper disable once UnusedParameter.Local
         private static T Disallow<T>(T _ = default)
         {

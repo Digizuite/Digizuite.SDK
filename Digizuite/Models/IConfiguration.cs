@@ -16,5 +16,11 @@ namespace Digizuite.Models
         string? ConfigVersionId { get; set; }
         
         HashSet<ServiceType>? DevelopmentServices { get; set; }
+        
+        /// <summary>
+        /// True if this service is running in Docker. Should only be used internally by Digizuite, since
+        /// those services has direct communication paths with each other. 
+        /// </summary>
+        bool RunInDocker { get; }
     }
 }
