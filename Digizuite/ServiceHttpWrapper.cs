@@ -45,7 +45,7 @@ namespace Digizuite
             {ServiceType.LoginService, "http://digizuitecore_loginservice"},
             {ServiceType.LegacyService, "http://digizuitecore_legacyservice"},
             {ServiceType.NotificationService, "http://digizuitecore_notificationservice"},
-            {ServiceType.FileService, "/DigizuiteCore/digizuitecore_fileservice"},
+            {ServiceType.FileService, "http://digizuitecore_fileservice"},
             {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
         };
 
