@@ -100,7 +100,7 @@ namespace Digizuite.HttpAbstraction
             if (_logger.IsLogLevelEnabled(LogLevel.Debug) || !response.IsSuccessStatusCode)
             {
                 // Use more memory intensive implementation to allow easier debugging
-                var stream = new MemoryStream((int) (response.Content.Headers.ContentLength ?? 0));
+                var stream = new MemoryStream((int)(response.Content.Headers.ContentLength ?? 0));
                 await response.Content.CopyToAsync(stream).ConfigureAwait(false);
 
                 stream.Position = 0;
@@ -229,6 +229,23 @@ namespace Digizuite.HttpAbstraction
             CancellationToken cancellationToken)
         {
             request.Method = HttpMethod.Post;
+
+            return client.SendAsync(request, cancellationToken);
+        }
+
+        public static Task<RestResponse<T?>> DeleteAsync<T>(this IRestClient client, RestRequest request,
+            CancellationToken cancellationToken)
+            where T : notnull
+        {
+            request.Method = HttpMethod.Delete;
+
+            return client.SendAsync<T>(request, cancellationToken);
+        }
+
+        public static Task<RestResponse> DeleteAsync(this IRestClient client, RestRequest request,
+            CancellationToken cancellationToken)
+        {
+            request.Method = HttpMethod.Delete;
 
             return client.SendAsync(request, cancellationToken);
         }
