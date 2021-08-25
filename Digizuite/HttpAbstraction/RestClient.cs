@@ -61,6 +61,16 @@ namespace Digizuite.HttpAbstraction
             return new RestResponse(response.StatusCode, null, content, activityId);
         }
 
+        public async Task<Stream> StreamAsync(RestRequest request, CancellationToken cancellationToken)
+        {
+            var url = request.Uri.AbsoluteUri;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
+
+            var httpResponseMessage = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken);
+            return await httpResponseMessage.Content.ReadAsStreamAsync();
+        }
+
         private async Task<HttpResponseMessage> SendRequest(RestRequest request, CancellationToken cancellationToken)
         {
             var uri = GetUrl(request);
@@ -195,6 +205,9 @@ namespace Digizuite.HttpAbstraction
             where T : notnull;
 
         Task<RestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken);
+
+
+        Task<Stream> StreamAsync(RestRequest request, CancellationToken cancellationToken);
     }
 
     public static class RestClientExtensions
