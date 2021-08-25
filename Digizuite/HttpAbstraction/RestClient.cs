@@ -63,12 +63,16 @@ namespace Digizuite.HttpAbstraction
 
         public async Task<Stream> StreamAsync(RestRequest request, CancellationToken cancellationToken)
         {
-            var url = request.Uri.AbsoluteUri;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
+            using var response = await SendRequest(request, cancellationToken);
 
-            var httpResponseMessage = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken);
-            return await httpResponseMessage.Content.ReadAsStreamAsync();
+            var content = await response.Content.ReadAsStreamAsync();
+            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders)
+                ? activityHeaders.FirstOrDefault()
+                : null;
+
+            _logger.LogTrace("Raw api response", nameof(content), content, nameof(activityId), activityId);
+
+            return content;
         }
 
         private async Task<HttpResponseMessage> SendRequest(RestRequest request, CancellationToken cancellationToken)
