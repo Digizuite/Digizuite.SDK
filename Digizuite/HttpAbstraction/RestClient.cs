@@ -70,7 +70,7 @@ namespace Digizuite.HttpAbstraction
                 ? activityHeaders.FirstOrDefault()
                 : null;
 
-            _logger.LogTrace("Raw api response", nameof(content), content, nameof(activityId), activityId);
+            _logger.LogTrace("Raw api response", nameof(activityId), activityId);
 
             return content;
         }
