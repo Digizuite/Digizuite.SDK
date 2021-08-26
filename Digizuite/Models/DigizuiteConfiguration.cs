@@ -5,10 +5,16 @@ namespace Digizuite.Models
 {
     public class DigizuiteConfiguration : IConfiguration
     {
+        private Uri _baseUrl = null!;
+
         /// <summary>
         /// The base url for all DC requests
         /// </summary>
-        public Uri BaseUrl { get; set; } = null!;
+        public Uri BaseUrl
+        {
+            get => _baseUrl;
+            set => _baseUrl = new Uri(value.Scheme + Uri.SchemeDelimiter + value.Host);
+        }
 
         public string SystemUsername { get; set; } = null!;
         public string SystemPassword { get; set; } = null!;
@@ -30,6 +36,5 @@ namespace Digizuite.Models
             return
                 $"{nameof(BaseUrl)}: {BaseUrl}, {nameof(SystemUsername)}: {SystemUsername}, {nameof(SystemPassword)}: {SystemPassword.Length}, {nameof(ConfigVersionId)}: {ConfigVersionId}";
         }
-
     }
 }
