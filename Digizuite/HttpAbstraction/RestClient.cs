@@ -61,6 +61,20 @@ namespace Digizuite.HttpAbstraction
             return new RestResponse(response.StatusCode, null, content, activityId);
         }
 
+        public async Task<Stream> StreamAsync(RestRequest request, CancellationToken cancellationToken)
+        {
+            using var response = await SendRequest(request, cancellationToken);
+
+            var content = await response.Content.ReadAsStreamAsync();
+            var activityId = response.Headers.TryGetValues("X-Activity-Id", out var activityHeaders)
+                ? activityHeaders.FirstOrDefault()
+                : null;
+
+            _logger.LogTrace("Raw api response", nameof(activityId), activityId);
+
+            return content;
+        }
+
         private async Task<HttpResponseMessage> SendRequest(RestRequest request, CancellationToken cancellationToken)
         {
             var uri = GetUrl(request);
@@ -100,7 +114,7 @@ namespace Digizuite.HttpAbstraction
             if (_logger.IsLogLevelEnabled(LogLevel.Debug) || !response.IsSuccessStatusCode)
             {
                 // Use more memory intensive implementation to allow easier debugging
-                var stream = new MemoryStream((int) (response.Content.Headers.ContentLength ?? 0));
+                var stream = new MemoryStream((int)(response.Content.Headers.ContentLength ?? 0));
                 await response.Content.CopyToAsync(stream).ConfigureAwait(false);
 
                 stream.Position = 0;
@@ -195,6 +209,9 @@ namespace Digizuite.HttpAbstraction
             where T : notnull;
 
         Task<RestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken);
+
+
+        Task<Stream> StreamAsync(RestRequest request, CancellationToken cancellationToken);
     }
 
     public static class RestClientExtensions
@@ -229,6 +246,23 @@ namespace Digizuite.HttpAbstraction
             CancellationToken cancellationToken)
         {
             request.Method = HttpMethod.Post;
+
+            return client.SendAsync(request, cancellationToken);
+        }
+
+        public static Task<RestResponse<T?>> DeleteAsync<T>(this IRestClient client, RestRequest request,
+            CancellationToken cancellationToken)
+            where T : notnull
+        {
+            request.Method = HttpMethod.Delete;
+
+            return client.SendAsync<T>(request, cancellationToken);
+        }
+
+        public static Task<RestResponse> DeleteAsync(this IRestClient client, RestRequest request,
+            CancellationToken cancellationToken)
+        {
+            request.Method = HttpMethod.Delete;
 
             return client.SendAsync(request, cancellationToken);
         }
