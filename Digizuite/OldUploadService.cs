@@ -11,6 +11,7 @@ using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Digizuite
 {
@@ -203,7 +204,7 @@ namespace Digizuite
             if (!response.Data!.Success)
             {
                 _logger.LogError("Finish replace failed", nameof(response), response);
-                throw new UploadException("Finish replace failed");
+                throw new UploadException("Finish replace failed: " + JsonSerializer.Serialize(response.Data));
             }
         }
 
