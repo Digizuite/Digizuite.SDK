@@ -14,6 +14,7 @@ namespace Digizuite.Test.IntegrationTests
         protected override DigizuiteOption Options => DigizuiteOption.Nothing;
     }
 
+    [Explicit]
     [TestFixture]
     public class NewUploadServiceTest : UploadServiceTest
     {
