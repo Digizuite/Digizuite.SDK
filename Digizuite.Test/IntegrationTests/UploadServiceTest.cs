@@ -54,7 +54,7 @@ namespace Digizuite.Test.IntegrationTests
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
 #pragma warning restore CA2000
             var listener = new SimpleUploadProgressListener();
-            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 57,
+            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 257,
                 KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener).ConfigureAwait(false);
 
             Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
