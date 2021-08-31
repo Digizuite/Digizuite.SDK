@@ -57,7 +57,7 @@ namespace Digizuite.Collections
             _innerCollection.RemoveAll(match);
         }
 
-        protected bool Equals(ValueList<T> other)
+        protected virtual bool Equals(ValueList<T> other)
         {
             if (other.Count != Count)
             {
@@ -67,7 +67,7 @@ namespace Digizuite.Collections
             var t = _innerCollection.ToHashSetNetstandard(_comparer);
             var o = other.ToHashSetNetstandard(_comparer);
 
-            return t.SetEquals(o);
+            return t.ComparerSetEquals(o);
         }
 
         public override bool Equals(object? obj)
@@ -117,6 +117,8 @@ namespace Digizuite.Collections
         {
             _innerCollection.CopyTo(array, arrayIndex);
         }
+        
+        public T this[int index] => _innerCollection[index];
     }
 
     public static class ValueListExtensions
