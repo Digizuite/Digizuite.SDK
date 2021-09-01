@@ -7,7 +7,7 @@ using Digizuite.Extensions;
 #nullable enable
 namespace Digizuite.Collections
 {
-    public class ValueList<T> : ICollection<T>
+    public class ValueList<T> : ICollection<T>, IReadOnlyList<T>
         where T : notnull
     {
         private readonly List<T> _innerCollection;
