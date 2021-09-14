@@ -7,6 +7,15 @@ using Digizuite.Extensions;
 #nullable enable
 namespace Digizuite.Collections
 {
+    /// <summary>
+    /// A specialized list where the inner values actually matter.
+    /// The two main benefits of this list type is:
+    /// 1. Equals actually considers the elements in the list, while ignoring their order.
+    /// 2. The `ToString` method invokes and prints the `ToString` from the elements in the list.
+    ///
+    /// This makes this list very useful for unit tests, where you want to do deep equality comparisons,
+    /// and wants something readable printed when the comparison fails. 
+    /// </summary>
     public class ValueList<T> : ICollection<T>, IReadOnlyList<T>
         where T : notnull
     {
