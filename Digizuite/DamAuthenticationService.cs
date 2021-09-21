@@ -210,7 +210,13 @@ namespace Digizuite
                 _accessKey = res.Data;
                 var duration = _accessKey!.Expiration - DateTimeOffset.Now;
 
-                _renewalTimer.Interval = duration.TotalMilliseconds * 0.9;
+                var totalMillis = duration.TotalMilliseconds * 0.9;
+                if (totalMillis > int.MaxValue)
+                {
+                    totalMillis = int.MaxValue;
+                }
+                
+                _renewalTimer.Interval = totalMillis;
                 _renewalTimer.Start();
 
                 _logger.LogInformation("Authenticated successful");
