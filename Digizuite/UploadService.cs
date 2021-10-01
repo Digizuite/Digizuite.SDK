@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -33,7 +34,7 @@ namespace Digizuite
             _configuration = configuration;
         }
 
-        public Task<int> Upload(Stream stream, string filename, string computerName,
+        public Task<UploadResponse> Upload(Stream stream, string filename, string computerName,
             IUploadProgressListener? listener = null, CancellationToken cancellationToken = default)
         {
             return InternalUpload(stream, filename, computerName, listener, cancellationToken,
@@ -41,7 +42,7 @@ namespace Digizuite
         }
 
 
-        public Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId,
+        public Task<UploadResponse> Replace(Stream stream, string filename, string computerName, int targetAssetId,
             KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener? listener = null, CancellationToken cancellationToken = default)
         {
             return InternalUpload(stream, filename, computerName, listener, cancellationToken, 
@@ -49,9 +50,9 @@ namespace Digizuite
                     FinishReplace(uploadInfo.UploadId, uploadInfo.ItemId, targetAssetId, keepMetadata, overwrite, cancellationToken));
         }
 
-        private async Task<int> InternalUpload(Stream stream, string filename, string computerName,
+        private async Task<UploadResponse> InternalUpload(Stream stream, string filename, string computerName,
             IUploadProgressListener? listener, CancellationToken cancellationToken,
-            Func<InitiateUploadResponse, Task> completeUpload)
+            Func<InitiateUploadResponse, Task<InternalUploadResponse>> completeUpload)
         {
             var uploadInfo = await InitiateUpload(filename, computerName, cancellationToken).ConfigureAwait(false);
             if (listener != null)
@@ -61,14 +62,14 @@ namespace Digizuite
 
             await UploadFileChunks(stream, uploadInfo.ItemId, listener, cancellationToken).ConfigureAwait(false);
 
-            await completeUpload(uploadInfo).ConfigureAwait(false);
+            var finishUploadResponse = await completeUpload(uploadInfo).ConfigureAwait(false);
 
             if (listener != null)
             {
-                await listener.FinishedUpload(uploadInfo.ItemId, cancellationToken).ConfigureAwait(false);
+                await listener.FinishedUpload(finishUploadResponse.ItemId, cancellationToken).ConfigureAwait(false);
             }
 
-            return uploadInfo.ItemId;
+            return new UploadResponse(finishUploadResponse.ItemId, finishUploadResponse.AssetId);
         }
 
         private async Task<InitiateUploadResponse> InitiateUpload(string filename, string computerName,
@@ -161,7 +162,7 @@ namespace Digizuite
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        private async Task FinishUpload(int uploadId, int itemId, CancellationToken cancellationToken)
+        private async Task<InternalUploadResponse> FinishUpload(int uploadId, int itemId, CancellationToken cancellationToken)
         {
             var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
             _logger.LogDebug("Using AccessKey", nameof(ak), ak);
@@ -173,7 +174,7 @@ namespace Digizuite
                 .AddAccessKey(ak);
 
             _logger.LogTrace("Finishing upload", nameof(uploadId), uploadId, nameof(itemId), itemId);
-            var response = await client.PostAsync<DigiResponse<object>>(request, cancellationToken).ConfigureAwait(false);
+            var response = await client.PostAsync<DigiResponse<InternalUploadResponse>>(request, cancellationToken).ConfigureAwait(false);
 
             _logger.LogDebug("Finished upload", nameof(response), response);
             if (!response.Data!.Success)
@@ -181,9 +182,11 @@ namespace Digizuite
                 _logger.LogError("Finish upload failed", nameof(response), response);
                 throw new UploadException("Finish upload failed");
             }
+            
+            return response.Data!.Items.Single();
         }
 
-        private async Task FinishReplace(int uploadId, int itemId, int targetAssetId, KeepMetadata keepMetadata, Overwrite overwrite, CancellationToken cancellationToken)
+        private async Task<InternalUploadResponse> FinishReplace(int uploadId, int itemId, int targetAssetId, KeepMetadata keepMetadata, Overwrite overwrite, CancellationToken cancellationToken)
         {
             var ak = await _damAuthenticationService.GetAccessKey().ConfigureAwait(false);
 
@@ -198,7 +201,7 @@ namespace Digizuite
                 .AddAccessKey(ak);
 
             _logger.LogTrace("Finishing replace");
-            var response = await client.PostAsync<DigiResponse<object>>(request, cancellationToken).ConfigureAwait(false);
+            var response = await client.PostAsync<DigiResponse<InternalUploadResponse>>(request, cancellationToken).ConfigureAwait(false);
             _logger.LogDebug("Finished replace", nameof(response), response);
 
             if (!response.Data!.Success)
@@ -206,6 +209,8 @@ namespace Digizuite
                 _logger.LogError("Finish replace failed", nameof(response), response);
                 throw new UploadException("Finish replace failed");
             }
+            
+            return response.Data!.Items.Single();
         }
 
 
@@ -235,10 +240,15 @@ namespace Digizuite
 
 
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
-        private class InitiateUploadResponse
+        private record InitiateUploadResponse
         {
             public int ItemId { get; set; }
             public int UploadId { get; set; }
+        }
+
+        private record InternalUploadResponse : InitiateUploadResponse
+        {
+            public int AssetId { get; set; }
         }
     }
 }

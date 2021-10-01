@@ -12,7 +12,7 @@ namespace Digizuite.Samples.Logging
             return true;
         }
 
-        public void Log(LogLevel level, Exception exception, string message, params object[] args)
+        public void Log(LogLevel level, Exception? exception, string message, params object?[] args)
         {
             if (!IsLogLevelEnabled(level))
             {
