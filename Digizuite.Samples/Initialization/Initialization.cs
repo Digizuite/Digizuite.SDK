@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Digizuite.Samples.Initialization
 {
-    public static class Initialization
+    public class Initialization
     {
         private static readonly ServiceProvider _serviceProvider;
         
