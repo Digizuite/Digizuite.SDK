@@ -33,7 +33,7 @@ Once the packages are installed, there are a few things that must be done
 - Implement a logger
 - Initialize everything
 
-The Digizuite SDK is logging information and in order to utilize this, one must implement a logger. This can be achieved by implementing the interface `Digizuite.Logging.ILogger<T>`. A simple ConsoleLogger example can be found [here](https://github.com/Digizuite/Digizuite.SDK/blob/master/Digizuite.Core/Logging/ConsoleLogger.cs).
+The Digizuite SDK is logging information and in order to utilize this, one must implement a logger. This can be achieved by implementing the interface `Digizuite.Logging.ILogger<T>`. A simple Logger example can be found [here](https://github.com/Digizuite/Digizuite.SDK/blob/master/Digizuite.Samples/Logging/SimpleLogger.cs).
 
 Additionally the SDK has to be initialized. If you are using dotnet, an extension method `AddDigizuite` is provided. If you are using .Net Framework the initialization must be done by hand. Use the extension method `AddDigizuite` for inspiration.
 
@@ -57,7 +57,6 @@ var serviceProvider = serviceCollection.BuildServiceProvider(true);
 To test that everything is working, use the registered serviceCollection to get an implementation of one of the Digizuite services (e.g. `ISearchService`) and execute a default search for getting assets
 
 ```c#
-
 var searchService = serviceProvider.GetRequiredService<ISearchService>();
 
 var parameters = new SearchParameters("GetAssets")
