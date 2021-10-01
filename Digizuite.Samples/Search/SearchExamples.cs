@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,7 +10,12 @@ namespace Digizuite.Samples.Search
 {
     public class SearchExamples
     {
-        
+        private readonly IServiceProvider _serviceProvider;
+        public SearchExamples(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
         /// <summary>
         /// Returns the first 12 assets in the default catalog folder Content (40)
         /// </summary>
