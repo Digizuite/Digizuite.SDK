@@ -8,32 +8,60 @@ This project is still very much in development, is only compatible with Digizuit
 5.3 and forward.
 
 ## Getting started
-To get started with the Digizuite SDK, you should first install the Digizuite package from nuget:
+The Digizuite SDK consists of two main packages
+
+- Digizuite.SDK
+- Digizuite.SDK.Core
+
+The Digizuite.SDK contains the actual SDK and the Digizuite.SDK.Core contains the initialization code using dependency injection from `Microsoft.Extensions.DependencyInjection`. Digizuite.SDK.Core depends on Digizuite.SDK.
+We recommend using the default initialization we provide, however, it is possible to install only the SDK and build it from scratch using other dependency injectors (e.g. AutoFac).
+
+To get started with the Digizuite SDK, you should first install the Digizuite packages from nuget:
 
 If you are using dotnet core:
 ```bash
-dotnet install Digizuite Digizuite.Core
+dotnet add package Digizuite.Sdk.Core
 ```
 
 Or if you are on .Net Framework
 ```powershell
-Install-Package Digizuite
+Install-Package Digizuite.Sdk.Core
 ```
 
+Once the packages are installed, there are a few things that must be done
 
-Once the packages are installed you can start using them. We recommend using a dependency injection
-system like `Microsoft.Extensions.DependencyInjection` to manage the Digizuite services. In fact
-if you are using dotnet core, we provide an extension method `AddDigizuite` for quickly adding 
-the Digizuite services to your service provider. You should also make sure to register an instance
-of `Digizuite.Models.DigizuiteConfiguration` so the services knows how to interact with the Digizuite and logging like `services.AddSingleton(typeof(Digizuite.Logging.ILogger<>), typeof(Digizuite.Logging.ConsoleLogger<>));`.
-To test that everything is working you can fire of a basic search using `ISearchService`:
+- Implement a logger
+- Initialize everything
+
+The Digizuite SDK is logging information and in order to utilize this, one must implement a logger. This can be achieved by implementing the interface `Digizuite.Logging.ILogger<T>`. A simple Logger example can be found [here](https://github.com/Digizuite/Digizuite.SDK/blob/master/Digizuite.Samples/Logging/SimpleLogger.cs).
+
+Additionally the SDK has to be initialized. If you are using dotnet, an extension method `AddDigizuite` is provided. If you are using .Net Framework the initialization must be done by hand. Use the extension method `AddDigizuite` for inspiration.
+
+A simple example of how the initialization code looks in a console application is as follows
+
 ```c#
+var serviceCollection = new ServiceCollection(); 
 
-var searchService = ServiceProvider.GetRequiredService<ISearchService>();
+var config = new DigizuiteConfiguration()
+{
+	BaseUrl = new Uri("https://<Digizuite url>.com/"),
+	SystemUsername = "<Username>",
+	SystemPassword = "<Password>"
+};
+
+serviceCollection.AddDigizuite(config);
+serviceCollection.AddSingleton(typeof(ILogger<>), typeof(ConsoleLogger<>));
+var serviceProvider = serviceCollection.BuildServiceProvider(true);
+```
+
+To test that everything is working, use the registered serviceCollection to get an implementation of one of the Digizuite services (e.g. `ISearchService`) and execute a default search for getting assets
+
+```c#
+var searchService = serviceProvider.GetRequiredService<ISearchService>();
 
 var parameters = new SearchParameters("GetAssets")
 {
-    {"sCatalogFolderId", "40"}
+	{"sCatalogFolderId", "40"}
 };
 
 var results = await searchService.Search<Digizuite.Models.Asset>(parameters);
@@ -43,6 +71,8 @@ For additional full examples, check out the
 [samples project on GitHub](https://github.com/Digizuite/Digizuite.SDK/tree/master/Digizuite.Samples). 
 
 ## Specific documentation
+
+The Digizuite SDK contains multiple services each responsible for an area of Digizuite.
 
 Specific documentation for each individual service can be found at the following pages:
 
