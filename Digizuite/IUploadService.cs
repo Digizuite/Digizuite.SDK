@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Models;
 
 namespace Digizuite
 {
@@ -15,7 +16,7 @@ namespace Digizuite
         /// <param name="listener">An optional listener for hooking in as the upload moves along. Do any custom operations you might have to do here</param>
         /// <param name="cancellationToken">A cancellation token for cancelling the requests if they are no longer relevant</param>
         /// <returns>The itemId of the newly uploaded asset</returns>
-        Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null, CancellationToken cancellationToken = default);
+        Task<UploadResponse> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Replaces an existing asset
@@ -29,7 +30,7 @@ namespace Digizuite
         /// <param name="listener">An optional listener for hooking in as the upload moves along. Do any custom operations you might have to do here</param>
         /// <param name="cancellationToken">A cancellation token for canceling the requests if they are no longer relevant</param>
         /// <returns>The itemId of the newly uploaded asset</returns>
-        Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId,
+        Task<UploadResponse> Replace(Stream stream, string filename, string computerName, int targetAssetId,
             KeepMetadata keepMetadata, Overwrite overwrite, IUploadProgressListener? listener = null, CancellationToken cancellationToken = default);
     }
 

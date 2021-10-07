@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Digizuite.Models;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
@@ -36,11 +37,11 @@ namespace Digizuite.Test.IntegrationTests
 #pragma warning restore CA2000
 
             var listener = new SimpleUploadProgressListener();
-            var resultingItemId = await service.Upload(stream, "uploaded-from-unit-test.png", "unittest", listener)
+            var uploadResponse = await service.Upload(stream, "uploaded-from-unit-test.png", "unittest", listener)
                 .ConfigureAwait(false);
 
-            Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
-            Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));
+            Assert.That(uploadResponse.ItemId, Is.EqualTo(listener.UploadInitiatedItemId));
+            Assert.That(uploadResponse.ItemId, Is.EqualTo(listener.FinishedItemId));
             Assert.That(listener.ChunkUploadedEvents.Last().Item2, Is.EqualTo(file.Length));
         }
 
@@ -54,11 +55,11 @@ namespace Digizuite.Test.IntegrationTests
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
 #pragma warning restore CA2000
             var listener = new SimpleUploadProgressListener();
-            var resultingItemId = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 257,
+            var uploadResponse = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 257,
                 KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener).ConfigureAwait(false);
 
-            Assert.That(resultingItemId, Is.EqualTo(listener.UploadInitiatedItemId));
-            Assert.That(resultingItemId, Is.EqualTo(listener.FinishedItemId));
+            Assert.That(uploadResponse.ItemId, Is.EqualTo(listener.FinishedItemId));
+            Assert.That(uploadResponse.AssetId, Is.EqualTo(56));
             Assert.That(listener.ChunkUploadedEvents.Last().Item2, Is.EqualTo(file.Length));
         }
 

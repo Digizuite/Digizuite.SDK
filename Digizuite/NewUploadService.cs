@@ -24,7 +24,7 @@ namespace Digizuite
             _configuration = configuration;
         }
 
-        public async Task<int> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null,
+        public async Task<UploadResponse> Upload(Stream stream, string filename, string computerName, IUploadProgressListener? listener = null,
             CancellationToken cancellationToken = default)
         {
             _logger.LogDebug("Starting upload", nameof(filename), filename, nameof(computerName), computerName);
@@ -32,19 +32,19 @@ namespace Digizuite
             var response = await UploadChunks(stream, null, KeepMetadata.Keep, Overwrite.ReplaceHistoryEntry,
                 computerName, filename, listener, cancellationToken);
 
-            return response.ItemId;
+            return new UploadResponse(response.ItemId, response.AssetId);
         }
 
-        public async Task<int> Replace(Stream stream, string filename, string computerName, int targetAssetId, KeepMetadata keepMetadata,
+        public async Task<UploadResponse> Replace(Stream stream, string filename, string computerName, int targetAssetId, KeepMetadata keepMetadata,
             Overwrite overwrite, IUploadProgressListener? listener = null, CancellationToken cancellationToken = default)
         {
             var response = await UploadChunks(stream, targetAssetId, keepMetadata, overwrite,
                 computerName, filename, listener, cancellationToken);
 
-            return response.ItemId;
+            return new UploadResponse(response.ItemId, response.AssetId);
         }
 
-        private async Task<UploadResponse> UploadChunks(
+        private async Task<InternalUploadResponse> UploadChunks(
             Stream stream, 
             int? assetId,
             KeepMetadata? keepMetadata, 
@@ -56,7 +56,7 @@ namespace Digizuite
         )
         {
             var firstRequest = true;
-            var response = new UploadResponse(-1, -1, false);
+            var response = new InternalUploadResponse(-1, -1, false);
             while (!response.Finished)
             {
                 if (firstRequest)
@@ -80,7 +80,7 @@ namespace Digizuite
             return response;
         }
 
-        private async Task<UploadResponse> UploadChunk(
+        private async Task<InternalUploadResponse> UploadChunk(
             Stream stream, 
             int? assetId,
             KeepMetadata? keepMetadata, 
@@ -127,7 +127,7 @@ namespace Digizuite
             request.Body = new StreamBody(limitedStream);
 
             _logger.LogDebug("Sending chunk");
-            var response = await client.PostAsync<UploadResponse>(request, cancellationToken);
+            var response = await client.PostAsync<InternalUploadResponse>(request, cancellationToken);
             _logger.LogDebug("Chunk transferred");
 
             if (!response.IsSuccessful)
@@ -153,6 +153,6 @@ namespace Digizuite
             return res;
         }
         
-        private record UploadResponse(int AssetId, int ItemId, bool Finished);
+        private record InternalUploadResponse(int AssetId, int ItemId, bool Finished);
     }
 }
