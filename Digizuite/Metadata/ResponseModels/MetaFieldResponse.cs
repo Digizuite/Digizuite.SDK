@@ -17,6 +17,7 @@ namespace Digizuite.Metadata.ResponseModels
         public bool Readonly { get; set; } = default;
         public bool AutoTranslated { get; set; } = default;
         public bool AutoTranslatedOverwriteExisting { get; set; } = default;
+        public bool AiTranslate { get; set; } = default;
         public int VisibilityMetaFieldId { get; set; } = default;
         public string VisibilityRegex { get; set; } = "";
         public int GroupId { get; set; } = default;
