@@ -80,6 +80,7 @@ namespace Digizuite.Extensions
             field.SortIndex = fieldResponse.SortIndex;
             field.AutoTranslated = fieldResponse.AutoTranslated;
             field.AutoTranslateOverwriteExisting = fieldResponse.AutoTranslatedOverwriteExisting;
+            field.AiTranslate = fieldResponse.AiTranslate;
             field.Audited = fieldResponse.Audited;
             field.VisibilityMetaFieldId = fieldResponse.VisibilityMetaFieldId;
             field.VisibilityRegex = fieldResponse.VisibilityRegex;
