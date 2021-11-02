@@ -25,13 +25,13 @@ namespace Digizuite.Extensions
         {
             var response = await service.GetRawMetadata(request, cancellationToken, accessKey);
 
-            var labelValues = response.Values
+            var itemValues = response.Values
                 .GroupBy(v => v.ItemId)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
             return response.Fields.SelectMany(field =>
             {
-                if (!labelValues.TryGetValue(field.ItemId, out var values))
+                if (!itemValues.TryGetValue(field.ItemId, out var values))
                 {
                     values = new();
                 }
