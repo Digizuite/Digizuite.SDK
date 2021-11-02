@@ -26,22 +26,16 @@ namespace Digizuite.Test.IntegrationTests
             TValue first, TValue second)
             where TField : Field<TValue>
         {
-            var fieldService = ServiceProvider.GetRequiredService<IMetaFieldService>();
-
-            var metafields = await fieldService.GetAllMetaFields();
-
-            var labelId = metafields.First(mf => mf.ItemId == fieldItemId).LabelId;
-
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
 
-            var field = await load(TestAssetItemId, labelId, CancellationToken.None);
+            var field = await load(TestAssetItemId, fieldItemId, CancellationToken.None);
 
             Assert.That(field.TargetItemId, Is.EqualTo(TestAssetItemId));
             field.Value = first;
 
             await service.UpdateFields(TestAssetItemId, fields: field);
 
-            var updated = await load(TestAssetItemId, labelId, CancellationToken.None);
+            var updated = await load(TestAssetItemId, fieldItemId, CancellationToken.None);
 
             Assert.That(updated.TargetItemId, Is.EqualTo(TestAssetItemId));
             Compare(updated.Value, first);
@@ -50,7 +44,7 @@ namespace Digizuite.Test.IntegrationTests
 
             await service.UpdateFields(TestAssetItemId, fields: field);
 
-            updated = await load(TestAssetItemId, labelId, CancellationToken.None);
+            updated = await load(TestAssetItemId, fieldItemId, CancellationToken.None);
             Assert.That(updated.TargetItemId, Is.EqualTo(TestAssetItemId));
 
             Compare(updated.Value, second);
@@ -259,11 +253,11 @@ namespace Digizuite.Test.IntegrationTests
         public async Task CanLoadAndUpdateField_MasterSlaveItemReference()
         {
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
-            var masterLabelId = 51688;
-            var slaveLabelId = 51690;
+            var masterFieldItemId = 10289;
+            var slaveFieldItemId = 10293;
             var slaveAssetItemId = 10229;
 
-            var field = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterLabelId);
+            var field = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldItemId);
 
             field.Value = new List<ItemReferenceOption>
             {
@@ -277,12 +271,12 @@ namespace Digizuite.Test.IntegrationTests
 
             await service.UpdateFields(TestAssetItemId, fields: field);
 
-            var updated = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterLabelId);
+            var updated = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldItemId);
 
             Assert.That(updated.Value, Is.EquivalentTo(field.Value));
 
 
-            var slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveLabelId);
+            var slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveFieldItemId);
 
             Assert.That(slave.Value, Is.EquivalentTo(new List<ItemReferenceOption>
             {
@@ -298,9 +292,9 @@ namespace Digizuite.Test.IntegrationTests
 
             await service.UpdateFields(slaveAssetItemId, fields: slave);
 
-            slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveLabelId);
+            slave = await service.GetSlaveItemReferenceMetafield(slaveAssetItemId, slaveFieldItemId);
             Assert.That(slave.Value, Is.Empty);
-            var master = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterLabelId);
+            var master = await service.GetMasterItemReferenceMetafield(TestAssetItemId, masterFieldItemId);
             Assert.That(master.Value, Is.Empty);
         }
 
@@ -308,6 +302,7 @@ namespace Digizuite.Test.IntegrationTests
         public async Task MultiMethods()
         {
             const int multiComboLabelId = 51687;
+            const int multiComboFieldItemId = 10287;
             const int testAssetItemId = 10205;
 
             var comboA = new ComboValue
@@ -342,7 +337,7 @@ namespace Digizuite.Test.IntegrationTests
             });
 
 
-            var field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            var field = await service.GetMultiComboMetafield(testAssetItemId, multiComboFieldItemId);
             Assert.That(field.Value, Is.Empty);
             
             // Set the first value
@@ -359,7 +354,7 @@ namespace Digizuite.Test.IntegrationTests
                 }
             });
             
-            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboFieldItemId);
             Assert.That(field.Value, Has.Exactly(1).Items);
             Assert.That(field.Value, Has.Exactly(1).Items.EqualTo(comboA));
             
@@ -379,7 +374,7 @@ namespace Digizuite.Test.IntegrationTests
                 }
             });
 
-            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboFieldItemId);
             Assert.That(field.Value, Has.Exactly(2).Items);
             Assert.That(field.Value, Is.EquivalentTo(new []{comboA, comboB}));
             
@@ -399,7 +394,7 @@ namespace Digizuite.Test.IntegrationTests
                 }
             });
 
-            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
+            field = await service.GetMultiComboMetafield(testAssetItemId, multiComboFieldItemId);
             Assert.That(field.Value, Has.Exactly(1).Items);
             Assert.That(field.Value, Has.Exactly(1).Items.EqualTo(comboA));
 
