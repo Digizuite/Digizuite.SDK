@@ -7,7 +7,8 @@ namespace Digizuite.Metadata.ResponseModels.MetaFields
     {
         public override MetaFieldDataType Type => MetaFieldDataType.MasterItemReference;
         public ItemType ItemType { get; set; }
-        public int MaxCount { get; set; }
+        public int RelatedMetaFieldLabelId { get; set; }
         public int? RelatedMetaFieldId { get; set; }
+        public int MaxCount { get; set; }
     }
 }

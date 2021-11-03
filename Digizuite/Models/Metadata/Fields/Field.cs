@@ -4,7 +4,9 @@
     {
         public int FieldItemId { get; set; }
         public int MetafieldId { get; set; }
-        internal int LabelId { get; set; }
+        public int LabelId { get; set; }
+        public int LanguageId { get; set; }
+        public string Label { get; set; } = "";
         public bool ReadOnly { get; set; }
         public bool Required { get; set; }
         public int SortIndex { get; set; }
