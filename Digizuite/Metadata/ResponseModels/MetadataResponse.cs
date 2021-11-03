@@ -11,6 +11,8 @@ namespace Digizuite.Metadata.ResponseModels
 
         public int MetafieldId { get; set; }
 
+        public int LabelId { get; set; }
+
         // public int RowId { get; set; }
         public abstract MetaFieldDataType Type { get; }
     }

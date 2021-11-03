@@ -13,7 +13,8 @@
         public string VisibilityRegex { get; set; } = "";
         public bool System { get; set; }
         public int TargetItemId { get; set; }
-
+        public AssetType RestrictToAssetType { get; set; } = AssetType.All;
+        public string UploadTagName { get; set; } = "";
         public abstract string? ToSingleString(string separator);
     }
 

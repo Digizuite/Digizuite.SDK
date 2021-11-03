@@ -25,13 +25,13 @@ namespace Digizuite.Extensions
         {
             var response = await service.GetRawMetadata(request, cancellationToken, accessKey);
 
-            var itemValues = response.Values
-                .GroupBy(v => v.ItemId)
+            var labelValues = response.Values
+                .GroupBy(v => v.LabelId)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
             return response.Fields.SelectMany(field =>
             {
-                if (!itemValues.TryGetValue(field.ItemId, out var values))
+                if (!labelValues.TryGetValue(field.LabelId, out var values))
                 {
                     values = new();
                 }
@@ -437,6 +437,7 @@ namespace Digizuite.Extensions
             {
                 value = getDefaultValue();
                 value.MetafieldId = field.MetafieldId;
+                value.LabelId = field.LabelId;
                 value.ItemId = assetItemId;
             }
             else
