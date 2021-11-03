@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Digizuite.Metadata;
 using Digizuite.Metadata.RequestModels;
 using Digizuite.Metadata.ResponseModels;
@@ -12,6 +13,7 @@ using Digizuite.Metadata.ResponseModels.Properties;
 using Digizuite.Models.Metadata;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
+
 using ComboValue = Digizuite.Models.Metadata.Values.ComboValue;
 using TreeValue = Digizuite.Models.Metadata.Values.TreeValue;
 
@@ -94,7 +96,7 @@ namespace Digizuite.Extensions
         /// </summary>
         /// <param name="service"></param>
         /// <param name="assetItemId">The itemId of the asset to load metadata for</param>
-        /// <param name="metafieldId">The labelId of the field to load</param>
+        /// <param name="metafieldLabelId">The labelId of the field to load</param>
         /// <param name="cancellationToken"></param>
         public static async Task<BitMetafield> GetBitMetafield(this IMetadataValueService service, int assetItemId,
             int metafieldLabelId, CancellationToken cancellationToken = default)
@@ -290,7 +292,7 @@ namespace Digizuite.Extensions
             return PopulateField(field, value, new NoteMetafield
             {
                 MaxLength = field.MaxLength,
-                
+
                 Value = value.Value
             });
         }
@@ -359,7 +361,7 @@ namespace Digizuite.Extensions
             return PopulateField(field, value, new MasterItemReferenceMetafield
             {
                 MaxItems = field.MaxCount,
-                RefType = field.ItemType,                
+                RefType = field.ItemType,
                 Value = value.Items.Select(v => new ItemReferenceOption
                 {
                     Label = v.Title,
@@ -419,20 +421,20 @@ namespace Digizuite.Extensions
         }
 
         private static async Task<(TField, TData)> GetSingleField<TField, TData>(this IMetadataValueService service,
-            int assetItemId, int metafieldLabelId, 
+            int assetItemId, int metafieldLabelId,
             CancellationToken cancellationToken, Func<TData> getDefaultValue)
             where TField : MetaFieldResponse
             where TData : MetadataResponse
         {
             var requestBody = new GetMetadataRequest
             {
-                ItemIds = new List<int>{assetItemId},
+                ItemIds = new List<int> { assetItemId },
                 LabelIds = new HashSet<int> { metafieldLabelId }
             };
 
             var response = await service.GetRawMetadata(requestBody, cancellationToken).ConfigureAwait(false);
 
-            var field = (TField) response.Fields.Single();
+            var field = (TField)response.Fields.Single();
 
             TData value;
             if (response.Values.Count == 0)
@@ -443,7 +445,7 @@ namespace Digizuite.Extensions
                 value.ItemId = assetItemId;
             }
             else
-                value = (TData) response.Values.Single();
+                value = (TData)response.Values.Single();
 
             return (field, value);
         }
@@ -453,7 +455,7 @@ namespace Digizuite.Extensions
             int assetItemId, string? accessKey = null, CancellationToken cancellationToken = default,
             params Field[] fields)
         {
-            return service.UpdateFields(new[] {assetItemId}, accessKey, cancellationToken, fields);
+            return service.UpdateFields(new[] { assetItemId }, accessKey, cancellationToken, fields);
         }
     }
 }
