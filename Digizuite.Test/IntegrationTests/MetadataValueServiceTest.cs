@@ -17,6 +17,7 @@ using NUnit.Framework;
 namespace Digizuite.Test.IntegrationTests
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.None)]
     public class MetadataValueServiceTest : IntegrationTestBase
     {
         private const int TestAssetItemId = 10224;
