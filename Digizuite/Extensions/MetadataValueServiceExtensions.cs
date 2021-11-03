@@ -440,7 +440,6 @@ namespace Digizuite.Extensions
             if (response.Values.Count == 0)
             {
                 value = getDefaultValue();
-                value.MetafieldId = field.MetafieldId;
                 value.LabelId = field.LabelId;
                 value.ItemId = assetItemId;
             }
