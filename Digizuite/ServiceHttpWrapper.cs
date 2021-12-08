@@ -11,6 +11,7 @@ namespace Digizuite
     public class ServiceHttpWrapper
     {
         private readonly IConfiguration _configuration;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _internalConfiguration;
 
         private readonly IRestClient _coreRestClient;
 
@@ -41,23 +42,18 @@ namespace Digizuite
             {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
         };
 
-        private readonly Dictionary<ServiceType, string> _dockerProductionUrls = new()
-        {
-            {ServiceType.BusinessWorkflow, "http://digizuitecore_businessworkflowservice"},
-            {ServiceType.DslService, "http://digizuitecore_dslservice"},
-            {ServiceType.LoginService, "http://digizuitecore_loginservice"},
-            {ServiceType.LegacyService, "http://digizuitecore_legacyservice"},
-            {ServiceType.NotificationService, "http://digizuitecore_notificationservice"},
-            {ServiceType.FileService, "http://digizuitecore_fileservice"},
-            {ServiceType.TranscodeService, "http://digizuitecore_transcodeservice"},
-            {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
-        };
+        private readonly Dictionary<ServiceType, string> _dockerProductionUrls;
 
-        public ServiceHttpWrapper(DevServerConfigurations devServerConfigurations,
-            IConfiguration configuration, HttpClient httpClient, ILogger<RestClient> logger)
+        public ServiceHttpWrapper(
+            DevServerConfigurations devServerConfigurations,
+            IConfiguration configuration,
+            Microsoft.Extensions.Configuration.IConfiguration internalConfiguration,
+            HttpClient httpClient, 
+            ILogger<RestClient> logger)
         {
             _devServerConfigurations = devServerConfigurations;
             _configuration = configuration;
+            _internalConfiguration = internalConfiguration;
 
             _coreRestClient = new RestClient(httpClient, new HttpSerializationSettings
             {
@@ -67,6 +63,18 @@ namespace Digizuite
             {
                 Serializer = new Dimmer3Serializer()
             }, logger);
+            
+            _dockerProductionUrls = new()
+            {
+                {ServiceType.BusinessWorkflow, _internalConfiguration["InternalUrls:businessworkflowservice"]},
+                {ServiceType.DslService, _internalConfiguration["InternalUrls:dslservice"]},
+                {ServiceType.LoginService, _internalConfiguration["InternalUrls:loginservice"]},
+                {ServiceType.LegacyService, _internalConfiguration["InternalUrls:legacyservice"]},
+                {ServiceType.NotificationService, _internalConfiguration["InternalUrls:notificationservice"]},
+                {ServiceType.FileService, _internalConfiguration["InternalUrls:fileservice"]},
+                {ServiceType.TranscodeService, _internalConfiguration["InternalUrls:transcodeservice"]},
+                {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
+            };
         }
 
         private Uri GetUri(string baseUrl, string servicePath, string requestedPath)
