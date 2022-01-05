@@ -31,7 +31,16 @@ namespace Digizuite.Test.IntegrationTests
 
             var metafields = await fieldService.GetAllMetaFields();
 
-            var labelId = metafields.First(mf => mf.ItemId == fieldItemId).LabelId;
+            int labelId;
+
+            if (metafields.First(mf => mf.ItemId == fieldItemId).Labels.Any())
+            {
+                labelId = metafields.First(mf => mf.ItemId == fieldItemId).Labels.Single().Value.LabelId;
+            }
+            else
+            {
+                labelId = metafields.First(mf => mf.ItemId == fieldItemId).LabelId;
+            }
 
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
 
