@@ -30,12 +30,25 @@ namespace Digizuite.Extensions
 
             return response.Fields.SelectMany(field =>
             {
-                if (!labelValues.TryGetValue(field.LabelId, out var values))
+
+                var responsesValues = new List<MetadataResponse>();
+
+                foreach (var label in field.Labels)
                 {
-                    values = new();
+                    if (labelValues.TryGetValue(label.Value.LabelId, out var resValues))
+                    {
+                        responsesValues.AddRange(resValues);
+                    }
                 }
 
-                return values!.Select(value =>
+#pragma warning disable 612
+                if (!labelValues.TryGetValue(field.LabelId, out var values) && labelValues.TryGetValue(field.LabelId, out var responses))
+                {
+                    responsesValues.AddRange(responses);
+                }
+#pragma warning restore 612
+
+                return responsesValues!.Select(value =>
                 {
                     Field parsedField = (field, value) switch
                     {
@@ -70,11 +83,14 @@ namespace Digizuite.Extensions
             TField field)
             where TField : Field
         {
+            var label = fieldResponse.Labels.SingleOrDefault(l => l.Value.LabelId == valueResponse.LabelId);
             field.FieldItemId = fieldResponse.ItemId;
             field.MetafieldId = fieldResponse.MetafieldId;
-            field.LabelId = fieldResponse.LabelId;
-            field.Label = fieldResponse.Label;
-            field.LanguageId = fieldResponse.LanguageId;
+#pragma warning disable 612
+            field.LabelId = label.Value?.LabelId ?? fieldResponse.LabelId;
+            field.LanguageId = label.Value?.LanguageId ?? fieldResponse.LanguageId;
+            field.Label = label.Value?.Label ?? fieldResponse.Label;
+#pragma warning restore 612
             field.ReadOnly = fieldResponse.Readonly;
             field.Required = fieldResponse.Required;
             field.SortIndex = fieldResponse.SortIndex;
@@ -435,7 +451,7 @@ namespace Digizuite.Extensions
             if (response.Values.Count == 0)
             {
                 value = getDefaultValue();
-                value.LabelId = field.LabelId;
+                value.LabelId = metafieldLabelId;
                 value.ItemId = assetItemId;
             }
             else
