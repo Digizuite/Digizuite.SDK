@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Digizuite.Metadata.ResponseModels.Helpers;
 using Digizuite.Models;
@@ -11,10 +12,7 @@ namespace Digizuite.Metadata.ResponseModels
     {
         public int ItemId { get; set; } = default;
         public int MetafieldId { get; set; } = default;
-        public int LabelId { get; set; } = default;
         public Guid Guid { get; set; } = default;
-        public int LanguageId { get; set; } = default;
-        public string Label { get; set; } = "";
         public abstract MetaFieldDataType Type { get; }
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
@@ -29,5 +27,16 @@ namespace Digizuite.Metadata.ResponseModels
         public int GroupId { get; set; } = default;
         public AssetType RestrictToAssetType { get; set; } = AssetType.All;
         public string UploadTagName { get; set; } = "";
+
+        [Obsolete]
+        public int LabelId { get; set; } = default;
+        
+        [Obsolete]
+        public int LanguageId { get; set; } = default;
+        
+        [Obsolete]
+        public string Label { get; set; } = "";
+
+        public Dictionary<int, MetaFieldLabelResponse> Labels { get; set; } = new();
     }
 }
