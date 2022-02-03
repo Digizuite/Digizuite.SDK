@@ -42,7 +42,7 @@ namespace Digizuite.Extensions
                 }
 
 #pragma warning disable 612
-                if (!labelValues.TryGetValue(field.LabelId, out var values) && labelValues.TryGetValue(field.LabelId, out var responses))
+                if (!responsesValues.Any() && labelValues.TryGetValue(field.LabelId, out var responses))
                 {
                     responsesValues.AddRange(responses);
                 }
