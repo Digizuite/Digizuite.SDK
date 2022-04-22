@@ -89,22 +89,6 @@ namespace Digizuite
             return _accessKey.MemberId;
         }
 
-        /// <summary>
-        ///    Gets the language id of the authenticated user
-        /// </summary>
-        public async Task<int> GetLanguageId()
-        {
-            _logger.LogTrace("Getting language");
-            if (HasExpired)
-            {
-                _logger.LogTrace("Loading new member id", nameof(HasExpired), HasExpired);
-                await Login(_configuration.SystemUsername, _configuration.SystemPassword).ConfigureAwait(false);
-            }
-
-            _logger.LogTrace("Returning language id", nameof(_accessKey.LanguageId), _accessKey!.LanguageId);
-            return _accessKey.LanguageId;
-        }
-
         public void Dispose()
         {
             Dispose(true);

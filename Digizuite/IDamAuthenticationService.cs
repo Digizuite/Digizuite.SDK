@@ -24,9 +24,5 @@ namespace Digizuite
         /// </summary>
         Task<int> GetMemberId();
 
-        /// <summary>
-        ///  Gets the language id of the authenticated user
-        /// </summary>
-        Task<int> GetLanguageId();
     }
 }
