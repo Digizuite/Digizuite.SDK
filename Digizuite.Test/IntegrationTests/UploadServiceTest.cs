@@ -10,7 +10,19 @@ using NUnit.Framework;
 namespace Digizuite.Test.IntegrationTests
 {
     [TestFixture]
-    public class UploadServiceTest : IntegrationTestBase
+    public class OldUploadServiceTest : UploadServiceTest
+    {
+        protected override DigizuiteOption Options => DigizuiteOption.Nothing;
+    }
+
+    [Explicit]
+    [TestFixture]
+    public class NewUploadServiceTest : UploadServiceTest
+    {
+        protected override DigizuiteOption Options => DigizuiteOption.UseNewUploadService;
+    }
+    
+    public abstract class UploadServiceTest : IntegrationTestBase
     {
         private const string TestFileName = "TestFiles/large_test_image.png";
 
@@ -37,17 +49,18 @@ namespace Digizuite.Test.IntegrationTests
         public async Task CanReplace()
         {
             var service = ServiceProvider.GetRequiredService<IUploadService>();
+            var assetId = 257;
 
             var file = new FileInfo(TestFileName);
 #pragma warning disable CA2000
             await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
 #pragma warning restore CA2000
             var listener = new SimpleUploadProgressListener();
-            var uploadResponse = await service.Replace(stream, "replace-from-unit-test.png", "unittest", 56,
+            var uploadResponse = await service.Replace(stream, "replace-from-unit-test.png", "unittest", assetId,
                 KeepMetadata.Keep, Overwrite.AddHistoryEntry, listener).ConfigureAwait(false);
 
             Assert.That(uploadResponse.ItemId, Is.EqualTo(listener.FinishedItemId));
-            Assert.That(uploadResponse.AssetId, Is.EqualTo(56));
+            Assert.That(uploadResponse.AssetId, Is.EqualTo(assetId));
             Assert.That(listener.ChunkUploadedEvents.Last().Item2, Is.EqualTo(file.Length));
         }
 

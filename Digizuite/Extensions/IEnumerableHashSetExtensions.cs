@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Digizuite.Extensions
 {
@@ -19,6 +20,18 @@ namespace Digizuite.Extensions
         internal static HashSet<T> ToHashSetNetstandard<T>(this IEnumerable<T> enumerable, IEqualityComparer<T> comparer)
         {
             return new HashSet<T>(enumerable, comparer);
+        }
+        
+        
+        /// <summary>
+        ///     A simple reimplementation of the SetEquals method,
+        ///     since the default implementation does not use the comparer
+        ///     that is specified for the HashSet.
+        /// </summary>
+        internal static bool ComparerSetEquals<T>(this HashSet<T> a, HashSet<T> b)
+        {
+            var comparer = a.Comparer;
+            return a.Count == b.Count && a.All(e => b.Contains(e, comparer));
         }
     }
 }

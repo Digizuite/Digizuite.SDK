@@ -7,7 +7,16 @@ using Digizuite.Extensions;
 #nullable enable
 namespace Digizuite.Collections
 {
-    public class ValueList<T> : ICollection<T>
+    /// <summary>
+    /// A specialized list where the inner values actually matter.
+    /// The two main benefits of this list type is:
+    /// 1. Equals actually considers the elements in the list, while ignoring their order.
+    /// 2. The `ToString` method invokes and prints the `ToString` from the elements in the list.
+    ///
+    /// This makes this list very useful for unit tests, where you want to do deep equality comparisons,
+    /// and wants something readable printed when the comparison fails. 
+    /// </summary>
+    public class ValueList<T> : ICollection<T>, IReadOnlyList<T>
         where T : notnull
     {
         private readonly List<T> _innerCollection;
@@ -57,7 +66,7 @@ namespace Digizuite.Collections
             _innerCollection.RemoveAll(match);
         }
 
-        protected bool Equals(ValueList<T> other)
+        protected virtual bool Equals(ValueList<T> other)
         {
             if (other.Count != Count)
             {
@@ -67,7 +76,7 @@ namespace Digizuite.Collections
             var t = _innerCollection.ToHashSetNetstandard(_comparer);
             var o = other.ToHashSetNetstandard(_comparer);
 
-            return t.SetEquals(o);
+            return t.ComparerSetEquals(o);
         }
 
         public override bool Equals(object? obj)
@@ -117,6 +126,8 @@ namespace Digizuite.Collections
         {
             _innerCollection.CopyTo(array, arrayIndex);
         }
+        
+        public T this[int index] => _innerCollection[index];
     }
 
     public static class ValueListExtensions

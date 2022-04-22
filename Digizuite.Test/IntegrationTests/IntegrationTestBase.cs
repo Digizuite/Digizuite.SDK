@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Digizuite.Logging;
 using Digizuite.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,8 @@ namespace Digizuite.Test.IntegrationTests
         protected virtual void SetupDependencies(IServiceCollection services)
         {
         }
+
+        protected virtual DigizuiteOption Options => DigizuiteOption.Nothing;
         
         [SetUp]
         public void Setup()
@@ -35,12 +38,16 @@ namespace Digizuite.Test.IntegrationTests
                 BaseUrl = new Uri(apiUrl),
                 SystemUsername = username,
                 SystemPassword = password,
+                DevelopmentServices = new HashSet<ServiceType>
+                {
+                    ServiceType.TranscodeService
+                }
             };
             var serviceCollection = new ServiceCollection();
 
             Configuration = cfg;
 
-            serviceCollection.AddDigizuite(cfg);
+            serviceCollection.AddDigizuite(cfg, Options);
             serviceCollection.AddSingleton(typeof(ILogger<>), typeof(ConsoleLogger<>));
             SetupDependencies(serviceCollection);
 

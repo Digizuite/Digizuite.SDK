@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Digizuite.Metadata;
 using Digizuite.Metadata.RequestModels;
 using Digizuite.Metadata.ResponseModels;
 using Digizuite.Metadata.ResponseModels.Metadata;
 using Digizuite.Metadata.ResponseModels.MetaFields;
 using Digizuite.Metadata.ResponseModels.Properties;
+using Digizuite.Models.Metadata;
 using Digizuite.Models.Metadata.Fields;
 using Digizuite.Models.Metadata.Values;
+
 using ComboValue = Digizuite.Models.Metadata.Values.ComboValue;
 using TreeValue = Digizuite.Models.Metadata.Values.TreeValue;
 
@@ -94,14 +97,13 @@ namespace Digizuite.Extensions
             field.ReadOnly = fieldResponse.Readonly;
             field.Required = fieldResponse.Required;
             field.SortIndex = fieldResponse.SortIndex;
-            field.AutoTranslated = fieldResponse.AutoTranslated;
-            field.AutoTranslateOverwriteExisting = fieldResponse.AutoTranslatedOverwriteExisting;
-            field.AiTranslate = fieldResponse.AiTranslate;
-            field.Audited = fieldResponse.Audited;
+            field.AutoTranslate = fieldResponse.AutoTranslate;
             field.VisibilityMetaFieldId = fieldResponse.VisibilityMetaFieldId;
             field.VisibilityRegex = fieldResponse.VisibilityRegex;
             field.TargetItemId = valueResponse.ItemId;
-
+            field.System = fieldResponse.System;
+            field.RestrictToAssetType = fieldResponse.RestrictToAssetType;
+            field.UploadTagName = fieldResponse.UploadTagName;
             return field;
         }
 
@@ -249,6 +251,7 @@ namespace Digizuite.Extensions
         {
             return PopulateField(field, value, new StringMetafield
             {
+                MaxLength = field.MaxLength,
                 Value = value.Value
             });
         }
@@ -304,7 +307,8 @@ namespace Digizuite.Extensions
         {
             return PopulateField(field, value, new NoteMetafield
             {
-                IsHtml = field.ShowRichTextEditor,
+                MaxLength = field.MaxLength,
+
                 Value = value.Value
             });
         }
@@ -344,7 +348,7 @@ namespace Digizuite.Extensions
         {
             return PopulateField(field, value, new TreeMetafield
             {
-                RecursiveToRoot = field.RecursiveToRoot,
+                RecursiveToRoot = field.SelectToRoot,
                 Value = value.Values.Select(v => new TreeValue
                 {
                     Id = v.Id,
@@ -433,20 +437,20 @@ namespace Digizuite.Extensions
         }
 
         private static async Task<(TField, TData)> GetSingleField<TField, TData>(this IMetadataValueService service,
-            int assetItemId, int metafieldLabelId, 
+            int assetItemId, int metafieldLabelId,
             CancellationToken cancellationToken, Func<TData> getDefaultValue)
             where TField : MetaFieldResponse
             where TData : MetadataResponse
         {
             var requestBody = new GetMetadataRequest
             {
-                ItemIds = new List<int>{assetItemId},
-                LabelIds = new HashSet<int>{metafieldLabelId}
+                ItemIds = new List<int> { assetItemId },
+                LabelIds = new HashSet<int> { metafieldLabelId }
             };
 
             var response = await service.GetRawMetadata(requestBody, cancellationToken).ConfigureAwait(false);
 
-            var field = (TField) response.Fields.Single();
+            var field = (TField)response.Fields.Single();
 
             TData value;
             if (response.Values.Count == 0)
@@ -456,7 +460,7 @@ namespace Digizuite.Extensions
                 value.ItemId = assetItemId;
             }
             else
-                value = (TData) response.Values.Single();
+                value = (TData)response.Values.Single();
 
             return (field, value);
         }
@@ -466,7 +470,7 @@ namespace Digizuite.Extensions
             int assetItemId, string? accessKey = null, CancellationToken cancellationToken = default,
             params Field[] fields)
         {
-            return service.UpdateFields(new[] {assetItemId}, accessKey, cancellationToken, fields);
+            return service.UpdateFields(new[] { assetItemId }, accessKey, cancellationToken, fields);
         }
     }
 }

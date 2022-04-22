@@ -17,6 +17,7 @@ using NUnit.Framework;
 namespace Digizuite.Test.IntegrationTests
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.None)]
     public class MetadataValueServiceTest : IntegrationTestBase
     {
         private const int TestAssetItemId = 10224;
@@ -175,14 +176,14 @@ namespace Digizuite.Test.IntegrationTests
         public async Task CanLoadAndUpdateField_Float()
         {
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
-            await TestChanges(10281, service.GetFloatMetafield, (double?) 1d, 2d);
+            await TestChanges(10281, service.GetFloatMetafield, (double?)1d, 2d);
         }
 
         [Test]
         public async Task CanLoadAndUpdateField_Int()
         {
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
-            await TestChanges(10283, service.GetIntMetafield, (int?) 1, 2);
+            await TestChanges(10283, service.GetIntMetafield, (int?)1, 2);
         }
 
         [Test]
@@ -339,7 +340,7 @@ namespace Digizuite.Test.IntegrationTests
                 OptionValue = "C",
                 Id = 51274
             };
-            
+
             var service = ServiceProvider.GetRequiredService<IMetadataValueService>();
 
             // Clear the field
@@ -355,7 +356,7 @@ namespace Digizuite.Test.IntegrationTests
 
             var field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
             Assert.That(field.Value, Is.Empty);
-            
+
             // Set the first value
             await service.ApplyUpdate(new[]
             {
@@ -369,12 +370,12 @@ namespace Digizuite.Test.IntegrationTests
                     }
                 }
             });
-            
+
             field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
             Assert.That(field.Value, Has.Exactly(1).Items);
             Assert.That(field.Value, Has.Exactly(1).Items.EqualTo(comboA));
-            
-            
+
+
             // Merge
             await service.ApplyUpdate(new[]
             {
@@ -392,9 +393,9 @@ namespace Digizuite.Test.IntegrationTests
 
             field = await service.GetMultiComboMetafield(testAssetItemId, multiComboLabelId);
             Assert.That(field.Value, Has.Exactly(2).Items);
-            Assert.That(field.Value, Is.EquivalentTo(new []{comboA, comboB}));
-            
-            
+            Assert.That(field.Value, Is.EquivalentTo(new[] { comboA, comboB }));
+
+
             // Unset
             await service.ApplyUpdate(new[]
             {

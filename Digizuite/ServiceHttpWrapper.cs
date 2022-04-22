@@ -4,6 +4,7 @@ using System.Net.Http;
 using Digizuite.HttpAbstraction;
 using Digizuite.Logging;
 using Digizuite.Models;
+using JetBrains.Annotations;
 
 namespace Digizuite
 {
@@ -21,6 +22,7 @@ namespace Digizuite
             {ServiceType.LegacyService, "https://localhost:5012"},
             {ServiceType.NotificationService, "https://localhost:5201"},
             {ServiceType.FileService, "https://localhost:5081"},
+            {ServiceType.TranscodeService, "https://localhost:5023"},
             {ServiceType.Dmm3bwsv3, "http://local.dev.digizuite.com/dev/dmm3bwsv3"}
         };
 
@@ -35,6 +37,7 @@ namespace Digizuite
             {ServiceType.LegacyService, "/DigizuiteCore/LegacyService"},
             {ServiceType.NotificationService, "/DigizuiteCore/NotificationService"},
             {ServiceType.FileService, "/DigizuiteCore/FileService"},
+            {ServiceType.TranscodeService, "/DigizuiteCore/TranscodeService"},
             {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
         };
 
@@ -46,6 +49,7 @@ namespace Digizuite
             {ServiceType.LegacyService, "http://digizuitecore_legacyservice"},
             {ServiceType.NotificationService, "http://digizuitecore_notificationservice"},
             {ServiceType.FileService, "http://digizuitecore_fileservice"},
+            {ServiceType.TranscodeService, "http://digizuitecore_transcodeservice"},
             {ServiceType.Dmm3bwsv3, "/dmm3bwsv3/"}
         };
 
@@ -74,7 +78,7 @@ namespace Digizuite
             return new Uri(url);
         }
         
-        public (IRestClient Client, RestRequest Request) GetClientAndRequest(ServiceType serviceType, string path)
+        public (IRestClient Client, RestRequest Request) GetClientAndRequest(ServiceType serviceType, [UriString] string path)
         {
             var uri = GetServiceUrl(serviceType, path);
 
@@ -85,14 +89,14 @@ namespace Digizuite
             return (client, request);
         }
 
-        public (IRestClient client, RestRequest request) GetRawClient(string baseUrl, string path)
+        public (IRestClient client, RestRequest request) GetRawClient(string baseUrl, [UriString] string path)
         {
             var uri = GetUri("", baseUrl, path);
 
             return (_coreRestClient, new RestRequest(uri));
         }
 
-        public Uri GetServiceUrl(ServiceType serviceType, string path)
+        public Uri GetServiceUrl(ServiceType serviceType, [UriString] string path)
         {
             var isDev = _devServerConfigurations.IsDevelopmentMode(serviceType);
             var pathUrl = (isDev, _configuration.RunInDocker) switch
@@ -136,7 +140,8 @@ namespace Digizuite
         LegacyService,
         Dmm3bwsv3,
         NotificationService,
-        FileService
+        FileService,
+        TranscodeService,
     }
 
     public static class ServiceHttpWrapperExtensions
