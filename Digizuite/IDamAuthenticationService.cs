@@ -23,6 +23,5 @@ namespace Digizuite
         ///     Gets the member id of the authenticated user
         /// </summary>
         Task<int> GetMemberId();
-
     }
 }
