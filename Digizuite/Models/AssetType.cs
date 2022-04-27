@@ -23,6 +23,7 @@ namespace Digizuite.Models
         Illustrator = 17,
         Visio = 18,
         Cad = 19,
+        Font = 20,
         AfterEffects = 21,
         PremierePro = 22,
         ODF = 110,
