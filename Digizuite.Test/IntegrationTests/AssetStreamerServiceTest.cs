@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -12,7 +11,6 @@ namespace Digizuite.Test.IntegrationTests
     public class AssetStreamerServiceTest : IntegrationTestBase
     {
         [Test]
-        [Explicit]
         public async Task GeneratesValidDownloadUrl()
         {
             var streamer = ServiceProvider.GetRequiredService<IAssetStreamerService>();
@@ -22,7 +20,6 @@ namespace Digizuite.Test.IntegrationTests
         }
 
         [Test]
-        [Explicit]
         public async Task ShouldDownloadSpecificQuality()
         {
             var streamer = ServiceProvider.GetRequiredService<IAssetStreamerService>();
