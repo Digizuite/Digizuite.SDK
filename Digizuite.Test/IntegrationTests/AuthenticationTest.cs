@@ -27,6 +27,7 @@ namespace Digizuite.Test.IntegrationTests
         }
 
         [Test]
+        [Explicit]
         public async Task GetMemberId()
         {
             var service = ServiceProvider.GetRequiredService<IDamAuthenticationService>();

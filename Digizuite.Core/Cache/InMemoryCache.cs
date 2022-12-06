@@ -44,7 +44,7 @@ namespace Digizuite.Cache
             
             if (_internalCache.TryGetValue<T>(key, out var result))
             {
-                return result;
+                return result!;
             }
 
             Task<T> cachedTask;
